@@ -62,6 +62,17 @@ body {
   }
 }
 
+.react-resizable-handle {
+  background: none;
+  border-left: 2px solid #e2e8f0;
+  width: 10px;
+  cursor: col-resize;
+}
+
+.react-resizable-handle:hover {
+  border-left-color: #94a3b8;
+}
+
 @layer base {
   * {
     @apply border-border;

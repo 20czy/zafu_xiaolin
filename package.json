@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "@react-pdf/renderer": "^4.1.6",
+    "@types/react-resizable": "^3.0.8",
     "framer-motion": "^11.18.0",
-    "lucide-react": "^0.471.1"
+    "lucide-react": "^0.471.1",
+    "react-pdf": "^9.2.1",
+    "react-resizable": "^3.0.5"
   }
 }

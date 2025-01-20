@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react'
+import { ResizableBox } from 'react-resizable'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import 'react-resizable/css/styles.css'
 
 interface ChatWindowProps {
   isExpanded: boolean
@@ -14,6 +16,7 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindowShadcn({ isExpanded, onToggle }: ChatWindowProps) {
+  const [width, setWidth] = useState(400)
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([])
   const [input, setInput] = useState('')
 
@@ -60,11 +63,16 @@ export default function ChatWindowShadcn({ isExpanded, onToggle }: ChatWindowPro
 
       <AnimatePresence>
         {isExpanded && (
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 400 }}
-            exit={{ width: 0 }}
-            className="h-full"
+          <ResizableBox
+            width={width}
+            height={window.innerHeight}
+            minConstraints={[300, window.innerHeight]}
+            maxConstraints={[600, window.innerHeight]}
+            resizeHandles={['w']}
+            axis="x"
+            onResize={(e, { size }) => {
+              setWidth(size.width)
+            }}
           >
             <Card className="h-full border-l-0 rounded-l-none">
               <CardHeader className="p-4">
@@ -109,7 +117,7 @@ export default function ChatWindowShadcn({ isExpanded, onToggle }: ChatWindowPro
                 </div>
               </CardFooter>
             </Card>
-          </motion.div>
+          </ResizableBox>
         )}
       </AnimatePresence>
     </div>

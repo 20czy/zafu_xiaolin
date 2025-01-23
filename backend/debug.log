@@ -1,0 +1,70 @@
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 6
+处理PDF时出错: 处理PDF文档时发生错误: pypdf package not found, please install it with `pip install pypdf`
+上传处理失败: 处理PDF时出错: 处理PDF文档时发生错误: pypdf package not found, please install it with `pip install pypdf`
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 7
+文档分割完成，共 13 个块
+处理PDF时出错: 创建向量存储时发生错误: "ZhipuAIEmbeddings" object has no field "api_key"
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: "ZhipuAIEmbeddings" object has no field "api_key"
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 8
+文档分割完成，共 13 个块
+处理PDF时出错: 创建向量存储时发生错误: 1 validation error for ZhipuAIEmbeddings
+  Value error, Did not find openai_api_key, please add an environment variable `OPENAI_API_KEY` which contains it, or pass `openai_api_key` as a named parameter. [type=value_error, input_value={'model_kwargs': {}, 'cli...20, 'http_client': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: 1 validation error for ZhipuAIEmbeddings
+  Value error, Did not find openai_api_key, please add an environment variable `OPENAI_API_KEY` which contains it, or pass `openai_api_key` as a named parameter. [type=value_error, input_value={'model_kwargs': {}, 'cli...20, 'http_client': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 9
+文档分割完成，共 13 个块
+处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: module 'zhipuai' has no attribute 'model_api'
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: module 'zhipuai' has no attribute 'model_api'
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 10
+文档分割完成，共 13 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 429 Too Many Requests"
+Retrying request to /embeddings in 0.917070 seconds
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 429 Too Many Requests"
+Retrying request to /embeddings in 1.562627 seconds
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 429 Too Many Requests"
+Retrying request to /embeddings in 3.822793 seconds
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 429 Too Many Requests"
+处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: Error code: 429, with error text {"error":{"code":"1113","message":"您的账户已欠费，请充值后重试。"}}
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: Error code: 429, with error text {"error":{"code":"1113","message":"您的账户已欠费，请充值后重试。"}}
+Internal Server Error: /api/upload_pdf/
+PDF文件已保存，ID: 11
+文档分割完成，共 13 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_11.faiss

@@ -41,6 +41,8 @@ export default function InputFile({ side }: FileUploaderProps) {
         body: formData,
       });
 
+      console.log(response);
+
       if (!response.ok) {
         throw new Error("文件上传失败");
       }

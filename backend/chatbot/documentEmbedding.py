@@ -3,6 +3,9 @@ from langchain.vectorstores import FAISS
 from typing import List, Dict
 import os
 from zhipuai import ZhipuAI
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ZhipuAIEmbeddings(Embeddings):
     """自定义智谱AI的Embeddings类"""
@@ -31,6 +34,7 @@ class ZhipuAIEmbeddings(Embeddings):
     
     def embed_query(self, text: str) -> List[float]:
         """获取单个查询文本的向量"""
+        logger.info(f"查询文本(query): {text}")
         try:
             response = self.client.embeddings.create(
                 model="embedding-3",
@@ -38,6 +42,7 @@ class ZhipuAIEmbeddings(Embeddings):
             )
             return response.data[0].embedding
         except Exception as e:
+            logger.error(f"获取查询向量失败: {str(e)}")
             raise Exception(f"获取查询向量失败: {str(e)}")
 
 def add_documents_to_faiss(docs: List[Dict], index_path: str = "document_index.faiss"):
@@ -66,18 +71,23 @@ def add_documents_to_faiss(docs: List[Dict], index_path: str = "document_index.f
     except Exception as e:
         raise Exception(f"创建向量存储时发生错误: {str(e)}")
 
-def load_faiss_index(index_path: str = "document_index.faiss"):
+def load_faiss_index(index_path: str) -> FAISS:
     """
-    加载FAISS向量存储
+    加载FAISS向量索引
     
     Args:
-        index_path: 向量存储路径
-    
+        index_path: 向量索引文件路径
+        
     Returns:
-        FAISS: 向量存储实例
+        FAISS向量存储实例
     """
     try:
         embeddings = ZhipuAIEmbeddings()
-        return FAISS.load_local(index_path, embeddings)
+        return FAISS.load_local(
+            index_path, 
+            embeddings,
+            allow_dangerous_deserialization=True
+        )
     except Exception as e:
-        raise Exception(f"加载向量存储时发生错误: {str(e)}")
+        logger.error(f"加载向量索引失败: {str(e)}")
+        raise Exception(f"加载向量索引失败: {str(e)}")

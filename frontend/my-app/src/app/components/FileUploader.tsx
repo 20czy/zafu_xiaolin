@@ -61,43 +61,35 @@ export default function InputFile({ side }: FileUploaderProps) {
     if (file.type === "application/pdf") {
       return (
         <div>
-          <Document
-            file={fileUrl}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          >
-            <Page pageNumber={pageNumber} />
-          </Document>
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <button
-              onClick={() => setPageNumber((page) => Math.max(1, page - 1))}
-              disabled={pageNumber <= 1}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          <div className="max-h-[600px] overflow-y-auto border rounded-lg p-4">
+            <Document
+              file={fileUrl}
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
             >
-              上一页
-            </button>
-            <span>
-              第 {pageNumber} 页，共 {numPages} 页
-            </span>
-            <button
-              onClick={() =>
-                setPageNumber((page) => Math.min(numPages, page + 1))
-              }
-              disabled={pageNumber >= numPages}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            >
-              下一页
-            </button>
+              {Array.from(new Array(numPages), (el, index) => (
+                <Page 
+                  key={`page_${index + 1}`}
+                  pageNumber={index + 1}
+                  className="mb-4"
+                />
+              ))}
+            </Document>
+          </div>
+          <div className="text-center mt-2">
+            共 {numPages} 页
           </div>
         </div>
       );
     }
 
-    return <p>请上传 PDF 文件</p>;
+    return <p>请上传标书文件</p>;
   };
 
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label htmlFor={`picture-${side}`}>PDF文件上传</Label>
+      <Label htmlFor={`picture-${side}`} className="text-xl font-semibold">
+        {side === "left" ? "招标书文件上传" : "应标书文件上传"}
+      </Label>
       <Input
         id={`picture-${side}`}
         type="file"

@@ -1,1 +1,10 @@
-/test.docx
+.log
+.vscode/
+.txt
+.docx
+api_ai.py
+extractTitle.py
+payload.tsx
+.env
+.pdf
+/media/

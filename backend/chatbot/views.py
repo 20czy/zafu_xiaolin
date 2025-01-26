@@ -1,6 +1,4 @@
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
 import json
 from .connectLLM import create_llm
 from .models import PDFDocument
@@ -8,9 +6,10 @@ from .models import PDFDocument
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.core.exceptions import ValidationError
 from .documentProcess import process_pdf_document
 from .documentEmbedding import add_documents_to_faiss
+from .documentSearch import search_all_documents
+from .promptTemplate import create_chat_prompt
 import os
 import logging
 from django.conf import settings
@@ -28,6 +27,7 @@ def chat(request):
         # 获取请求体中的数据
         data = json.loads(request.body)
         message = data.get('message')
+        logger.info(f"收到用户消息: {message}")
         
         # 验证消息不为空
         if not message:
@@ -36,8 +36,25 @@ def chat(request):
                 'message': '消息内容不能为空'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # 调用LLM获取响应
-        response = llm.invoke(message)
+        try:
+            # 检索所有文档中的相关内容
+            search_results = search_all_documents(message)
+            
+            if search_results:
+                # 如果找到相关文档内容，使用文档上下文
+                # prompt = create_chat_prompt(search_results, message)
+                response = llm.invoke(message)
+                logger.info("使用文档上下文进行回复")
+            else:
+                # 如果没有找到相关文档内容，使用普通对话模式
+                response = llm.invoke(message)
+                logger.info("使用普通对话模式进行回复")
+                
+        except Exception as e:
+            logger.warning(f"文档检索失败，使用普通对话模式: {str(e)}")
+            response = llm.invoke(message)
+            
+        logger.info(f"LLM响应: {response}")
         
         return Response({
             'status': 'success',
@@ -45,6 +62,7 @@ def chat(request):
                 'content': response.content
             }
         }, status=status.HTTP_200_OK)
+    
     except json.JSONDecodeError:
         return Response({
             'status': 'error',
@@ -99,6 +117,9 @@ def upload_pdf(request):
             
             # 更新文档记录，添加向量存储路径
             document.vector_index_path = index_path
+            document.is_processed = True
+            document.page_count = len(set(doc.metadata.get('page', 0) for doc in docs))
+            document.chunk_count = len(docs)
             document.save()
             
         except Exception as e:
@@ -113,8 +134,11 @@ def upload_pdf(request):
                 'id': document.id,
                 'title': document.title,
                 'url': request.build_absolute_uri(document.file.url),
-                'chunks_count': len(docs),
-                'vector_store': index_path
+                'is_processed': document.is_processed,
+                'page_count': document.page_count,
+                'chunk_count': document.chunk_count,
+                'created_at': document.created_at,
+                'updated_at': document.updated_at
             }
         }, status=status.HTTP_201_CREATED)
         
@@ -122,6 +146,5 @@ def upload_pdf(request):
         logger.error(f"上传处理失败: {str(e)}")
         return Response({
             'status': 'error',
-            'message': f'服务器错误: {str(e)}',
-            'detail': str(e)
+            'message': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

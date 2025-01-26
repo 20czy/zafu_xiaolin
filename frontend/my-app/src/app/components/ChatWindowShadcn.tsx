@@ -37,9 +37,10 @@ export default function ChatWindowShadcn({ isExpanded, onToggle }: ChatWindowPro
       })
 
       const data = await response.json()
+      console.log(data)
       
       if (data.status === 'success') {
-        setMessages(prev => [...prev, { text: data.content, isUser: false }])
+        setMessages(prev => [...prev, { text: data.data.content, isUser: false }])
       } else {
         setMessages(prev => [...prev, { text: '抱歉，发生了错误，请稍后重试。', isUser: false }])
       }

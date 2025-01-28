@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from .documentProcess import process_pdf_document
 from .documentEmbedding import add_documents_to_faiss
 from .documentSearch import search_all_documents
-from .promptTemplate import create_chat_prompt
 import os
 import logging
 from django.conf import settings

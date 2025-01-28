@@ -105,7 +105,7 @@ def search_document(document_id: int, query: str, top_k: int = 3) -> List[Dict]:
         top_k: 返回的相关文档数量
         
     Returns:
-        相关文档内容列表
+        List[Dict]: 相关文档内容列表
     """
     # 获取查询向量
     query_vec = query_embedding(query)

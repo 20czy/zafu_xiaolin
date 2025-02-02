@@ -12,6 +12,7 @@ from .documentSearch import search_all_documents
 import os
 import logging
 from django.conf import settings
+from .promptGenrator import PromptGenerator
 
 # 配置日志
 logger = logging.getLogger(__name__)
@@ -26,7 +27,10 @@ def chat(request):
         # 获取请求体中的数据
         data = json.loads(request.body)
         message = data.get('message')
-        logger.info(f"收到用户消息: {message}")
+        logger.info("="*50)
+        logger.info("新的聊天请求")
+        logger.info(f"用户输入: {message}")
+        logger.info("-"*30)
         
         # 验证消息不为空
         if not message:
@@ -36,25 +40,41 @@ def chat(request):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            # 检索所有文档中的相关内容
-            search_results = search_all_documents(message)
+            # 创建PromptGenerator实例
+            prompt_generator = PromptGenerator()
             
-            if search_results:
-                # 如果找到相关文档内容，使用文档上下文
-                # prompt = create_chat_prompt(search_results, message)
-                response = llm.invoke(message)
-                logger.info("使用文档上下文进行回复")
-            else:
-                # 如果没有找到相关文档内容，使用普通对话模式
-                response = llm.invoke(message)
-                logger.info("使用普通对话模式进行回复")
+            # 准备基础插槽数据
+            slot_data = {
+                "topic": "招标审核",
+                "query": message,
+                "language": "中文"
+            }
+            
+            # 生成包含文档搜索结果的提示（仅用于测试）
+            prompt = prompt_generator.generate_prompt_with_search(
+                query=message,
+                slot_data=slot_data,
+                top_k=3
+            )
+            
+            # 仅打印生成的prompt用于测试
+            logger.info("[测试] 文档检索和Prompt生成结果:")
+            logger.info("-"*30)
+            logger.info(f"生成的完整prompt:\n{prompt}")
+            logger.info("-"*30)
+            
+            # 使用普通对话模式
+            response = llm.invoke(message)
+            logger.info(f"LLM响应:\n{response.content}")
+            logger.info("="*50)
                 
         except Exception as e:
-            logger.warning(f"文档检索失败，使用普通对话模式: {str(e)}")
+            logger.warning("-"*30)
+            logger.warning(f"文档检索或提示生成失败: {str(e)}")
+            logger.warning("切换到普通对话模式")
+            logger.warning("-"*30)
             response = llm.invoke(message)
             
-        logger.info(f"LLM响应: {response}")
-        
         return Response({
             'status': 'success',
             'data': {

@@ -2,6 +2,10 @@ import os
 from pathlib import Path
 from typing import Dict
 from .documentSearch import search_document, search_all_documents
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class PromptGenerator:
     def __init__(self):
@@ -61,7 +65,7 @@ class PromptGenerator:
             # 格式化搜索结果
             formatted_docs = []
             for result in search_results:
-                doc_text = f"文档：{result.get('document_title', '未知文档')}\n"
+                doc_text = f"文档：{result.get('document_title', '暂无标题')}\n"
                 doc_text += f"内容：{result['content']}\n"
                 formatted_docs.append(doc_text)
             
@@ -69,6 +73,7 @@ class PromptGenerator:
             slot_data['documents'] = '\n'.join(formatted_docs)
             
             # 生成最终提示
+            logger.info(f"生成带搜索结果的提示: {slot_data}")
             return self.generate_prompt(slot_data, template_name)
             
         except Exception as e:

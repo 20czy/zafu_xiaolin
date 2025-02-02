@@ -8,3 +8,5 @@ payload.tsx
 .env
 .pdf
 /media/
+node_modules
+test.docx

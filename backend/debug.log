@@ -256,3 +256,345 @@ HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
 LLM响应:
 你好！请问有什么我可以帮助你的吗？
 ==================================================
+/Users/charn/Desktop/qualificationReview/backend/chatbot/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+Not Found: /api/chat/sessions/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+/Users/charn/Desktop/qualificationReview/backend/chatbot/admin.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /admin/chatbot/chatmessage/
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: chatbot_chatmessage
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/options.py", line 718, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 188, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 186, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/sites.py", line 241, in inner
+    return view(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 188, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 186, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/options.py", line 2001, in changelist_view
+    cl = self.get_changelist_instance(request)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/options.py", line 866, in get_changelist_instance
+    return ChangeList(
+           ^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/views/main.py", line 146, in __init__
+    self.get_results(request)
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/views/main.py", line 313, in get_results
+    result_count = paginator.count
+                   ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/paginator.py", line 110, in count
+    return c()
+           ^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 620, in count
+    return self.query.get_count(using=self.db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/sql/query.py", line 630, in get_count
+    return obj.get_aggregation(using, {"__count": Count("*")})["__count"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/sql/query.py", line 616, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1574, in execute_sql
+    cursor.execute(sql, params)
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such table: chatbot_chatmessage
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: 你好呀
+------------------------------
+input query of search_all_documents: 你好呀
+查询文本(query): 你好呀
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+加载向量存储: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_12.faiss
+Loading faiss.
+Successfully loaded faiss.
+检索到 3 条结果
+检索结果: [{'content': '上海市住房和城乡建设管理委员会办公室      2024年6月18日印发', 'metadata': {}, 'score': 1.2871506}, {'content': '— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落', 'metadata': {}, 'score': 1.3495224}, {'content': '— 2 —\n上海市住房和城乡建设管理行业\n数字化转型实施方案（2024-2026 年）\n为深入贯彻落实党的二十大精神，全面践行人民城市理念，\n贯彻落实中共中央、国务院《数字中国建设整体布局规划》 、住\n房城乡建设部《“数字住建”建设整体布局规划》与市委、市政\n府《关于全面推进数字化转型的意见》 ，持续推进本市住房城乡\n建设管理行业数字化转型工作，服务上海“五个中心”建设和长\n三角一体化发展战略，按照夯实基础、赋能全局、强化能力、优\n化环境的战略路径，全面提升住建行业数字化建设的整体性、系\n统性、协同性，以数字化驱动城市建设和治理方式变革，推动行\n业高质量发展，培育发展新质生产力，实现政府、社会和企业共\n建共治共享，为中国式现代化城市发展注入强大活力, 制定本\n实施方案。\n一、总体考虑\n到2026年，基本形成上海“数字住建”“4321”整体框架，\n初步实现住建行业横向打通、纵向贯通、协调有力的“物联+数\n联+智联”发展格局。“4”即加快数字技术与住建行业深度融合，\n深入推进数字工程、数字住房、数字城市、数字村镇等四大领域\n发展进步；“3”即强化利企便民服务、高效协同发展和数字智\n能创新三个导向的数字化布局；“2”即构筑可信可控的信息安', 'metadata': {}, 'score': 1.3684638}]
+生成带搜索结果的提示: {'topic': '招标审核', 'query': '你好呀', 'language': '中文', 'documents': '文档：数字建筑.pdf\n内容：— 2 —\n上海市住房和城乡建设管理行业\n数字化转型实施方案（2024-2026 年）\n为深入贯彻落实党的二十大精神，全面践行人民城市理念，\n贯彻落实中共中央、国务院《数字中国建设整体布局规划》 、住\n房城乡建设部《“数字住建”建设整体布局规划》与市委、市政\n府《关于全面推进数字化转型的意见》 ，持续推进本市住房城乡\n建设管理行业数字化转型工作，服务上海“五个中心”建设和长\n三角一体化发展战略，按照夯实基础、赋能全局、强化能力、优\n化环境的战略路径，全面提升住建行业数字化建设的整体性、系\n统性、协同性，以数字化驱动城市建设和治理方式变革，推动行\n业高质量发展，培育发展新质生产力，实现政府、社会和企业共\n建共治共享，为中国式现代化城市发展注入强大活力, 制定本\n实施方案。\n一、总体考虑\n到2026年，基本形成上海“数字住建”“4321”整体框架，\n初步实现住建行业横向打通、纵向贯通、协调有力的“物联+数\n联+智联”发展格局。“4”即加快数字技术与住建行业深度融合，\n深入推进数字工程、数字住房、数字城市、数字村镇等四大领域\n发展进步；“3”即强化利企便民服务、高效协同发展和数字智\n能创新三个导向的数字化布局；“2”即构筑可信可控的信息安\n\n文档：数字建筑.pdf\n内容：— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落\n\n文档：数字建筑.pdf\n内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发\n'}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 文档：数字建筑.pdf
+内容：— 2 —
+上海市住房和城乡建设管理行业
+数字化转型实施方案（2024-2026 年）
+为深入贯彻落实党的二十大精神，全面践行人民城市理念，
+贯彻落实中共中央、国务院《数字中国建设整体布局规划》 、住
+房城乡建设部《“数字住建”建设整体布局规划》与市委、市政
+府《关于全面推进数字化转型的意见》 ，持续推进本市住房城乡
+建设管理行业数字化转型工作，服务上海“五个中心”建设和长
+三角一体化发展战略，按照夯实基础、赋能全局、强化能力、优
+化环境的战略路径，全面提升住建行业数字化建设的整体性、系
+统性、协同性，以数字化驱动城市建设和治理方式变革，推动行
+业高质量发展，培育发展新质生产力，实现政府、社会和企业共
+建共治共享，为中国式现代化城市发展注入强大活力, 制定本
+实施方案。
+一、总体考虑
+到2026年，基本形成上海“数字住建”“4321”整体框架，
+初步实现住建行业横向打通、纵向贯通、协调有力的“物联+数
+联+智联”发展格局。“4”即加快数字技术与住建行业深度融合，
+深入推进数字工程、数字住房、数字城市、数字村镇等四大领域
+发展进步；“3”即强化利企便民服务、高效协同发展和数字智
+能创新三个导向的数字化布局；“2”即构筑可信可控的信息安
+
+文档：数字建筑.pdf
+内容：— 4 —
+3.推进工程建设项目全生命周期数字化管理。 逐步建立全市
+统一的工程建设项目数据共享应用机制、数据资源库，推动工程
+建设项目设计、施工、验收、运营全生命周期数字化管理。推进
+建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设
+备的全量、全要素、跨区域、跨层级的数字化监管系统。
+4.建设智慧工地场景试验室。建立市区协同、政企联动的智
+慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，
+形成工地画像，推动差异化监督巡查和分级管理。加强配套政策
+引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治
+理方式转型升级。
+5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达
+峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算
+模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智
+慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。
+6.完善市重大工程建设管理信息化平台。 持续优化市重大工
+程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建
+设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实
+事项目管理系统，进一步完善管理场景。构建“3+1”全生命周
+期管理体系，打造数字化展示集成看板。
+——以宜居安居为落脚点，开展数字住房领域提升行动
+7.绘制全市住房保障“一张图”。实现各品种保障房房源落
+
+文档：数字建筑.pdf
+内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发
+
+Question: 你好呀
+
+
+------------------------------
+HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+你好！很高兴见到你。有什么我可以帮忙的吗？
+==================================================
+==================================================
+新的聊天请求
+用户输入: 你好
+------------------------------
+input query of search_all_documents: 你好
+查询文本(query): 你好
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+加载向量存储: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_12.faiss
+检索到 3 条结果
+检索结果: [{'content': '上海市住房和城乡建设管理委员会办公室      2024年6月18日印发', 'metadata': {}, 'score': 1.2090278}, {'content': '— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落', 'metadata': {}, 'score': 1.279378}, {'content': '— 6 —\n再到评价的全过程管理，实现海绵城市规划、建设、评估全流程\n数字化管控， 推进改变房屋结构或者改变房屋设计用途前的检测\n鉴定数字化,强化城市体检、城市更新和海绵城市信息系统的有\n效联动。\n12.加快推进城市生命线安全工程建设。聚焦各类管线、综\n合管廊等公共市政基础设施，以燃气老旧管网改造、燃气第三方\n外损事故预防、路面塌陷预警等为重点，进一步加强管线交底，\n推进燃气楼内立管改造、二次供水改造的数字化管理，研发生命\n线工程安全风险评估与预警智能模型， 实时精准监测城市生命线\n运行状况，全面提高信息集成、综合研判和联动治理能力，高效\n防范应对重特大安全事故发生。\n13.深入推进住建领域“一网统管”。围绕公共安全、行政执\n法、社会化管理和专业化管理等四类网格化管理事项，进一步升\n级完善网格化管理信息系统，探索构建大城建热线平台。加快搭\n建住建领域城市运行管理服务系统， 加强对城市运行管理服务状\n况的实时监测、动态分析、统筹协调、指挥监督和综合评价。加\n快构建基于大安全大应急框架下的横向互联互通、 纵向上下贯通\n的应急信息平台。 研究城市基础设施维护需求的分类分析预测模\n型，升级完善上海城市基础设施建设与维护项目管理信息系统。\n14. 构建高效城管执法保障体系。继续做实市城管执法局指\n挥中心功能，持续推进区级示范指挥中心建设，加强中队勤务指', 'metadata': {}, 'score': 1.2987942}]
+生成带搜索结果的提示: {'topic': '招标审核', 'query': '你好', 'language': '中文', 'documents': '文档：数字建筑.pdf\n内容：— 6 —\n再到评价的全过程管理，实现海绵城市规划、建设、评估全流程\n数字化管控， 推进改变房屋结构或者改变房屋设计用途前的检测\n鉴定数字化,强化城市体检、城市更新和海绵城市信息系统的有\n效联动。\n12.加快推进城市生命线安全工程建设。聚焦各类管线、综\n合管廊等公共市政基础设施，以燃气老旧管网改造、燃气第三方\n外损事故预防、路面塌陷预警等为重点，进一步加强管线交底，\n推进燃气楼内立管改造、二次供水改造的数字化管理，研发生命\n线工程安全风险评估与预警智能模型， 实时精准监测城市生命线\n运行状况，全面提高信息集成、综合研判和联动治理能力，高效\n防范应对重特大安全事故发生。\n13.深入推进住建领域“一网统管”。围绕公共安全、行政执\n法、社会化管理和专业化管理等四类网格化管理事项，进一步升\n级完善网格化管理信息系统，探索构建大城建热线平台。加快搭\n建住建领域城市运行管理服务系统， 加强对城市运行管理服务状\n况的实时监测、动态分析、统筹协调、指挥监督和综合评价。加\n快构建基于大安全大应急框架下的横向互联互通、 纵向上下贯通\n的应急信息平台。 研究城市基础设施维护需求的分类分析预测模\n型，升级完善上海城市基础设施建设与维护项目管理信息系统。\n14. 构建高效城管执法保障体系。继续做实市城管执法局指\n挥中心功能，持续推进区级示范指挥中心建设，加强中队勤务指\n\n文档：数字建筑.pdf\n内容：— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落\n\n文档：数字建筑.pdf\n内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发\n'}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 文档：数字建筑.pdf
+内容：— 6 —
+再到评价的全过程管理，实现海绵城市规划、建设、评估全流程
+数字化管控， 推进改变房屋结构或者改变房屋设计用途前的检测
+鉴定数字化,强化城市体检、城市更新和海绵城市信息系统的有
+效联动。
+12.加快推进城市生命线安全工程建设。聚焦各类管线、综
+合管廊等公共市政基础设施，以燃气老旧管网改造、燃气第三方
+外损事故预防、路面塌陷预警等为重点，进一步加强管线交底，
+推进燃气楼内立管改造、二次供水改造的数字化管理，研发生命
+线工程安全风险评估与预警智能模型， 实时精准监测城市生命线
+运行状况，全面提高信息集成、综合研判和联动治理能力，高效
+防范应对重特大安全事故发生。
+13.深入推进住建领域“一网统管”。围绕公共安全、行政执
+法、社会化管理和专业化管理等四类网格化管理事项，进一步升
+级完善网格化管理信息系统，探索构建大城建热线平台。加快搭
+建住建领域城市运行管理服务系统， 加强对城市运行管理服务状
+况的实时监测、动态分析、统筹协调、指挥监督和综合评价。加
+快构建基于大安全大应急框架下的横向互联互通、 纵向上下贯通
+的应急信息平台。 研究城市基础设施维护需求的分类分析预测模
+型，升级完善上海城市基础设施建设与维护项目管理信息系统。
+14. 构建高效城管执法保障体系。继续做实市城管执法局指
+挥中心功能，持续推进区级示范指挥中心建设，加强中队勤务指
+
+文档：数字建筑.pdf
+内容：— 4 —
+3.推进工程建设项目全生命周期数字化管理。 逐步建立全市
+统一的工程建设项目数据共享应用机制、数据资源库，推动工程
+建设项目设计、施工、验收、运营全生命周期数字化管理。推进
+建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设
+备的全量、全要素、跨区域、跨层级的数字化监管系统。
+4.建设智慧工地场景试验室。建立市区协同、政企联动的智
+慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，
+形成工地画像，推动差异化监督巡查和分级管理。加强配套政策
+引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治
+理方式转型升级。
+5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达
+峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算
+模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智
+慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。
+6.完善市重大工程建设管理信息化平台。 持续优化市重大工
+程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建
+设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实
+事项目管理系统，进一步完善管理场景。构建“3+1”全生命周
+期管理体系，打造数字化展示集成看板。
+——以宜居安居为落脚点，开展数字住房领域提升行动
+7.绘制全市住房保障“一张图”。实现各品种保障房房源落
+
+文档：数字建筑.pdf
+内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发
+
+Question: 你好
+
+
+------------------------------
+HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+你好！很高兴见到你。有什么我可以帮忙的吗？
+==================================================
+==================================================
+新的聊天请求
+用户输入: 你是什么模型
+------------------------------
+input query of search_all_documents: 你是什么模型
+查询文本(query): 你是什么模型
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+加载向量存储: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_12.faiss
+检索到 3 条结果
+检索结果: [{'content': '上海市住房和城乡建设管理委员会办公室      2024年6月18日印发', 'metadata': {}, 'score': 1.333402}, {'content': '— 11 —\n指导企业和参建各方编制企业级、项目级应用标准。全面推进城\n市信息模型CIM平台标准建设， 加快构建数字孪生和元宇宙基础\n设施。\n31.完善工程建设系列标准。建立全市统一的工程建设项目\n数据标准体系、项目编码规则，结合智慧工地的特点，构建“数\n据采集、场景应用、智慧评价”的智慧工地标准体系框架。\n32.完善城市管理系列标准。从公共安全、行政执法、社会\n化管理和专业化管理等四个方面， 聚焦风险隐患， 完善管理标准。\n（四）加快打造住建行业全域数字化转型一体化支撑平台\n——深入推进城市信息模型（CIM）底座建设\n33.加快建立统一、开放的CIM底座。全面提升底座的泛在\n通用性、智能协同性和开放共享性。优化升级市级CIM平台，探\n索人工智能AIGC、大模型等新技术，支持仿真模拟与虚实交互，\n构建权威、轻量、开放、易用的城市服务应用体系。\n34.推进市、区、街镇三级CIM平台协同。基于统一标准，\n形成三级CIM平台架构，实现数据协同，构建覆盖全市的CIM应\n用体系。 优先推进五个新城CIM平台建设与落地实施， 鼓励各区、\n街镇、开发区及市属国企运用市级CIM平台拓展业务。\n——丰富CIM+应用体系\n35.构建CIM+智慧应用场景体系。通过智能化集成分析与定\n制化共享应用，推动“CIM+”应用在重点行业管理和社会服务中', 'metadata': {}, 'score': 1.3786705}, {'content': '— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落', 'metadata': {}, 'score': 1.4255389}]
+生成带搜索结果的提示: {'topic': '招标审核', 'query': '你是什么模型', 'language': '中文', 'documents': '文档：数字建筑.pdf\n内容：— 4 —\n3.推进工程建设项目全生命周期数字化管理。 逐步建立全市\n统一的工程建设项目数据共享应用机制、数据资源库，推动工程\n建设项目设计、施工、验收、运营全生命周期数字化管理。推进\n建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设\n备的全量、全要素、跨区域、跨层级的数字化监管系统。\n4.建设智慧工地场景试验室。建立市区协同、政企联动的智\n慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，\n形成工地画像，推动差异化监督巡查和分级管理。加强配套政策\n引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治\n理方式转型升级。\n5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达\n峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算\n模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智\n慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。\n6.完善市重大工程建设管理信息化平台。 持续优化市重大工\n程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建\n设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实\n事项目管理系统，进一步完善管理场景。构建“3+1”全生命周\n期管理体系，打造数字化展示集成看板。\n——以宜居安居为落脚点，开展数字住房领域提升行动\n7.绘制全市住房保障“一张图”。实现各品种保障房房源落\n\n文档：数字建筑.pdf\n内容：— 11 —\n指导企业和参建各方编制企业级、项目级应用标准。全面推进城\n市信息模型CIM平台标准建设， 加快构建数字孪生和元宇宙基础\n设施。\n31.完善工程建设系列标准。建立全市统一的工程建设项目\n数据标准体系、项目编码规则，结合智慧工地的特点，构建“数\n据采集、场景应用、智慧评价”的智慧工地标准体系框架。\n32.完善城市管理系列标准。从公共安全、行政执法、社会\n化管理和专业化管理等四个方面， 聚焦风险隐患， 完善管理标准。\n（四）加快打造住建行业全域数字化转型一体化支撑平台\n——深入推进城市信息模型（CIM）底座建设\n33.加快建立统一、开放的CIM底座。全面提升底座的泛在\n通用性、智能协同性和开放共享性。优化升级市级CIM平台，探\n索人工智能AIGC、大模型等新技术，支持仿真模拟与虚实交互，\n构建权威、轻量、开放、易用的城市服务应用体系。\n34.推进市、区、街镇三级CIM平台协同。基于统一标准，\n形成三级CIM平台架构，实现数据协同，构建覆盖全市的CIM应\n用体系。 优先推进五个新城CIM平台建设与落地实施， 鼓励各区、\n街镇、开发区及市属国企运用市级CIM平台拓展业务。\n——丰富CIM+应用体系\n35.构建CIM+智慧应用场景体系。通过智能化集成分析与定\n制化共享应用，推动“CIM+”应用在重点行业管理和社会服务中\n\n文档：数字建筑.pdf\n内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发\n'}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 文档：数字建筑.pdf
+内容：— 4 —
+3.推进工程建设项目全生命周期数字化管理。 逐步建立全市
+统一的工程建设项目数据共享应用机制、数据资源库，推动工程
+建设项目设计、施工、验收、运营全生命周期数字化管理。推进
+建筑市场与施工现场两场联动，构建覆盖企业、项目、人员、设
+备的全量、全要素、跨区域、跨层级的数字化监管系统。
+4.建设智慧工地场景试验室。建立市区协同、政企联动的智
+慧工地场景试验室建设模式， 实现多场景的全市覆盖和数据接入，
+形成工地画像，推动差异化监督巡查和分级管理。加强配套政策
+引导和评优激励，加快智慧场景应用推广覆盖，推动工地安全治
+理方式转型升级。
+5.推进建筑低碳化数字化协同应用。 围绕城乡建设领域碳达
+峰碳中和目标，建设完善建筑碳排放监管系统，构建碳排放计算
+模型，加强建筑能耗科学监测和设备运行智慧管理，打造一批智
+慧楼宇和低碳智慧建筑。探索建设建筑互联网标识解析体系。
+6.完善市重大工程建设管理信息化平台。 持续优化市重大工
+程管理系统，对项目进行全过程目标管理和全方位跟踪评价。建
+设立功竞赛管理系统，实现评选信息全流程数字化管理。搭建实
+事项目管理系统，进一步完善管理场景。构建“3+1”全生命周
+期管理体系，打造数字化展示集成看板。
+——以宜居安居为落脚点，开展数字住房领域提升行动
+7.绘制全市住房保障“一张图”。实现各品种保障房房源落
+
+文档：数字建筑.pdf
+内容：— 11 —
+指导企业和参建各方编制企业级、项目级应用标准。全面推进城
+市信息模型CIM平台标准建设， 加快构建数字孪生和元宇宙基础
+设施。
+31.完善工程建设系列标准。建立全市统一的工程建设项目
+数据标准体系、项目编码规则，结合智慧工地的特点，构建“数
+据采集、场景应用、智慧评价”的智慧工地标准体系框架。
+32.完善城市管理系列标准。从公共安全、行政执法、社会
+化管理和专业化管理等四个方面， 聚焦风险隐患， 完善管理标准。
+（四）加快打造住建行业全域数字化转型一体化支撑平台
+——深入推进城市信息模型（CIM）底座建设
+33.加快建立统一、开放的CIM底座。全面提升底座的泛在
+通用性、智能协同性和开放共享性。优化升级市级CIM平台，探
+索人工智能AIGC、大模型等新技术，支持仿真模拟与虚实交互，
+构建权威、轻量、开放、易用的城市服务应用体系。
+34.推进市、区、街镇三级CIM平台协同。基于统一标准，
+形成三级CIM平台架构，实现数据协同，构建覆盖全市的CIM应
+用体系。 优先推进五个新城CIM平台建设与落地实施， 鼓励各区、
+街镇、开发区及市属国企运用市级CIM平台拓展业务。
+——丰富CIM+应用体系
+35.构建CIM+智慧应用场景体系。通过智能化集成分析与定
+制化共享应用，推动“CIM+”应用在重点行业管理和社会服务中
+
+文档：数字建筑.pdf
+内容：上海市住房和城乡建设管理委员会办公室      2024年6月18日印发
+
+Question: 你是什么模型
+
+
+------------------------------
+HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+您好！我是由中国的深度求索（DeepSeek）公司开发的智能助手DeepSeek-V3。如您有任何任何问题，我会尽我所能为您提供帮助。
+==================================================

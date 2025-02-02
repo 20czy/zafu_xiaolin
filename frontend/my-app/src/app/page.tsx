@@ -6,7 +6,7 @@ import FileUploader from "./components/FileUploader";
 
 export default function Home() {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-
+  const [activeSessionId, setActiveSessionId] = useState<number | null>(null);
   return (
     <main className="min-h-screen flex">
       <div className="flex-1 flex items-start justify-center gap-8 p-8">
@@ -21,6 +21,8 @@ export default function Home() {
       <ChatWindowShadcn
         isExpanded={isChatExpanded}
         onToggle={() => setIsChatExpanded(!isChatExpanded)}
+        sessionId={activeSessionId}
+        onSessionChange={setActiveSessionId}
       />
     </main>
   );

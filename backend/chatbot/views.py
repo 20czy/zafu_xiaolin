@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .connectLLM import create_llm
-from .models import PDFDocument
+from .models import PDFDocument, ChatSession
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -167,3 +167,46 @@ def upload_pdf(request):
             'status': 'error',
             'message': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET', 'POST'])
+def chat_sessions(request):
+    if request.method == 'GET':
+        sessions = ChatSession.objects.all()
+        return Response({
+            'status': 'success',
+            'data': [{
+                'id': session.id,
+                'title': session.title,
+                'updated_at': session.updated_at
+            } for session in sessions]
+        })
+    
+    elif request.method == 'POST':
+        session = ChatSession.objects.create()
+        return Response({
+            'status': 'success',
+            'data': {
+                'id': session.id,
+                'title': session.title,
+                'created_at': session.created_at,
+            }
+        }, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def session_messages(request, session_id):
+    try:
+        session = ChatSession.objects.get(id=session_id)
+        messages = session.messages.all()
+        return Response({
+            'status': 'success',
+            'data': [{
+                'content': msg.content,
+                'is_user': msg.is_user,
+                'created_at': msg.created_at
+            } for msg in messages]
+        })
+    except ChatSession.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': '会话不存在'
+        }, status=status.HTTP_404_NOT_FOUND)

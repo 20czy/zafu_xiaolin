@@ -38,3 +38,24 @@ class PDFDocument(models.Model):
 
     def __str__(self):
         return f"{self.title} ({'已处理' if self.is_processed else '未处理'})"
+
+class ChatSession(models.Model):
+    """聊天会话模型"""
+    title = models.CharField(max_length=200, default="新对话")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-updated_at']
+
+class ChatMessage(models.Model):
+    """聊天消息模型"""
+    session = models.ForeignKey(ChatSession, on_delete=models.CASCADE, related_name='messages')
+    content = models.TextField()
+    is_user = models.BooleanField(default=True)  # True表示用户消息，False表示AI响应
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['created_at']
+    
+    

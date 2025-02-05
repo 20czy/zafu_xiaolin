@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 def chat(request):
     try:
         # 创建LLM实例
-        llm = create_llm()
+        llm = create_llm(model_name='chatglm')
         
         # 获取请求体中的数据
         data = json.loads(request.body)

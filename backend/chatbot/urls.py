@@ -8,4 +8,5 @@ urlpatterns = [
     path('upload_pdf/', views.upload_pdf, name='upload_pdf'),
     path('chat/sessions/', views.chat_sessions, name='chat_sessions'),
     path('chat/sessions/<int:session_id>/messages/', views.session_messages, name='session_messages'),
+    # path('chat/sessions/<int:session_id>/delete/', views.delete_session, name='delete_session'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -209,7 +209,7 @@ def upload_pdf(request):
             'message': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 def chat_sessions(request):
     if request.method == 'GET':
         sessions = ChatSession.objects.all()
@@ -234,21 +234,36 @@ def chat_sessions(request):
         }, status=status.HTTP_201_CREATED)
 
 # 根据session_id获取会话消息
-@api_view(['GET'])
+@api_view(['GET', 'DELETE'])
 def session_messages(request, session_id):
-    try:
+    if request.method == 'GET':
+        try:
+            session = ChatSession.objects.get(id=session_id)
+            messages = session.messages.all()
+            return Response({
+                'status': 'success',
+                'data': [{
+                    'content': msg.content,
+                    'is_user': msg.is_user,
+                    'created_at': msg.created_at
+                } for msg in messages]
+            })
+        except ChatSession.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '会话不存在'
+            }, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == 'DELETE':
         session = ChatSession.objects.get(id=session_id)
-        messages = session.messages.all()
-        return Response({
-            'status': 'success',
-            'data': [{
-                'content': msg.content,
-                'is_user': msg.is_user,
-                'created_at': msg.created_at
-            } for msg in messages]
-        })
-    except ChatSession.DoesNotExist:
-        return Response({
-            'status': 'error',
-            'message': '会话不存在'
-        }, status=status.HTTP_404_NOT_FOUND)
+        try:
+            session.delete()
+            return Response({
+                'status': 'success',
+                'message': '会话已删除'
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'删除会话失败: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    

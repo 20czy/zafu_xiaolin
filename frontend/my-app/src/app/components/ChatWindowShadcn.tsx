@@ -2,28 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Send, Plus, History } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { ResizableBox } from "react-resizable";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import "react-resizable/css/styles.css";
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
+import SessionHistory from "./AIChatWindow/SessionHistory";
+import MessageList from "./AIChatWindow/MessageList";
+import ChatInput from "./AIChatWindow/ChatInput";
 
 interface ChatWindowProps {
   isExpanded: boolean;
@@ -46,6 +39,7 @@ export default function ChatWindowShadcn({
   const [sessions, setSessions] = useState<
     Array<{ id: number; title: string; updated_at: string }>
   >([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // 添加初始化会话的useEffect
   useEffect(() => {
@@ -183,17 +177,32 @@ export default function ChatWindowShadcn({
     }
   };
 
+  // 添加删除会话的函数
+  const handleDeleteSession = async (sessionId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/chat/sessions/${sessionId}/messages/`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        fetchSessions();
+        if (sessionId === sessionId) {
+          onSessionChange(null);
+        }
+      } else {
+        console.error("删除会话失败");
+      }
+    } catch (error) {
+      console.error("删除会话失败:", error);
+    }
+  };
+
   return (
     <div className="fixed right-0 top-0 h-screen flex">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onToggle}
-        className="self-center h-12 w-12 rounded-l-md rounded-r-none border bg-background"
-      >
-        {isExpanded ? <ChevronRight /> : <ChevronLeft />}
-      </Button>
-
+      <ToggleButton onToggle={onToggle} isExpanded={isExpanded} />
+      
       <AnimatePresence>
         {isExpanded && (
           <ResizableBox
@@ -203,171 +212,39 @@ export default function ChatWindowShadcn({
             maxConstraints={[600, window.innerHeight]}
             resizeHandles={["w"]}
             axis="x"
-            onResize={(e, { size }) => {
-              setWidth(size.width);
-            }}
+            onResize={(e, { size }) => setWidth(size.width)}
           >
             <Card className="h-full border-l-0 rounded-l-none">
               <CardHeader className="p-4 flex flex-row justify-between items-center">
-                <h2 className="font-semibold">AI 助手</h2>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleNewSession}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => {
-                          console.log("fetchSessions");
-                          fetchSessions();
-                        }}
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="w-[300px]">
-                      <SheetHeader>
-                        <SheetTitle>聊天历史</SheetTitle>
-                      </SheetHeader>
-                      <ScrollArea className="h-full">
-                        <div className="space-y-2 py-4">
-                          {sessions.map((session) => (
-                            <Button
-                              key={session.id}
-                              variant={
-                                sessionId === session.id ? "secondary" : "ghost"
-                              }
-                              className="w-full justify-start"
-                              onClick={() => {
-                                if (onSessionChange) {
-                                  onSessionChange(session.id);
-                                }
-                              }}
-                            >
-                              {session.title}
-                              <span className="ml-auto text-xs text-muted-foreground">
-                                {new Date(
-                                  session.updated_at
-                                ).toLocaleDateString()}
-                              </span>
-                            </Button>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </SheetContent>
-                  </Sheet>
-                </div>
+                <h2 className="font-semibold">AI 审阅助手</h2>
+                <HeaderActions 
+                  onNewSession={handleNewSession}
+                  onOpenHistory={() => {
+                    fetchSessions();
+                    setIsHistoryOpen(true);
+                  }}
+                />
               </CardHeader>
 
+              <SessionHistory
+                sessions={sessions}
+                currentSessionId={sessionId}
+                onSessionChange={onSessionChange}
+                onDeleteSession={handleDeleteSession}
+                open={isHistoryOpen}
+                onOpenChange={setIsHistoryOpen}
+              />
+
               <CardContent className="p-0">
-                <ScrollArea className="h-[calc(100vh-8rem)] px-4">
-                  <div className="flex flex-col gap-4">
-                    {messages.map((message, index) => (
-                      <div
-                        key={index}
-                        className={`flex ${
-                          message.isUser ? "justify-end" : "justify-start"
-                        }`}
-                      >
-                        <div
-                          className={`max-w-[80%] p-3 rounded-lg ${
-                            message.isUser
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted"
-                          }`}
-                        >
-                          {message.isUser ? (
-                            message.text
-                          ) : (
-                            <ReactMarkdown
-                              className="prose prose-sm dark:prose-invert max-w-none"
-                              remarkPlugins={[remarkGfm]}
-                              rehypePlugins={[rehypeRaw]}
-                              components={{
-                                // 自定义代码块样式
-                                code({ node, inline, className, children, ...props }) {
-                                  const match = /language-(\w+)/.exec(className || '')
-                                  return !inline ? (
-                                    <pre className="bg-muted-foreground/10 p-2 rounded">
-                                      <code className={className} {...props}>
-                                        {children}
-                                      </code>
-                                    </pre>
-                                  ) : (
-                                    <code className="bg-muted-foreground/10 px-1 rounded" {...props}>
-                                      {children}
-                                    </code>
-                                  )
-                                },
-                                // 自定义表格样式
-                                table({ children }) {
-                                  return (
-                                    <div className="overflow-auto my-4">
-                                      <table className="border-collapse border border-muted-foreground/20">
-                                        {children}
-                                      </table>
-                                    </div>
-                                  )
-                                },
-                                th({ children }) {
-                                  return (
-                                    <th className="border border-muted-foreground/20 px-4 py-2 bg-muted-foreground/5">
-                                      {children}
-                                    </th>
-                                  )
-                                },
-                                td({ children }) {
-                                  return (
-                                    <td className="border border-muted-foreground/20 px-4 py-2">
-                                      {children}
-                                    </td>
-                                  )
-                                },
-                                // 自定义链接样式
-                                a({ children, href }) {
-                                  return (
-                                    <a
-                                      href={href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-primary hover:underline"
-                                    >
-                                      {children}
-                                    </a>
-                                  )
-                                }
-                              }}
-                            >
-                              {message.text}
-                            </ReactMarkdown>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
+                <MessageList messages={messages} />
               </CardContent>
 
               <CardFooter className="p-4">
-                <div className="flex w-full gap-2">
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    placeholder="输入消息..."
-                    className="flex-1"
-                  />
-                  <Button size="icon" onClick={handleSend}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
+                <ChatInput 
+                  input={input}
+                  setInput={setInput}
+                  handleSend={handleSend}
+                />
               </CardFooter>
             </Card>
           </ResizableBox>
@@ -376,3 +253,40 @@ export default function ChatWindowShadcn({
     </div>
   );
 }
+
+// ToggleButton.tsx
+const ToggleButton = ({ onToggle, isExpanded }: { 
+  onToggle: () => void;
+  isExpanded: boolean;
+}) => (
+  <Button
+    variant="ghost"
+    size="icon"
+    onClick={onToggle}
+    className="self-center h-12 w-12 rounded-l-md rounded-r-none border bg-background"
+  >
+    {isExpanded ? <ChevronRight /> : <ChevronLeft />}
+  </Button>
+);
+
+// HeaderActions.tsx
+import { Plus, History } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const HeaderActions = ({ 
+  onNewSession,
+  onOpenHistory
+}: {
+  onNewSession: () => void;
+  onOpenHistory: () => void;
+}) => (
+  <div className="flex gap-2">
+    <Button variant="outline" size="icon" onClick={onNewSession}>
+      <Plus className="h-4 w-4" />
+    </Button>
+    
+    <Button variant="outline" size="icon" onClick={onOpenHistory}>
+      <History className="h-4 w-4" />
+    </Button>
+  </div>
+);

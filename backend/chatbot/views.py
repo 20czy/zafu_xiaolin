@@ -27,19 +27,37 @@ def chat(request):
         # 获取请求体中的数据
         data = json.loads(request.body)
         message = data.get('message')
+        session_id = data.get('session_id')
+        
         logger.info("="*50)
         logger.info("新的聊天请求")
         logger.info(f"用户输入: {message}")
+        logger.info(f"会话ID: {session_id}")
         logger.info("-"*30)
         
-        # 验证消息不为空
+        # 验证消息和会话ID不为空
         if not message:
             return Response({
                 'status': 'error',
                 'message': '消息内容不能为空'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+            
+        if not session_id:
+            return Response({
+                'status': 'error',
+                'message': '会话ID不能为空'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
         try:
+            # 获取会话实例
+            chat_session = ChatSession.objects.get(id=session_id)
+            
+            # 保存用户消息
+            chat_session.messages.create(
+                content=message,
+                is_user=True
+            )
+            
             # 创建PromptGenerator实例
             prompt_generator = PromptGenerator()
             
@@ -65,15 +83,38 @@ def chat(request):
             
             # 使用普通对话模式
             response = llm.invoke(message)
+            
+            # 保存AI响应消息
+            chat_session.messages.create(
+                content=response.content,
+                is_user=False
+            )
+            
+            # 更新会话标题（如果是第一条消息）
+            if chat_session.messages.count() <= 2:  # 考虑刚刚创建的两条消息
+                chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
+                chat_session.save()
+            
             logger.info(f"LLM响应:\n{response.content}")
             logger.info("="*50)
                 
+        except ChatSession.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '会话不存在'
+            }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             logger.warning("-"*30)
             logger.warning(f"文档检索或提示生成失败: {str(e)}")
             logger.warning("切换到普通对话模式")
             logger.warning("-"*30)
             response = llm.invoke(message)
+            
+            # 即使出错也保存消息
+            chat_session.messages.create(
+                content=response.content,
+                is_user=False
+            )
             
         return Response({
             'status': 'success',
@@ -192,6 +233,7 @@ def chat_sessions(request):
             }
         }, status=status.HTTP_201_CREATED)
 
+# 根据session_id获取会话消息
 @api_view(['GET'])
 def session_messages(request, session_id):
     try:

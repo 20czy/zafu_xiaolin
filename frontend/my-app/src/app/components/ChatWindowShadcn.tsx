@@ -127,10 +127,12 @@ export default function ChatWindowShadcn({
         .then((res) => res.json())
         .then((data) => {
           if (data.status === "success") {
-            const newMessages = data.data.map((msg: { content: string; is_user: boolean }) => ({
-              text: msg.content,
-              isUser: msg.is_user,
-            }));
+            const newMessages = data.data.map(
+              (msg: { content: string; is_user: boolean }) => ({
+                text: msg.content,
+                isUser: msg.is_user,
+              })
+            );
             setMessages(newMessages);
           }
         })
@@ -159,22 +161,22 @@ export default function ChatWindowShadcn({
   // 添加新建会话的函数
   const handleNewSession = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/chat/sessions/', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/chat/sessions/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-        }
+          "Content-Type": "application/json",
+        },
       });
       const data = await response.json();
-      if (data.status === 'success') {
+      if (data.status === "success") {
         onSessionChange(data.data.id);
         setMessages([]); // 清空当前消息
         fetchSessions(); // 更新会话列表
       } else {
-        console.error('创建新会话失败:', data.message);
+        console.error("创建新会话失败:", data.message);
       }
     } catch (error) {
-      console.error('创建新会话失败:', error);
+      console.error("创建新会话失败:", error);
     }
   };
 
@@ -206,7 +208,11 @@ export default function ChatWindowShadcn({
               <CardHeader className="p-4 flex flex-row justify-between items-center">
                 <h2 className="font-semibold">AI 助手</h2>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon" onClick={handleNewSession}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleNewSession}
+                  >
                     <Plus className="h-4 w-4" />
                   </Button>
 

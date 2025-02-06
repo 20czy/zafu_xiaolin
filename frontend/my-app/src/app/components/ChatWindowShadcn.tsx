@@ -21,6 +21,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import "react-resizable/css/styles.css";
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 
 interface ChatWindowProps {
   isExpanded: boolean;
@@ -280,7 +283,71 @@ export default function ChatWindowShadcn({
                               : "bg-muted"
                           }`}
                         >
-                          {message.text}
+                          {message.isUser ? (
+                            message.text
+                          ) : (
+                            <ReactMarkdown
+                              className="prose prose-sm dark:prose-invert max-w-none"
+                              remarkPlugins={[remarkGfm]}
+                              rehypePlugins={[rehypeRaw]}
+                              components={{
+                                // 自定义代码块样式
+                                code({ node, inline, className, children, ...props }) {
+                                  const match = /language-(\w+)/.exec(className || '')
+                                  return !inline ? (
+                                    <pre className="bg-muted-foreground/10 p-2 rounded">
+                                      <code className={className} {...props}>
+                                        {children}
+                                      </code>
+                                    </pre>
+                                  ) : (
+                                    <code className="bg-muted-foreground/10 px-1 rounded" {...props}>
+                                      {children}
+                                    </code>
+                                  )
+                                },
+                                // 自定义表格样式
+                                table({ children }) {
+                                  return (
+                                    <div className="overflow-auto my-4">
+                                      <table className="border-collapse border border-muted-foreground/20">
+                                        {children}
+                                      </table>
+                                    </div>
+                                  )
+                                },
+                                th({ children }) {
+                                  return (
+                                    <th className="border border-muted-foreground/20 px-4 py-2 bg-muted-foreground/5">
+                                      {children}
+                                    </th>
+                                  )
+                                },
+                                td({ children }) {
+                                  return (
+                                    <td className="border border-muted-foreground/20 px-4 py-2">
+                                      {children}
+                                    </td>
+                                  )
+                                },
+                                // 自定义链接样式
+                                a({ children, href }) {
+                                  return (
+                                    <a
+                                      href={href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-primary hover:underline"
+                                    >
+                                      {children}
+                                    </a>
+                                  )
+                                }
+                              }}
+                            >
+                              {message.text}
+                            </ReactMarkdown>
+                          )}
                         </div>
                       </div>
                     ))}

@@ -2708,3 +2708,32 @@ HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1
 LLM响应:
 你好👋！我是人工智能助手，很高兴见到你，有什么可以帮助你的吗？
 ==================================================
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 13
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_13.faiss
+PDF文件已保存，ID: 14
+文档分割完成，共 50 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: 'utf-8' codec can't encode characters in position 367-368: surrogates not allowed
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: 'utf-8' codec can't encode characters in position 367-368: surrogates not allowed
+Internal Server Error: /api/upload_pdf/
+PDF文件已保存，ID: 15
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_15.faiss
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader

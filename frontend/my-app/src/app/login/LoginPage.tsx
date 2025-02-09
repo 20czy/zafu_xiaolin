@@ -61,7 +61,7 @@ export default function LoginPage() {
       const data = await response.json();
       if (data.status === "success") {
         // 登录成功，重定向到主页
-        router.push("/dashboard");
+        router.push("/");
       } else {
         // 处理登录失败
         form.setError("root", {

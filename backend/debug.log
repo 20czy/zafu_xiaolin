@@ -2737,3 +2737,252 @@ HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200
 向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_15.faiss
 Watching for file changes with StatReloader
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: users_user
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/sites.py", line 444, in login
+    return LoginView.as_view(**defaults)(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 188, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 186, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/auth/views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/generic/base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/generic/edit.py", line 150, in post
+    if form.is_valid():
+       ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/forms/forms.py", line 197, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/forms/forms.py", line 192, in errors
+    self.full_clean()
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/forms/forms.py", line 326, in full_clean
+    self._clean_form()
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/forms/forms.py", line 342, in _clean_form
+    cleaned_data = self.clean()
+                   ^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/auth/forms.py", line 356, in clean
+    self.user_cache = authenticate(
+                      ^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/auth/__init__.py", line 79, in authenticate
+    user = backend.authenticate(request, **credentials)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/auth/backends.py", line 42, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/auth/base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 645, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1574, in execute_sql
+    cursor.execute(sql, params)
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such table: users_user
+/Users/charn/Desktop/qualificationReview/backend/users/migrations/__init__.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentProcess.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentProcess.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentEmbedding.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentSearch.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/migrations/0001_initial.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/users/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/migrations/0001_initial.py changed, reloading.
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: hello dear
+会话ID: 1
+------------------------------
+input query of search_all_documents: hello dear
+没有找到已处理的文档
+生成带搜索结果的提示: {'topic': '招标审核', 'query': 'hello dear', 'language': '中文', 'documents': ''}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 
+Question: hello dear
+
+
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+Hello there! How can I assist you today?
+==================================================
+==================================================
+新的聊天请求
+用户输入: nice to meet you
+会话ID: 1
+------------------------------
+input query of search_all_documents: nice to meet you
+没有找到已处理的文档
+生成带搜索结果的提示: {'topic': '招标审核', 'query': 'nice to meet you', 'language': '中文', 'documents': ''}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 
+Question: nice to meet you
+
+
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+Nice to meet you too! How can I assist you today?
+==================================================
+==================================================
+新的聊天请求
+用户输入: write a short story
+会话ID: 1
+------------------------------
+input query of search_all_documents: write a short story
+没有找到已处理的文档
+生成带搜索结果的提示: {'topic': '招标审核', 'query': 'write a short story', 'language': '中文', 'documents': ''}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 
+Question: write a short story
+
+
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+Once upon a time, in the quaint village of Willowbrook, nestled between rolling hills and whispering forests, there lived a young girl named Elara. Elara was known throughout the village for her boundless curiosity and her knack for finding the extraordinary in the ordinary.
+
+One crisp autumn morning, Elara stumbled upon a peculiar, ancient-looking book in the dusty corner of her grandmother's attic. The book was leather-bound with intricate gold inlay, and its cover bore the faint image of a starry night sky. Intrigued, she opened it to find pages filled with cryptic symbols and strange, glowing words.
+
+Elara spent the next few days poring over the book, trying to decipher its secrets. She realized that the symbols were a map, and the glowing words were instructions for a journey. Determined to uncover the mystery, she set out to find the places marked on the map.
+
+Her first stop was the Whispering Woods, a place known to be haunted by the spirits of the trees. As she ventured deeper into the woods, the trees seemed to part for her, guiding her along the path. She felt a strange connection to the ancient trees, as if they were whispering secrets of the past.
+
+The next leg of her journey took her to the Singing Lake, where the water was said to have the power to heal. Elara found a hidden cove, where the water shimmered with a soft, golden light. She knelt by the lake and closed her eyes, feeling the energy of the water flow through her.
+
+As the days passed, Elara continued her quest, visiting places of legend and uncovering the stories behind them. She learned of the village's founding, of the great dragon that once protected Willowbrook, and of the magical creatures that roamed the land.
+
+Finally, Elara arrived at the last destination on her map: an ancient stone circle perched atop a windswept hill. She had never seen anything like it, with its perfectly aligned stones and the faint glow emanating from the center.
+
+As she stepped into the circle, the stones seemed to come alive, and a voice echoed through her mind. "Elara, you have been chosen to restore balance to our world. The magic of Willowbrook is fading, and it is up to you to find the lost fragments of the ancient artifacts."
+
+Elara's heart raced with excitement and fear. She knew that this journey was not just about uncovering secrets, but about saving her beloved village.
+
+With the ancient book as her guide, Elara set out to find the lost fragments, facing challenges and adversaries along the way. With courage and determination, she overcame each obstacle, learning valuable lessons about herself and the world around her.
+
+In the end, Elara returned to Willowbrook, the fragments in hand, and performed a ritual to restore the magic that once protected the village. The stars twinkled brighter, the trees whispered in harmony, and the Singing Lake sang a song of gratitude.
+
+Elara had not only uncovered the secrets of her village's past but had also become the guardian of its future. And so, the legend of Elara, the girl who found the extraordinary in the ordinary, lived on in the hearts and minds of the people of Willowbrook, forever.
+==================================================
+/Users/charn/Desktop/qualificationReview/backend/users/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/users/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/users/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/users/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/users/urls.py changed, reloading.
+Watching for file changes with StatReloader

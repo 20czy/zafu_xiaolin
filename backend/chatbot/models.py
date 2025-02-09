@@ -1,9 +1,24 @@
 from django.db import models
+from django.conf import settings
 
 class PDFDocument(models.Model):
     """PDF文档模型"""
     title = models.CharField(max_length=255, verbose_name='文档标题')
     file = models.FileField(upload_to='pdfs/', verbose_name='PDF文件')
+    # uploader = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name='uploaded_documents',
+    #     verbose_name='上传者'
+    # )
+    # session = models.ForeignKey(
+    #     'ChatSession',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='documents',
+    #     verbose_name='关联会话'
+    # )
     vector_index_path = models.CharField(
         max_length=255, 
         null=True, 
@@ -42,6 +57,12 @@ class PDFDocument(models.Model):
 class ChatSession(models.Model):
     """聊天会话模型"""
     title = models.CharField(max_length=200, default="新对话")
+    # user = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name='chat_sessions',
+    #     verbose_name='用户'
+    # )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

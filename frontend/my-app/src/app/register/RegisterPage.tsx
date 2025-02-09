@@ -23,7 +23,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-// 定义表单验证架构
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "用户名至少需要2个字符",
@@ -31,41 +30,45 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: "密码至少需要6个字符",
   }),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "两次输入的密码不匹配",
+  path: ["confirmPassword"],
 });
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // 初始化表单
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  // 处理表单提交
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/api/login/", {
+      const response = await fetch("http://localhost:8000/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
       });
 
       const data = await response.json();
       if (data.status === "success") {
-        // 登录成功，重定向到主页
-        router.push("/dashboard");
+        router.push("/login");
       } else {
-        // 处理登录失败
         form.setError("root", {
-          message: "登录失败：" + data.message,
+          message: "注册失败：" + data.message,
         });
       }
     } catch (error) {
@@ -81,10 +84,18 @@ export default function LoginPage() {
     <div className="flex h-screen items-center justify-center bg-gray-50">
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>登录</CardTitle>
-          <CardDescription>
-            请输入您的账号和密码进行登录
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>注册</CardTitle>
+              <CardDescription>创建新账号</CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/login")}
+            >
+              返回登录
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -124,6 +135,24 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>确认密码</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="password" 
+                        placeholder="请再次输入密码" 
+                        {...field} 
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {form.formState.errors.root && (
                 <div className="text-sm text-red-500">
                   {form.formState.errors.root.message}
@@ -134,7 +163,7 @@ export default function LoginPage() {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? "登录中..." : "登录"}
+                {isLoading ? "注册中..." : "注册"}
               </Button>
             </form>
           </Form>

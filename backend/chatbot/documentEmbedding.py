@@ -1,5 +1,5 @@
 from langchain.embeddings.base import Embeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from typing import List, Dict
 import os
 from zhipuai import ZhipuAI

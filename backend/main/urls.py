@@ -21,4 +21,5 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include('chatbot.urls')),
+    path('api/', include('users.urls')),  # 添加用户认证 URLs
 ]

@@ -22,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useDispatch } from 'react-redux';
+import { login } from '@/redux/features/authSlice';
 
 // 定义表单验证架构
 const formSchema = z.object({
@@ -35,6 +37,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   // 初始化表单
@@ -60,10 +63,12 @@ export default function LoginPage() {
 
       const data = await response.json();
       if (data.status === "success") {
-        // 登录成功，重定向到主页
+        dispatch(login({
+          username: data.data.username,
+          id: data.data.id
+        }));
         router.push("/");
       } else {
-        // 处理登录失败
         form.setError("root", {
           message: "登录失败：" + data.message,
         });

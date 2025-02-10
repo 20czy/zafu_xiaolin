@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '@/redux/features/authSlice';
+import type { RootState } from '@/redux/store';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +16,11 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 这里应该根据实际的登录状态来设置
+  const dispatch = useDispatch();
+  const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
-    // 实现登出逻辑
-    setIsLoggedIn(false);
+    dispatch(logout());
     router.push('/login');
   };
 
@@ -32,7 +34,7 @@ export default function Navbar() {
             <Button variant="ghost" className="h-8 w-8 rounded-full">
               <Avatar>
                 <AvatarFallback>
-                  {isLoggedIn ? "U" : "?"}
+                  {isLoggedIn ? user?.username[0].toUpperCase() : "?"}
                 </AvatarFallback>
               </Avatar>
             </Button>
@@ -40,7 +42,9 @@ export default function Navbar() {
           <DropdownMenuContent align="end" className="w-40">
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem>个人信息</DropdownMenuItem>
+                <DropdownMenuItem>
+                  {user?.username}
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   退出登录

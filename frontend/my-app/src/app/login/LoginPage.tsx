@@ -49,15 +49,40 @@ export default function LoginPage() {
     },
   });
 
+  // 获取 CSRF 令牌
+  async function fetchCSRFToken() {
+    try {
+      const response = await fetch("http://localhost:8000/api/csrf/", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if(!response.ok){
+        throw new Error(`请求失败，状态码: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.csrfToken;
+    } catch (error) {
+      console.error("获取 CSRF 令牌失败:", error);
+      return false;
+    }
+  }
+
   // 处理表单提交
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
+      // 先获取 CSRF 令牌
+      const csrfToken = await fetchCSRFToken();
+
       const response = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
         },
+        credentials: "include",
         body: JSON.stringify(values),
       });
 
@@ -74,6 +99,7 @@ export default function LoginPage() {
         });
       }
     } catch (error) {
+      console.error(error);
       form.setError("root", {
         message: "网络错误，请稍后重试",
       });

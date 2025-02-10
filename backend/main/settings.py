@@ -126,7 +126,43 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS 设置
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Next.js 开发服务器
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Next.js 开发服务器
+]
+
+CORS_ALLOW_CREDENTIALS = True  # 允许跨域请求携带凭证（cookies）
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# 设置 Cookie 相关
+SESSION_COOKIE_SAMESITE = 'Lax'  # 或者使用 'None'，但必须配合 SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = False  # 开发环境设置为 False，生产环境应该设置为 True
+
+# 移除之前的 CORS_ALLOW_ALL_ORIGINS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

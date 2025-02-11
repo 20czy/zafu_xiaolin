@@ -211,8 +211,16 @@ def upload_pdf(request):
 
 @api_view(['GET', 'POST', 'DELETE'])
 def chat_sessions(request):
+    # 检查用户是否登录
+    if not request.user.is_authenticated:
+        return Response({
+            'status': 'error',
+            'message': '请先登录'
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # GET请求：获取当前用户的所有会话
     if request.method == 'GET':
-        sessions = ChatSession.objects.all()
+        sessions = ChatSession.objects.filter(user=request.user)
         return Response({
             'status': 'success',
             'data': [{
@@ -222,8 +230,9 @@ def chat_sessions(request):
             } for session in sessions]
         })
     
+    # POST请求：为当前用户创建新会话
     elif request.method == 'POST':
-        session = ChatSession.objects.create()
+        session = ChatSession.objects.create(user=request.user)
         return Response({
             'status': 'success',
             'data': {

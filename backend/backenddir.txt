@@ -20,3 +20,7 @@ text spllit
 创建登陆页面，用户 ==》 会话  会话 ==》 招标书，应标书， 聊天记录
 
 添加自动清理空白会话的功能
+
+python manage.py makemigrations [应用名]
+
+python manage.py makemigrations

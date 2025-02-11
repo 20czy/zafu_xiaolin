@@ -17,6 +17,7 @@ import "react-resizable/css/styles.css";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
+import { fetchCSRFToken } from "./util";
 
 interface ChatWindowProps {
   isExpanded: boolean;
@@ -46,13 +47,18 @@ export default function ChatWindowShadcn({
     const createInitialSession = async () => {
       if (!sessionId) {
         try {
+          const csrfToken = await fetchCSRFToken();
+
           const response = await fetch(
             "http://localhost:8000/api/chat/sessions/",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
               },
+              credentials:
+                "include", // 添加凭证支持
             }
           );
           const data = await response.json();
@@ -89,6 +95,7 @@ export default function ChatWindowShadcn({
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           message: currentMessage,
           session_id: sessionId,
@@ -120,7 +127,9 @@ export default function ChatWindowShadcn({
   // 当用户改变会话时，更新历史消息
   useEffect(() => {
     if (sessionId) {
-      fetch(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`)
+      fetch(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`, {
+        credentials: "include",
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data.status === "success") {
@@ -145,7 +154,9 @@ export default function ChatWindowShadcn({
   // 获取聊天历史
   const fetchSessions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sessions/");
+      const response = await fetch("http://localhost:8000/api/chat/sessions/", {
+        credentials: "include",
+      });
       const data = await response.json();
       if (data.status === "success") {
         setSessions(data.data);
@@ -163,6 +174,7 @@ export default function ChatWindowShadcn({
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -184,6 +196,7 @@ export default function ChatWindowShadcn({
         `http://localhost:8000/api/chat/sessions/${sessionId}/messages/`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
       if (response.ok) {

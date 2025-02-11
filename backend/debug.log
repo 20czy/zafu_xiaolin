@@ -3026,3 +3026,187 @@ Watching for file changes with StatReloader
 Forbidden: /api/login/
 /Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: 你好
+会话ID: 23
+------------------------------
+input query of search_all_documents: 你好
+没有找到已处理的文档
+生成带搜索结果的提示: {'topic': '招标审核', 'query': '你好', 'language': '中文', 'documents': ''}
+[测试] 文档检索和Prompt生成结果:
+------------------------------
+生成的完整prompt:
+You are an expert in 招标审核. 
+please answer in 中文.
+Please analyze the following documents and answer the question.
+Documents: 
+Question: 你好
+
+
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+LLM响应:
+你好👋！很高兴见到你，有什么可以帮助你的吗？
+==================================================
+PDF文件已保存，ID: 1
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_1.faiss
+/Users/charn/Desktop/qualificationReview/backend/chatbot/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Internal Server Error: /admin/chatbot/chatsession/
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: chatbot_chatsession.user_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/options.py", line 718, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 188, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 186, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/sites.py", line 241, in inner
+    return view(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 188, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/utils/decorators.py", line 186, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/contrib/admin/options.py", line 2140, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+                                                           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1574, in execute_sql
+    cursor.execute(sql, params)
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: chatbot_chatsession.user_id
+/Users/charn/Desktop/qualificationReview/backend/chatbot/models.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/models.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Unauthorized: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+<rest_framework.request.Request: GET '/api/chat/sessions/'>
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/login/
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/login/
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/main/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/

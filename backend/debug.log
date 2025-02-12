@@ -3210,3 +3210,29 @@ Forbidden: /api/chat/sessions/
 Forbidden: /api/chat/sessions/
 Forbidden: /api/chat/sessions/
 Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/login/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/
+Internal Server Error: /api/chat/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/login/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/sessions/
+Forbidden: /api/chat/
+Internal Server Error: /api/chat/
+Forbidden: /api/chat/
+Internal Server Error: /api/chat/
+Internal Server Error: /api/chat/
+Internal Server Error: /api/chat/

@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useDispatch } from 'react-redux';
 import { login } from '@/redux/features/authSlice';
-import { fetchCSRFToken } from "../components/util";
+import { useCSRFToken, fetchWithCSRF } from "../components/util";
 
 // 定义表单验证架构
 const formSchema = z.object({
@@ -54,20 +54,11 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      // 先获取 CSRF 令牌
-      const csrfToken = await fetchCSRFToken();
-
-      const response = await fetch("http://localhost:8000/api/login/", {
+      const data = await fetchWithCSRF("http://localhost:8000/api/login/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
-        },
-        credentials: "include",
         body: JSON.stringify(values),
       });
 
-      const data = await response.json();
       if (data.status === "success") {
         dispatch(login({
           username: data.data.username,

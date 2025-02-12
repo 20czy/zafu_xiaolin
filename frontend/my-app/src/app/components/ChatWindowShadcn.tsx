@@ -17,7 +17,7 @@ import "react-resizable/css/styles.css";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
-import { fetchCSRFToken } from "./util";
+import { fetchWithCSRF, useCSRFToken } from "./util";
 
 interface ChatWindowProps {
   isExpanded: boolean;
@@ -33,13 +33,9 @@ export default function ChatWindowShadcn({
   onSessionChange,
 }: ChatWindowProps) {
   const [width, setWidth] = useState(400);
-  const [messages, setMessages] = useState<
-    Array<{ text: string; isUser: boolean }>
-  >([]);
+  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [input, setInput] = useState("");
-  const [sessions, setSessions] = useState<
-    Array<{ id: number; title: string; updated_at: string }>
-  >([]);
+  const [sessions, setSessions] = useState<Array<{ id: number; title: string; updated_at: string }>>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // 添加初始化会话的useEffect
@@ -47,25 +43,12 @@ export default function ChatWindowShadcn({
     const createInitialSession = async () => {
       if (!sessionId) {
         try {
-          const csrfToken = await fetchCSRFToken();
-
-          const response = await fetch(
-            "http://localhost:8000/api/chat/sessions/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken,
-              },
-              credentials:
-                "include", // 添加凭证支持
-            }
-          );
-          const data = await response.json();
+          const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/", {
+            method: "POST",
+          });
+          
           if (data.status === "success") {
             onSessionChange(data.data.id);
-          } else {
-            console.error("创建初始会话失败:", data.message);
           }
         } catch (error) {
           console.error("创建初始会话失败:", error);
@@ -74,64 +57,36 @@ export default function ChatWindowShadcn({
     };
 
     createInitialSession();
-  }, []); // 仅在组件首次加载时执行
+  }, [sessionId]);
 
-  // 简化后的handleSend函数
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const currentMessage = input;
-    setInput(""); // 清空输入框
-
-    // 立即添加用户消息到界面
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: currentMessage, isUser: true },
-    ]);
+    setInput("");
+    setMessages(prev => [...prev, { text: currentMessage, isUser: true }]);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/", {
+      const data = await fetchWithCSRF("http://localhost:8000/api/chat/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
         body: JSON.stringify({
           message: currentMessage,
           session_id: sessionId,
         }),
       });
 
-      const data = await response.json();
-
       if (data.status === "success") {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: data.data.content, isUser: false },
-        ]);
-      } else {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: "抱歉，发生了错误，请稍后重试。", isUser: false },
-        ]);
+        setMessages(prev => [...prev, { text: data.data.content, isUser: false }]);
       }
     } catch (error) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: "网络错误，请检查连接后重试。", isUser: false },
-      ]);
-      console.error("发送消息失败:", error);
+      setMessages(prev => [...prev, { text: "网络错误，请检查连接后重试。", isUser: false }]);
     }
   };
 
-  // 当用户改变会话时，更新历史消息
   useEffect(() => {
     if (sessionId) {
-      fetch(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`, {
-        credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((data) => {
+      fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`)
+        .then(data => {
           if (data.status === "success") {
             const newMessages = data.data.map(
               (msg: { content: string; is_user: boolean }) => ({
@@ -142,22 +97,17 @@ export default function ChatWindowShadcn({
             setMessages(newMessages);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("获取历史消息失败:", error);
         });
     } else {
-      // 如果sessionId为null，则清空messages
       setMessages([]);
     }
-  }, [sessionId]); // 只在sessionId变化时获取历史消息
+  }, [sessionId]);
 
-  // 获取聊天历史
   const fetchSessions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sessions/", {
-        credentials: "include",
-      });
-      const data = await response.json();
+      const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/");
       if (data.status === "success") {
         setSessions(data.data);
       }
@@ -166,46 +116,31 @@ export default function ChatWindowShadcn({
     }
   };
 
-  // 添加新建会话的函数
   const handleNewSession = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sessions/", {
+      const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
       });
-      const data = await response.json();
+      
       if (data.status === "success") {
         onSessionChange(data.data.id);
-        setMessages([]); // 清空当前消息
-        fetchSessions(); // 更新会话列表
-      } else {
-        console.error("创建新会话失败:", data.message);
+        setMessages([]);
+        fetchSessions();
       }
     } catch (error) {
       console.error("创建新会话失败:", error);
     }
   };
 
-  // 添加删除会话的函数
   const handleDeleteSession = async (sessionId: number) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/chat/sessions/${sessionId}/messages/`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        fetchSessions();
-        if (sessionId === sessionId) {
-          onSessionChange(null);
-        }
-      } else {
-        console.error("删除会话失败");
+      await fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`, {
+        method: "DELETE",
+      });
+      
+      fetchSessions();
+      if (sessionId === sessionId) {
+        onSessionChange(null);
       }
     } catch (error) {
       console.error("删除会话失败:", error);

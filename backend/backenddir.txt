@@ -24,3 +24,39 @@ text spllit
 python manage.py makemigrations [应用名]
 
 python manage.py makemigrations
+
+
+                # 创建PromptGenerator实例
+                prompt_generator = PromptGenerator()
+                
+                # 准备基础插槽数据
+                slot_data = {
+                    "topic": "招标审核",
+                    "query": message,
+                    "language": "中文"
+                }
+                
+                # 生成包含文档搜索结果的提示（仅用于测试）
+                prompt = prompt_generator.generate_prompt_with_search(
+                    query=message,
+                    slot_data=slot_data,
+                    top_k=3
+                )
+                
+                # 仅打印生成的prompt用于测试
+                logger.info("[测试] 文档检索和Prompt生成结果:")
+                logger.info("-"*30)
+                logger.info(f"生成的完整prompt:\n{prompt}")
+                logger.info("-"*30)
+                
+                # 使用普通对话模式
+                response = llm.invoke(message)
+                
+                # 保存AI响应消息
+                chat_session.messages.create(
+                    content=response.content,
+                    is_user=False
+                )
+                
+                logger.info(f"LLM响应:\n{response.content}")
+                logger.info("="*50)

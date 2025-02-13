@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -38,11 +38,15 @@ export default function ChatWindowShadcn({
   const [sessions, setSessions] = useState<Array<{ id: number; title: string; updated_at: string }>>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
+  // 使用 useRef 来标记会话是否已创建
+  const isSessionCreating = useRef(false);
+
   // 添加初始化会话的useEffect
   useEffect(() => {
     const createInitialSession = async () => {
-      if (!sessionId) {
+      if (!sessionId && !isSessionCreating.current) {
         try {
+          isSessionCreating.current = true;
           const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/", {
             method: "POST",
           });
@@ -52,34 +56,80 @@ export default function ChatWindowShadcn({
           }
         } catch (error) {
           console.error("创建初始会话失败:", error);
+        } finally {
+          isSessionCreating.current = false;
         }
       }
     };
 
     createInitialSession();
-  }, [sessionId]);
+  }, [sessionId, onSessionChange]);
+  
+  // 添加状态来跟踪当前正在流式接收的消息
+  const [streamingMessage, setStreamingMessage] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !sessionId) return;
 
     const currentMessage = input;
     setInput("");
     setMessages(prev => [...prev, { text: currentMessage, isUser: true }]);
+    setIsStreaming(true);
+    setStreamingMessage(""); // 重置流式消息
+
+    let accumulatedMessage = "";
 
     try {
-      const data = await fetchWithCSRF("http://localhost:8000/api/chat/", {
+      const response = await fetch("http://localhost:8000/api/chat/", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           message: currentMessage,
           session_id: sessionId,
         }),
       });
 
-      if (data.status === "success") {
-        setMessages(prev => [...prev, { text: data.data.content, isUser: false }]);
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("无法获取响应流");
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(line.slice(5));
+              accumulatedMessage += data.content;
+              // 更新流式消息状态以实现打字机效果
+              setStreamingMessage(accumulatedMessage);
+            } catch (e) {
+              console.error("解析SSE数据失败:", e);
+            }
+          }
+        }
       }
+
+      // 流式接收完成，更新消息列表
+      setMessages(prev => [...prev, { text: accumulatedMessage, isUser: false }]);
+      setStreamingMessage(""); // 清空流式消息
+      setIsStreaming(false);
+
     } catch (error) {
+      console.error("发送消息失败:", error);
       setMessages(prev => [...prev, { text: "网络错误，请检查连接后重试。", isUser: false }]);
+      setStreamingMessage("");
+      setIsStreaming(false);
     }
   };
 
@@ -184,7 +234,10 @@ export default function ChatWindowShadcn({
               />
 
               <CardContent className="p-0">
-                <MessageList messages={messages} />
+                <MessageList 
+                  messages={messages} 
+                  streamingMessage={isStreaming ? streamingMessage : null} 
+                />
               </CardContent>
 
               <CardFooter className="p-4">

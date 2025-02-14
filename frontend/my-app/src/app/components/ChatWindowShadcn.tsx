@@ -42,6 +42,10 @@ export default function ChatWindowShadcn({
   const isSessionCreating = useRef(false);
 
   // 添加初始化会话的useEffect
+  // 添加一个 ref 来追踪最近创建的会话
+  const recentlyCreatedSessionId = useRef<number | null>(null);
+
+  // 修改创建初始会话的 useEffect
   useEffect(() => {
     const createInitialSession = async () => {
       if (!sessionId && !isSessionCreating.current) {
@@ -52,6 +56,7 @@ export default function ChatWindowShadcn({
           });
           
           if (data.status === "success") {
+            recentlyCreatedSessionId.current = data.data.id; // 记录新创建的会话 ID
             onSessionChange(data.data.id);
           }
         } catch (error) {
@@ -64,6 +69,44 @@ export default function ChatWindowShadcn({
 
     createInitialSession();
   }, [sessionId, onSessionChange]);
+
+  // 修改清理空会话的 useEffect
+  useEffect(() => {
+    const cleanEmptySessions = async () => {
+      try {
+        const sessionsData = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/");
+        if (sessionsData.status === "success") {
+          for (const session of sessionsData.data) {
+            // 跳过最近创建的会话
+            if (session.id === recentlyCreatedSessionId.current) {
+              continue;
+            }
+
+            const messagesData = await fetchWithCSRF(
+              `http://localhost:8000/api/chat/sessions/${session.id}/messages/`
+            );
+            
+            if (messagesData.status === "success" && messagesData.data.length === 0) {
+              await fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${session.id}/messages/`, {
+                method: "DELETE",
+              });
+              
+              if (session.id === sessionId) {
+                onSessionChange(null);
+              }
+            }
+          }
+          fetchSessions();
+        }
+      } catch (error) {
+        console.error("清理空会话失败:", error);
+      }
+    };
+
+    // 延迟执行清理，给初始会话创建留出时间
+    const timeoutId = setTimeout(cleanEmptySessions, 1000);
+    return () => clearTimeout(timeoutId);
+  }, []); // 仅在组件首次加载时执行
   
   // 添加状态来跟踪当前正在流式接收的消息
   const [streamingMessage, setStreamingMessage] = useState("");

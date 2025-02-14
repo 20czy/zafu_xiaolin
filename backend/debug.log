@@ -4185,3 +4185,99 @@ HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1
 会话ID: 64
 ------------------------------
 HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+Not Found: /
+==================================================
+新的聊天请求
+用户输入: nihao
+会话ID: 65
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+==================================================
+新的聊天请求
+用户输入: how are you today
+会话ID: 65
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+<rest_framework.request.Request: GET '/api/chat/sessions/'>
+获取当前用户的所有会话
+<rest_framework.request.Request: GET '/api/chat/sessions/'>
+获取当前用户的所有会话
+<rest_framework.request.Request: GET '/api/chat/sessions/'>
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+{}
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+Internal Server Error: /api/chat/sessions/
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/request.py", line 421, in __getattr__
+    return getattr(_request, attr)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'content'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py", line 219, in chat_sessions
+    logger.info(request.content)
+                ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/django/lib/python3.12/site-packages/rest_framework/request.py", line 423, in __getattr__
+    return self.__getattribute__(attr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'content'
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+b''
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 

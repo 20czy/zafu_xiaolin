@@ -215,6 +215,8 @@ def chat_sessions(request):
     
     # GET请求：获取当前用户的所有会话
     if request.method == 'GET':
+        logger.info("获取当前用户的所有会话")
+        logger.info(request.user)
         sessions = ChatSession.objects.filter(user=request.user)
         return Response({
             'status': 'success',

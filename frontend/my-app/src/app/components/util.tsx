@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // 创建一个独立的获取 CSRF 令牌的函数
-async function getCSRFToken() {
+export async function getCSRFToken() {
   try {
     const response = await fetch("http://localhost:8000/api/csrf/", {
       method: "GET",

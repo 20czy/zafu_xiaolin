@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 export default function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
+  // 从redux store中读取 auth 的 state ，将值赋给 isLoggedIn 和 user
   const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {

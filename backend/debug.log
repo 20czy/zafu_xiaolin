@@ -4281,3 +4281,248 @@ charn
 charn 
 获取当前用户的所有会话
 charn 
+上传处理失败: NOT NULL constraint failed: chatbot_pdfdocument.uploader_id
+Internal Server Error: /api/upload_pdf/
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+上传处理失败: NOT NULL constraint failed: chatbot_pdfdocument.uploader_id
+Internal Server Error: /api/upload_pdf/
+上传处理失败: NOT NULL constraint failed: chatbot_pdfdocument.uploader_id
+Internal Server Error: /api/upload_pdf/
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+Watching for file changes with StatReloader
+上传处理失败: NOT NULL constraint failed: chatbot_pdfdocument.uploader_id
+Internal Server Error: /api/upload_pdf/
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+上传处理失败: NOT NULL constraint failed: chatbot_pdfdocument.uploader_id
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+Bad Request: /api/upload_pdf/
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+上传处理失败: Cannot assign "<django.contrib.auth.models.AnonymousUser object at 0x11fcd0ad0>": "PDFDocument.uploader" must be a "User" instance.
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+PDF文件已保存，ID: 2
+文档分割完成，共 50 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: 'utf-8' codec can't encode characters in position 367-368: surrogates not allowed
+上传处理失败: 处理PDF时出错: 创建向量存储时发生错误: 获取文档向量失败: 'utf-8' codec can't encode characters in position 367-368: surrogates not allowed
+Internal Server Error: /api/upload_pdf/
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentProcess.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentProcess.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentProcess.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+charn 
+获取当前用户的所有会话
+charn 
+PDF文件已保存，ID: 3
+文档分割完成，共 48 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_3.faiss
+获取当前用户的所有会话
+root (管理员)
+/Users/charn/Desktop/qualificationReview/backend/chatbot/documentSearch.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/urls.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 4
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_4.faiss
+Not Found: /media/pdfs/商务标_hV03GGf.pdf
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 5
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_5.faiss
+Not Found: /media/pdfs/商务标_Yr0KUGt.pdf
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 6
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_6.faiss
+Not Found: /media/pdfs/商务标_vCLkJWD.pdf
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 7
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_7.faiss
+Not Found: /media/pdfs/商务标_dOX0V6A.pdf
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 8
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_8.faiss
+Not Found: /media/pdfs/商务标_5yggztd.pdf
+Not Found: /media/pdfs/商务标_5yggztd.pdf
+Not Found: /media/pdfs/商务标_5yggztd.pdf
+Not Found: /media/pdfs/商务标_5yggztd.pdf
+/Users/charn/Desktop/qualificationReview/backend/main/urls.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 9
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_9.faiss
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 10
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_10.faiss
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 11
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_11.faiss
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)

@@ -3,6 +3,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from .models import PDFDocument
 
 
+def clean_text(text):
+    """清理文本中的无效字符"""
+    # 移除或替换无效的 Unicode 字符
+    cleaned_text = text.encode('utf-8', errors='ignore').decode('utf-8')
+    # 或者使用更保守的方式，将无效字符替换为问号
+    # cleaned_text = text.encode('utf-8', errors='replace').decode('utf-8')
+    return cleaned_text
+
 def process_pdf_document(document_id):
     """
     从数据库获取PDF文件并进行处理
@@ -32,6 +40,10 @@ def process_pdf_document(document_id):
             separators=["\n\n", "\n", " ", ""]
         )
         
+        # 清理文本
+        for page in pages:
+            page.page_content = clean_text(page.page_content)
+
         # 分割文档
         docs = text_splitter.split_documents(pages)
         

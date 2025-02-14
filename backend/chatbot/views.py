@@ -132,12 +132,30 @@ def chat(request):
 # 上传pdf文件
 @api_view(['POST'])
 def upload_pdf(request):
+    # 检查用户是否登录
+    if not request.user.is_authenticated:
+        return Response({
+            'status': 'error',
+            'message': '请先登录'
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
     try:
         if 'file' not in request.FILES:
             return Response({
                 'status': 'error',
                 'message': '没有文件被上传'
             }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 获取会话ID
+        session_id = request.data.get('session_id')
+        if session_id:
+            try:
+                session = ChatSession.objects.get(id=session_id)
+            except ChatSession.DoesNotExist:
+                return Response({
+                    'status': 'error',
+                    'message': '会话不存在'
+                }, status=status.HTTP_404_NOT_FOUND)
         
         pdf_file = request.FILES['file']
         if not pdf_file.name.endswith('.pdf'):
@@ -146,10 +164,12 @@ def upload_pdf(request):
                 'message': '只能上传PDF文件'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # 保存PDF文档
+        # 保存PDF文档，添加上传者信息和会话关联
         document = PDFDocument.objects.create(
             title=pdf_file.name,
-            file=pdf_file
+            file=pdf_file,
+            uploader=request.user,
+            session=session if session_id else None  # 关联会话
         )
         
         logger.info(f"PDF文件已保存，ID: {document.id}")
@@ -272,4 +292,47 @@ def session_messages(request, session_id):
                 'status': 'error',
                 'message': f'删除会话失败: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def session_documents(request, session_id):
+    """获取指定会话关联的文档"""
+    try:
+        # 检查用户是否登录
+        if not request.user.is_authenticated:
+            return Response({
+                'status': 'error',
+                'message': '请先登录'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # 获取会话
+        session = ChatSession.objects.get(id=session_id)
+        
+        # 获取与会话关联的文档
+        documents = PDFDocument.objects.filter(session_id=session_id)
+        
+        return Response({
+            'status': 'success',
+            'data': [{
+                'id': doc.id,
+                'title': doc.title,
+                'url': request.build_absolute_uri(doc.file.url),
+                'is_processed': doc.is_processed,
+                'page_count': doc.page_count,
+                'chunk_count': doc.chunk_count,
+                'created_at': doc.created_at,
+                'updated_at': doc.updated_at
+            } for doc in documents]
+        })
+        
+    except ChatSession.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': '会话不存在'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"获取会话文档失败: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '获取文档失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     

@@ -3,7 +3,9 @@ from langchain_openai import ChatOpenAI
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema.messages import HumanMessage
 from dotenv import load_dotenv
+import logging
 
+logger = logging.getLogger(__name__)
 # 加载 .env 文件中的环境变量
 load_dotenv()
 
@@ -41,19 +43,36 @@ def create_llm(model_name='deepseek-chat', stream=False):
     
     return llm
 
-def create_streaming_response(llm, message):
+def create_streaming_response(llm, message, chat_history=None):
     """
     创建流式响应
     Args:
         llm: LLM 实例
         message: 用户输入的消息
+        chat_history: 聊天历史记录，默认为 None
     Returns:
         生成器，用于流式输出响应
     """
-    messages = [HumanMessage(content=message)]
-    for chunk in llm.stream(messages):
-        if chunk.content:
-            yield chunk.content
+    try:
+        # 系统基础的提示词
+        system_prompt = "你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。"
+
+        # 构建聊天上下文
+        messages = [{"role": "system", "content": system_prompt}]
+        if chat_history:
+                messages.extend(chat_history)
+        messages.append({"role": "user", "content": message})
+
+        logger.info(f"sending messages: {messages}")
+        logger.info("-"*30)
+
+        # 使用流式方式生成回复
+        for chunk in llm.stream(messages):
+            if chunk.content:
+                yield chunk.content
+    except Exception as e:
+        logger.error(f"Error during reply: {str(e)}")
+        yield "抱歉，生成回复时出现错误。"
 
 def test_llm(model_name='deepseek-chat', stream=False):
     """

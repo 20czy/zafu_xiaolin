@@ -283,7 +283,7 @@ export default function ChatWindowShadcn({
                 />
               </CardContent>
 
-              <CardFooter className="p-10">
+              <CardFooter className="pb-10 pl-4 pr-4 pt-3">
                 <ChatInput 
                   input={input}
                   setInput={setInput}

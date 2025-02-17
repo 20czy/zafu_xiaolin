@@ -4526,3 +4526,205 @@ root (管理员)
 root (管理员)
 获取当前用户的所有会话
 root (管理员)
+Watching for file changes with StatReloader
+PDF文件已保存，ID: 12
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+Loading faiss.
+Successfully loaded faiss.
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_12.faiss
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+PDF文件已保存，ID: 13
+文档分割完成，共 2 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_13.faiss
+PDF文件已保存，ID: 14
+文档分割完成，共 48 个块
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/embeddings "HTTP/1.1 200 OK"
+向量存储已创建: /Users/charn/Desktop/qualificationReview/backend/media/vector_store/doc_14.faiss
+==================================================
+新的聊天请求
+用户输入: 你好
+会话ID: 95
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/connectLLM.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/connectLLM.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/connectLLM.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+==================================================
+新的聊天请求
+用户输入: 你好呀
+会话ID: 97
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'user', 'content': '你好呀'}]
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/connectLLM.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: 有的
+会话ID: 97
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'assistant', 'content': '很高兴为您服务！有什么招标文件或投标文件需要帮助审阅和分析的吗？'}, {'role': 'user', 'content': '有的'}, {'role': 'user', 'content': '有的'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+==================================================
+新的聊天请求
+用户输入: 你会什么
+会话ID: 97
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'assistant', 'content': '很高兴为您服务！有什么招标文件或投标文件需要帮助审阅和分析的吗？'}, {'role': 'user', 'content': '有的'}, {'role': 'assistant', 'content': '好的，请将您需要审阅的招标文件和投标文件的内容或者关键信息提供给我，我会尽力帮助您进行分析和比对。您可以直接上传文件，或者简要描述文件中的关键点和您想要关注的问题。'}, {'role': 'user', 'content': '你会什么'}, {'role': 'user', 'content': '你会什么'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+==================================================
+新的聊天请求
+用户输入: 好厉害
+会话ID: 97
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'assistant', 'content': '很高兴为您服务！有什么招标文件或投标文件需要帮助审阅和分析的吗？'}, {'role': 'user', 'content': '有的'}, {'role': 'assistant', 'content': '好的，请将您需要审阅的招标文件和投标文件的内容或者关键信息提供给我，我会尽力帮助您进行分析和比对。您可以直接上传文件，或者简要描述文件中的关键点和您想要关注的问题。'}, {'role': 'user', 'content': '你会什么'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我具备以下能力来帮助您审阅和分析招标文件与投标文件：\n\n1. **文本理解**：我可以理解招标文件和投标文件中的语言和条款。\n2. **条款对比**：我可以比较招标文件中的要求和投标文件中的响应，找出差异和不符合项。\n3. **关键信息提取**：我能够提取文件中的关键信息，如项目要求、技术规格、预算限制、交付时间等。\n4. **合规性检查**：我可以检查投标文件是否符合招标文件的要求，包括技术规格、商务条款等。\n5. **风险评估**：我可以帮助识别潜在的风险点和不符合规定的地方。\n6. **格式校对**：我可以检查文件格式是否符合招标文件的要求，如页码、字体、签名等。\n7. **语言翻译**：虽然我的主要语言是中文，但我也能够处理和理解一些英文内容。\n\n如果您有具体的文件或问题，请提供详细信息，我将根据您的需求提供相应的帮助。'}, {'role': 'user', 'content': '好厉害'}, {'role': 'user', 'content': '好厉害'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+==================================================
+新的聊天请求
+用户输入: 你有记忆能力吗？
+会话ID: 97
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'assistant', 'content': '很高兴为您服务！有什么招标文件或投标文件需要帮助审阅和分析的吗？'}, {'role': 'user', 'content': '有的'}, {'role': 'assistant', 'content': '好的，请将您需要审阅的招标文件和投标文件的内容或者关键信息提供给我，我会尽力帮助您进行分析和比对。您可以直接上传文件，或者简要描述文件中的关键点和您想要关注的问题。'}, {'role': 'user', 'content': '你会什么'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我具备以下能力来帮助您审阅和分析招标文件与投标文件：\n\n1. **文本理解**：我可以理解招标文件和投标文件中的语言和条款。\n2. **条款对比**：我可以比较招标文件中的要求和投标文件中的响应，找出差异和不符合项。\n3. **关键信息提取**：我能够提取文件中的关键信息，如项目要求、技术规格、预算限制、交付时间等。\n4. **合规性检查**：我可以检查投标文件是否符合招标文件的要求，包括技术规格、商务条款等。\n5. **风险评估**：我可以帮助识别潜在的风险点和不符合规定的地方。\n6. **格式校对**：我可以检查文件格式是否符合招标文件的要求，如页码、字体、签名等。\n7. **语言翻译**：虽然我的主要语言是中文，但我也能够处理和理解一些英文内容。\n\n如果您有具体的文件或问题，请提供详细信息，我将根据您的需求提供相应的帮助。'}, {'role': 'user', 'content': '好厉害'}, {'role': 'assistant', 'content': '谢谢您的夸奖！我的目标是提供尽可能准确和有用的帮助。如果您有任何具体的问题或需要审阅的文件，随时告诉我，我会尽我所能协助您。'}, {'role': 'user', 'content': '你有记忆能力吗？'}, {'role': 'user', 'content': '你有记忆能力吗？'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: 那也足够了
+会话ID: 97
+------------------------------
+get history from cache: {chat_history}
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好呀'}, {'role': 'assistant', 'content': '很高兴为您服务！有什么招标文件或投标文件需要帮助审阅和分析的吗？'}, {'role': 'user', 'content': '有的'}, {'role': 'assistant', 'content': '好的，请将您需要审阅的招标文件和投标文件的内容或者关键信息提供给我，我会尽力帮助您进行分析和比对。您可以直接上传文件，或者简要描述文件中的关键点和您想要关注的问题。'}, {'role': 'user', 'content': '你会什么'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我具备以下能力来帮助您审阅和分析招标文件与投标文件：\n\n1. **文本理解**：我可以理解招标文件和投标文件中的语言和条款。\n2. **条款对比**：我可以比较招标文件中的要求和投标文件中的响应，找出差异和不符合项。\n3. **关键信息提取**：我能够提取文件中的关键信息，如项目要求、技术规格、预算限制、交付时间等。\n4. **合规性检查**：我可以检查投标文件是否符合招标文件的要求，包括技术规格、商务条款等。\n5. **风险评估**：我可以帮助识别潜在的风险点和不符合规定的地方。\n6. **格式校对**：我可以检查文件格式是否符合招标文件的要求，如页码、字体、签名等。\n7. **语言翻译**：虽然我的主要语言是中文，但我也能够处理和理解一些英文内容。\n\n如果您有具体的文件或问题，请提供详细信息，我将根据您的需求提供相应的帮助。'}, {'role': 'user', 'content': '好厉害'}, {'role': 'assistant', 'content': '谢谢您的夸奖！我的目标是提供尽可能准确和有用的帮助。如果您有任何具体的问题或需要审阅的文件，随时告诉我，我会尽我所能协助您。'}, {'role': 'user', 'content': '你有记忆能力吗？'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我具有一定的记忆能力，但它是有限的。以下是我记忆能力的一些特点：\n\n1. **会话记忆**：在当前会话中，我可以记住之前的对话内容，以便提供连贯的交流体验。\n\n2. **用户数据记忆**：我可以记住您之前提供的一些个人信息，以便在未来的会话中提供更加个性化的服务。\n\n3. **上下文记忆**：在处理特定任务时，例如审阅文件，我可以记住文件的关键细节和您提出的问题。\n\n然而，我并不具备长期记忆能力，也就是说，我无法像人类那样长期存储大量的信息。每次会话结束后，我的记忆会重置，除非这些信息在后续的会话中被再次提及。此外，我存储的数据是匿名的，以保护用户隐私。\n\n如果您有需要长期跟踪的信息，您可能需要自行记录或保存。'}, {'role': 'user', 'content': '那也足够了'}, {'role': 'user', 'content': '那也足够了'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+获取当前用户的所有会话
+root (管理员)
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+获取当前用户的所有会话
+root (管理员)
+==================================================
+新的聊天请求
+用户输入: 你好
+会话ID: 99
+------------------------------
+get history from cache: {chat_history}
+缓存未命中，从数据库重建对话历史
+从数据库重建对话历史，共 0 条消息
+[]
+------------------------------
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好'}, {'role': 'user', 'content': '你好'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+==================================================
+新的聊天请求
+用户输入: 你会做什么
+会话ID: 99
+------------------------------
+get history from cache: {chat_history}
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好'}, {'role': 'assistant', 'content': '作为招投标文件审阅助手，请问有什么具体的招标文件或投标文件需要我帮助分析和比对吗？请提供相关信息，我会尽力协助您。'}, {'role': 'user', 'content': '你会做什么'}, {'role': 'user', 'content': '你会做什么'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+/Users/charn/Desktop/qualificationReview/backend/chatbot/views.py changed, reloading.
+Watching for file changes with StatReloader
+==================================================
+新的聊天请求
+用户输入: can you speak english
+会话ID: 99
+------------------------------
+get history from cache:
+[{'role': 'user', 'content': '你好'}, {'role': 'assistant', 'content': '作为招投标文件审阅助手，请问有什么具体的招标文件或投标文件需要我帮助分析和比对吗？请提供相关信息，我会尽力协助您。'}, {'role': 'user', 'content': '你会做什么'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我的主要功能和服务包括：\n\n1. **信息查询**：我可以帮助您快速查找各种信息，如天气预报、新闻更新、历史数据等。\n\n2. **知识解答**：我可以回答各种问题，从科学原理到日常生活常识，甚至包括一些技术性的问题。\n\n3. **数据分析**：在招投标领域，我可以帮助分析招标文件和投标文件，对比两者内容，找出差异和关键点。\n\n4. **文本处理**：我可以帮助撰写、编辑或校对文本，包括撰写商务信函、报告、文章等。\n\n5. **语言翻译**：我可以提供多种语言之间的文本翻译服务。\n\n6. **日程管理**：我可以帮助您管理日程，设置提醒，安排会议等。\n\n7. **学习和教育**：我可以提供学习资源，帮助用户学习新知识，解答学习中的问题。\n\n8. **娱乐互动**：我可以参与简单的对话，提供笑话、谜语等娱乐内容。\n\n9. **技术支持**：我可以提供一些基本的技术支持，如软件使用指南、故障排除等。\n\n10. **辅助决策**：在招投标等决策过程中，我可以提供基于现有信息的分析和建议。\n\n请告诉我您需要哪方面的帮助，我会尽力满足您的需求。'}]
+sending messages: [{'role': 'system', 'content': '你是一个专业的招投标文件审阅助手，可以帮助用户分析和比对招标文件与投标文件。'}, {'role': 'user', 'content': '你好'}, {'role': 'assistant', 'content': '作为招投标文件审阅助手，请问有什么具体的招标文件或投标文件需要我帮助分析和比对吗？请提供相关信息，我会尽力协助您。'}, {'role': 'user', 'content': '你会做什么'}, {'role': 'assistant', 'content': '作为一个人工智能助手，我的主要功能和服务包括：\n\n1. **信息查询**：我可以帮助您快速查找各种信息，如天气预报、新闻更新、历史数据等。\n\n2. **知识解答**：我可以回答各种问题，从科学原理到日常生活常识，甚至包括一些技术性的问题。\n\n3. **数据分析**：在招投标领域，我可以帮助分析招标文件和投标文件，对比两者内容，找出差异和关键点。\n\n4. **文本处理**：我可以帮助撰写、编辑或校对文本，包括撰写商务信函、报告、文章等。\n\n5. **语言翻译**：我可以提供多种语言之间的文本翻译服务。\n\n6. **日程管理**：我可以帮助您管理日程，设置提醒，安排会议等。\n\n7. **学习和教育**：我可以提供学习资源，帮助用户学习新知识，解答学习中的问题。\n\n8. **娱乐互动**：我可以参与简单的对话，提供笑话、谜语等娱乐内容。\n\n9. **技术支持**：我可以提供一些基本的技术支持，如软件使用指南、故障排除等。\n\n10. **辅助决策**：在招投标等决策过程中，我可以提供基于现有信息的分析和建议。\n\n请告诉我您需要哪方面的帮助，我会尽力满足您的需求。'}, {'role': 'user', 'content': 'can you speak english'}, {'role': 'user', 'content': 'can you speak english'}]
+------------------------------
+HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"

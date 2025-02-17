@@ -15,6 +15,7 @@ from django.conf import settings
 from .promptGenrator import PromptGenerator
 from django.http import StreamingHttpResponse
 from .connectLLM import create_llm, create_streaming_response
+from django.core.cache import cache
 
 # 配置日志
 logger = logging.getLogger(__name__)
@@ -39,6 +40,129 @@ def chat(request):
         logger.info(f"用户输入: {message}")
         logger.info(f"会话ID: {session_id}")
         logger.info("-"*30)
+        
+        try:
+            chat_session = ChatSession.objects.get(id=session_id)
+
+            # 从 Redis 缓存获取对话历史
+            cache_key = f'chat_history_{session_id}'
+            chat_history = cache.get(cache_key)
+
+            logger.info("get history from cache:")
+            logger.info(chat_history)
+
+            if not chat_history:
+                # 缓存未命中，从数据库重建对话历史
+                logger.info("缓存未命中，从数据库重建对话历史")
+                history_messages = chat_session.messages.order_by('created_at')
+                chat_history = []
+                for msg in history_messages:
+                    role = "user" if msg.is_user else "assistant"
+                    chat_history.append({"role": role, "content": msg.content})
+
+                logger.info(f"从数据库重建对话历史，共 {len(chat_history)} 条消息")
+                logger.info(chat_history)    
+                logger.info("-"*30)
+                # 存入缓存，设置过期时间为1小时
+                cache.set(cache_key, chat_history, timeout=3600)
+            
+            # 添加当前用户消息
+            chat_session.messages.create(
+                content=message,
+                is_user=True
+            )
+            
+            # 更新缓存中的对话历史
+            chat_history.append({"role": "user", "content": message})
+            cache.set(cache_key, chat_history, timeout=3600)
+            
+            try:
+                # 创建LLM实例
+                llm = create_llm(model_name='chatglm', stream=True)
+                
+                def response_generator():
+                    full_response = ""
+                    try:
+                        # 将历史记录传入对话生成函数
+                        for chunk in create_streaming_response(llm, message, chat_history):
+                            if chunk:
+                                full_response += chunk
+                                yield f"data: {json.dumps({'content': chunk})}\n\n"
+                    finally:
+                        if full_response:
+                            chat_session.messages.create(
+                                content=full_response,
+                                is_user=False
+                            )
+                            
+                            if chat_session.messages.count() <= 2:
+                                chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
+                                chat_session.save()
+
+                            # 更新缓存
+                            chat_history.append({"role": "assistant", "content": full_response})
+                            cache.set(f'chat_history_{session_id}', chat_history, timeout=3600)
+
+                response = StreamingHttpResponse(
+                    response_generator(),
+                    content_type='text/event-stream'
+                )
+                response['Cache-Control'] = 'no-cache'
+                response['X-Accel-Buffering'] = 'no'
+                return response
+                    
+            except Exception as e:
+                logger.warning(f"流式响应失败，切换到普通对话模式: {str(e)}")
+                
+                try:
+                    # 普通对话模式也传入历史记录
+                    response = llm.invoke(message, chat_history)
+                    response_content = getattr(response, 'content', str(response))
+                    
+                    chat_session.messages.create(
+                        content=response_content,
+                        is_user=False
+                    )
+                    
+                    return Response({
+                        'status': 'success',
+                        'data': {
+                            'content': response_content
+                        }
+                    })
+                except Exception as e:
+                    logger.error(f"对话失败: {str(e)}")
+                    return Response({
+                        'status': 'error',
+                        'message': '对话生成失败，请稍后重试'
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    
+        except ChatSession.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '会话不存在'
+            }, status=status.HTTP_404_NOT_FOUND)
+            
+    except Exception as e:
+        logger.error(f"未预期的错误: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '服务器内部错误'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+def chat_with_retrieval(request):
+    try:
+        # 获取请求体中的数据
+        message = request.data.get('message', '').strip()
+        session_id = request.data.get('session_id')
+        
+        # 验证消息和会话ID不为空
+        if not message or not session_id:
+            return Response({
+                'status': 'error',
+                'message': '消息内容和会话ID不能为空'
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             chat_session = ChatSession.objects.get(id=session_id)

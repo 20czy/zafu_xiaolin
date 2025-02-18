@@ -2,7 +2,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .connectLLM import create_llm
 from .models import PDFDocument, ChatSession
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,9 +11,9 @@ from .documentSearch import search_all_documents
 import os
 import logging
 from django.conf import settings
-from .promptGenrator import PromptGenerator
+from .promptGenerator import PromptGenerator
 from django.http import StreamingHttpResponse
-from .connectLLM import create_llm, create_streaming_response
+from .connectLLM import create_llm, create_streaming_response, create_system_prompt
 from django.core.cache import cache
 
 # 配置日志
@@ -83,8 +82,10 @@ def chat(request):
                 def response_generator():
                     full_response = ""
                     try:
+                        # 构建系统提示词
+                        system_prompt = create_system_prompt(llm, message, session_id)
                         # 将历史记录传入对话生成函数
-                        for chunk in create_streaming_response(llm, message, chat_history):
+                        for chunk in create_streaming_response(llm, message, chat_history, system_prompt):
                             if chunk:
                                 full_response += chunk
                                 yield f"data: {json.dumps({'content': chunk})}\n\n"
@@ -143,109 +144,6 @@ def chat(request):
                 'message': '会话不存在'
             }, status=status.HTTP_404_NOT_FOUND)
             
-    except Exception as e:
-        logger.error(f"未预期的错误: {str(e)}")
-        return Response({
-            'status': 'error',
-            'message': '服务器内部错误'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-@api_view(['POST'])
-def chat_with_retrieval(request):
-    try:
-        # 获取请求体中的数据
-        message = request.data.get('message', '').strip()
-        session_id = request.data.get('session_id')
-        
-        # 验证消息和会话ID不为空
-        if not message or not session_id:
-            return Response({
-                'status': 'error',
-                'message': '消息内容和会话ID不能为空'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            chat_session = ChatSession.objects.get(id=session_id)
-        except ChatSession.DoesNotExist:
-            return Response({
-                'status': 'error',
-                'message': '会话不存在'
-            }, status=status.HTTP_404_NOT_FOUND)
-            
-        # 保存用户消息
-        chat_session.messages.create(
-            content=message,
-            is_user=True
-        )
-        
-        try:
-            # 创建LLM实例
-            llm = create_llm(model_name='chatglm', stream=True)
-            
-            # 创建流式响应生成器
-            def response_generator():
-                full_response = ""
-                try:
-                    for chunk in create_streaming_response(llm, message):
-                        if chunk:  # 确保chunk不为空
-                            full_response += chunk
-                            # logger.info(f"流式响应: {chunk}")
-                            yield f"data: {json.dumps({'content': chunk})}\n\n"
-                finally:
-                    if full_response:  # 只在有响应时保存
-                        # 保存完整的响应消息
-                        chat_session.messages.create(
-                            content=full_response,
-                            is_user=False
-                        )
-                        
-                        # 更新会话标题（如果是第一条消息）
-                        if chat_session.messages.count() <= 2:
-                            chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
-                            chat_session.save()
-
-            # 返回 SSE 流式响应
-            response = StreamingHttpResponse(
-                response_generator(),
-                content_type='text/event-stream'
-            )
-            response['Cache-Control'] = 'no-cache'
-            response['X-Accel-Buffering'] = 'no'
-            return response
-                
-        except Exception as e:
-            logger.warning("-"*30)
-            logger.warning(f"流式响应失败，切换到普通对话模式: {str(e)}")
-            logger.warning("-"*30)
-            
-            try:
-                response = llm.invoke(message)
-                response_content = getattr(response, 'content', str(response))
-                
-                # 保存响应消息
-                chat_session.messages.create(
-                    content=response_content,
-                    is_user=False
-                )
-                
-                return Response({
-                    'status': 'success',
-                    'data': {
-                        'content': response_content
-                    }
-                })
-            except Exception as e:
-                logger.error(f"对话失败: {str(e)}")
-                return Response({
-                    'status': 'error',
-                    'message': '对话生成失败，请稍后重试'
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    except json.JSONDecodeError:
-        return Response({
-            'status': 'error',
-            'message': '无效的JSON格式'
-        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         logger.error(f"未预期的错误: {str(e)}")
         return Response({

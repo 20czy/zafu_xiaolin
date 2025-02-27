@@ -60,3 +60,11 @@ python manage.py makemigrations
                 
                 logger.info(f"LLM响应:\n{response.content}")
                 logger.info("="*50)
+
+将前端上传的文件区分为招标书和应标书 ✅
+将rag作为一个工具，提供给控制者在需要的时候调用。
+肯定不想要每次请求都调用rag，只在需要时调用
+
+检查一下递归分割的代码，适当增加一下chunk size
+阅读Agentic Chunking
+优化一下loader

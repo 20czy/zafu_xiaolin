@@ -16,10 +16,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 interface FileUploaderProps {
   side: "left" | "right";
+  document_type: "invitation" | "offer";
   sessionId: number | null; // 添加会话ID属性
 }
 
-export default function InputFile({ side, sessionId }: FileUploaderProps) {
+export default function InputFile({ side, sessionId, document_type }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
@@ -45,6 +46,7 @@ export default function InputFile({ side, sessionId }: FileUploaderProps) {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("session_id", sessionId?.toString() || "");  // 添加会话ID，将number|null转换为string
+      formData.append("document_type", document_type);  // 添加文档类型
 
       const token = await getCSRFToken();
       
@@ -80,26 +82,37 @@ export default function InputFile({ side, sessionId }: FileUploaderProps) {
       
       if (response.ok) {
         const data = await response.json();
-        console.log("会话文档数据:", data); // 添加详细日志
+        console.log("会话文档数据:", data);
         
-        // data.data 是一个数组，需要获取第一个文档
         if (data.data && data.data.length > 0) {
-          const document = data.data[0]; // 获取第一个文档
-          setDocumentId(document.id);
-          setFileUrl(document.url);
-          setUploadStatus("文件加载成功");
+          // 根据文档类型筛选正确的文档
+          const document = data.data.find((doc: { document_type: string }) =>
+            doc.document_type === (side === "left" ? "invitation" : "offer")
+          );
           
-          // 创建一个临时的 File 对象用于预览
-          fetch(document.url)
-            .then(res => res.blob())
-            .then(blob => {
-              const file = new File([blob], document.title, { type: 'application/pdf' });
-              setFile(file);
-            })
-            .catch(error => {
-              console.error("获取文件内容失败:", error);
-              setUploadStatus("文件加载失败");
-            });
+          if (document) {
+            setDocumentId(document.id);
+            setFileUrl(document.url);
+            setUploadStatus("文件加载成功");
+            
+            // 创建一个临时的 File 对象用于预览
+            fetch(document.url)
+              .then(res => res.blob())
+              .then(blob => {
+                const file = new File([blob], document.title, { type: 'application/pdf' });
+                setFile(file);
+              })
+              .catch(error => {
+                console.error("获取文件内容失败:", error);
+                setUploadStatus("文件加载失败");
+              });
+          } else {
+            // 如果没有找到对应类型的文档，清空状态
+            setDocumentId(null);
+            setFileUrl("");
+            setFile(null);
+            setUploadStatus("");
+          }
         }
       }
     } catch (error) {

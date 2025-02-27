@@ -159,7 +159,7 @@ def search_all_documents(query: str, top_k: int = 3) -> List[Dict]:
         logger.error(f"搜索所有文档时发生错误: {str(e)}")
         raise Exception(f"搜索所有文档时发生错误: {str(e)}")
 
-def search_session_documents(query: str, session_id: int, top_k: int = 3) -> List[Dict]:
+def search_session_documents(query: str, session_id: int, document_type: str = None, top_k: int = 3) -> List[Dict]:
     """
     搜索特定会话关联的所有文档内容
     
@@ -167,19 +167,25 @@ def search_session_documents(query: str, session_id: int, top_k: int = 3) -> Lis
         query: 查询文本
         session_id: 会话ID
         top_k: 返回的相关文档数量
+        document_type: 文档类型，可选值为 "invitation" 或 "offer"
         
     Returns:
         相关文档内容列表
     """
-    logger.info(f"搜索会话 {session_id} 的文档")
+    logger.info(f"搜索会话 {session_id} 的文档, 类型为 {document_type}")
     try:
         # 获取会话相关的已处理文档
         chat_session = ChatSession.objects.get(id=session_id)
-        processed_docs = PDFDocument.objects.filter(
-            session=chat_session,
-            is_processed=True
-        )
-        
+        query_filter = {
+            'session': chat_session,
+            'is_processed': True
+        }
+
+        if document_type in ['invitation', 'offer']:
+            query_filter['document_type'] = document_type
+
+        processed_docs = PDFDocument.objects.filter(**query_filter)
+
         if not processed_docs.exists():
             logger.info(f"会话 {session_id} 没有找到已处理的文档")
             return []
@@ -196,7 +202,7 @@ def search_session_documents(query: str, session_id: int, top_k: int = 3) -> Lis
                 # 添加文档标题和类型到结果中
                 for result in results:
                     result['document_title'] = doc.title
-                    # result['document_type'] = '招标文件' if doc.document_type == 'invitation' else '投标文件'
+                    result['document_type'] = '招标文件' if doc.DOCUMENT_TYPES == 'invitation' else '投标文件'
                 all_results.extend(results)
             except Exception as e:
                 logger.warning(f"检索文档 {doc.id} 时出错: {str(e)}")

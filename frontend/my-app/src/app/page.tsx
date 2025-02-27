@@ -16,10 +16,10 @@ export default function Home() {
         {/* 文件上传区域 */}
         <div className="flex-1 flex items-start justify-center gap-8 p-8">
           <div className="w-1/2 p-4 border-r">
-            <FileUploader side="left" sessionId={activeSessionId} />
+            <FileUploader side="left" sessionId={activeSessionId} document_type="invitation"/>
           </div>
           <div className="w-1/2 p-4">
-            <FileUploader side="right" sessionId={activeSessionId} />
+            <FileUploader side="right" sessionId={activeSessionId} document_type="offer"/>
           </div>
         </div>
         

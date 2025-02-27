@@ -3,8 +3,18 @@ from django.conf import settings
 
 class PDFDocument(models.Model):
     """PDF文档模型"""
+    DOCUMENT_TYPES = [
+        ('invatation', '招标书'),
+        ('offer', '应标书'),
+    ]
     title = models.CharField(max_length=255, verbose_name='文档标题')
     file = models.FileField(upload_to='pdfs/', verbose_name='PDF文件')
+    document_type = models.CharField(
+        max_length=20,
+        choices=DOCUMENT_TYPES,
+        default='invatation',
+        verbose_name='文档类型'
+    )
     uploader = models.ForeignKey(
         # django用户认证模型
         settings.AUTH_USER_MODEL,

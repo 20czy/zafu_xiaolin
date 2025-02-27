@@ -10,6 +10,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from .models import PDFDocument, ChatSession
 from .documentSearch import search_session_documents
+import json
 
 logger = logging.getLogger(__name__)
 # 加载 .env 文件中的环境变量
@@ -67,36 +68,98 @@ def create_prompt_with_slot(invitation, offer):
     # 生成最终提示
     prompt = prompt_generator.generate_prompt(slot_data, template_name)
     return prompt
+
+def task_classification(message):
+    """
+    使用LLM判断用户输入的任务类型，并返回是否需要使用RAG以及文档类型
+    """
+    try:
+        llm = create_llm(model_name='chatglm', stream=False)
+        
+        messages = [
+            {
+                "role": "system", 
+                "content": """你是一个任务分类助手。请分析用户输入属于以下哪种任务类型：
+1. 回答招投标业务专业问题（不需要查询文档）
+2. 询问招标书相关问题（需要查询招标书，请提供供查询使用的query）
+3. 询问应标书相关问题（需要查询应标书，请提供供查询使用的query）
+4. 比对招投标文件进行审核（需要同时查询招标书和应标书，请提供供查询使用的query）
+请只返回如下格式的答案：
+{
+    "task_type": 1-4的数字,
+    "explanation": "简要解释原因",
+    "query": "供查询使用的query"
+}"""
+            },
+            {"role": "user", "content": message}
+        ]
+
+        response = llm.invoke(messages)
+        
+        # 解析LLM返回的JSON响应
+        result = json.loads(response.content)
+        task_type = result.get('task_type')
+        query = result.get('query', '')
+        
+        # 根据任务类型确定是否需要RAG和文档类型
+        if task_type == 1:
+            return False, None, None  # 不需要RAG
+        elif task_type == 2:
+            return True, 'invitation', query  # 查询招标书
+        elif task_type == 3:
+            return True, 'offer', query  # 查询应标书
+        elif task_type == 4:
+            return True, 'both', query  # 查询两种文档
+        else:
+            logger.warning(f"未知的任务类型: {task_type}")
+            return False, None, None
+            
+    except Exception as e:
+        logger.error(f"任务分类失败: {str(e)}")
+        # 发生错误时使用默认行为
+        return False, None, None
     
 def create_system_prompt(llm, message, session_id):
     """
     生成系统提示词
-    Args:
-        llm: LLM 实例
-        message: 用户输入的消息
-        session_id: 会话ID
-    Returns:
-        str: 生成的系统提示词
     """
-    # 优化用户查询
-    optimized_query = optimize_query(llm, message)
-
-    logger.info(f"优化后的查询: {optimized_query}")
-    logger.info(f"session_id: {session_id}")
-        
-    # 检索相关文档
-    relevant_docs = search_session_documents(optimized_query, session_id)
-    logger.warn(f"检索到的相关文档: {relevant_docs}")
     
-    # 构建包含检索结果的上下文
-    context = "\n\n".join([
-        f"在《{doc['document_title']}》中找到相关内容：\n{doc['content']}" 
-        for doc in relevant_docs
-    ])
-    logger.warn(f"构建的上下文: {context}")
+    # 获取任务类型和相关文档
+    need_rag, doc_type, query = task_classification(message)
     
-    system_prompt = create_prompt_with_slot(context, "offer")
-
+    if need_rag:
+        if doc_type == 'both':
+            # 同时检索招标书和应标书
+            invitation_docs = search_session_documents(query, session_id, 'invitation')
+            offer_docs = search_session_documents(query, session_id, 'offer')
+            
+            invitation_context = "\n\n".join([
+                f"在招标文件《{doc['document_title']}》中找到相关内容：\n{doc['content']}" 
+                for doc in invitation_docs
+            ])
+            
+            offer_context = "\n\n".join([
+                f"在投标文件《{doc['document_title']}》中找到相关内容：\n{doc['content']}" 
+                for doc in offer_docs
+            ])
+            
+            system_prompt = create_prompt_with_slot(invitation_context, offer_context)
+        else:
+            # 检索单一类型文档
+            relevant_docs = search_session_documents(query, session_id, doc_type)
+            context = "\n\n".join([
+                f"在《{doc['document_title']}》中找到相关内容：\n{doc['content']}" 
+                for doc in relevant_docs
+            ])
+            
+            if doc_type == 'invitation':
+                system_prompt = create_prompt_with_slot(context, "")
+            else:
+                system_prompt = create_prompt_with_slot("", context)
+    else:
+        # 不需要RAG，使用基础提示词
+        system_prompt = "你是一个专业的招投标文件审阅助手，可以帮助用户解答招投标相关的专业问题。"
+    
     return system_prompt
 
 def create_streaming_response(llm, message, chat_history=None, system_prompt=None):
@@ -134,13 +197,10 @@ def create_streaming_response(llm, message, chat_history=None, system_prompt=Non
 def optimize_query(llm, query):
     """优化用户查询"""
     try:
-        system_prompt = """你是一个专业的招投标文档查询优化助手。请帮助优化用户的查询，使其更加清晰、具体和专业。
-        规则：
-        1. 保持查询的核心意图
-        2. 添加必要的招投标专业术语
-        3. 使查询更加结构化
-        4. 删除无关信息
-        5. 确保优化后的查询不超过200字
+        system_prompt = """你是一个专业的招投标文档查询优化助手,
+        在当前的任务中系统需要根据用户的输入去检索一些内容，帮助llm回答用户的问题
+        你的任务是在招投标的场景下优化用户的输入，
+        请推测用户的意图，将用户的输入优化为更准确的查询，
         请直接输出优化后的查询。
         """
         

@@ -1,0 +1,130 @@
+
+{
+  "course_schedule": {
+    "student_info": {
+      "name": "张三",
+      "major": "计算机科学与技术",
+      "semester": "2024-2025学年第二学期"
+    },
+    "weekly_schedule": [
+      {
+        "day": "星期一",
+        "sections": [
+          {
+            "time": "08:00-09:40",
+            "course": "高等数学（三）",
+            "category": "数学类",
+            "teacher": "张建国",
+            "classroom": "A101",
+            "note": "核心必修课"
+          },
+          {
+            "time": "14:00-15:40",
+            "course": "数据结构与算法",
+            "category": "计算机专业类",
+            "teacher": "李雪梅",
+            "classroom": "B202",
+            "note": "含实验课"
+          }
+        ]
+      },
+      {
+        "day": "星期二",
+        "sections": [
+          {
+            "time": "08:00-09:40",
+            "course": "线性代数（二）",
+            "category": "数学类",
+            "teacher": "王志强",
+            "classroom": "A102",
+            "note": "理论课"
+          },
+          {
+            "time": "14:00-15:40",
+            "course": "操作系统原理",
+            "category": "计算机专业类",
+            "teacher": "陈昊",
+            "classroom": "C303",
+            "note": "含实践环节"
+          }
+        ]
+      },
+      {
+        "day": "星期三",
+        "sections": [
+          {
+            "time": "08:00-09:40",
+            "course": "概率论与数理统计",
+            "category": "数学类",
+            "teacher": "赵敏",
+            "classroom": "A103",
+            "note": "双语教学"
+          },
+          {
+            "time": "14:00-15:40",
+            "course": "计算机网络技术",
+            "category": "计算机专业类",
+            "teacher": "刘海洋",
+            "classroom": "B204",
+            "note": "实验课机房"
+          }
+        ]
+      },
+      {
+        "day": "星期四",
+        "sections": [
+          {
+            "time": "08:00-09:40",
+            "course": "离散数学（二）",
+            "category": "数学类",
+            "teacher": "周明",
+            "classroom": "A104",
+            "note": "逻辑设计基础"
+          },
+          {
+            "time": "14:00-15:40",
+            "course": "人工智能导论",
+            "category": "计算机专业类",
+            "teacher": "吴芳",
+            "classroom": "C305",
+            "note": "前沿技术课程"
+          }
+        ]
+      },
+      {
+        "day": "星期五",
+        "sections": [
+          {
+            "time": "08:00-09:40",
+            "course": "软件工程",
+            "category": "计算机专业类",
+            "teacher": "郑伟",
+            "classroom": "B206",
+            "note": "项目实践课"
+          },
+          {
+            "time": "14:00-15:40",
+            "course": "编译原理",
+            "category": "计算机专业类",
+            "teacher": "冯涛",
+            "classroom": "C307",
+            "note": "理论+实践"
+          }
+        ]
+      },
+      {
+        "day": "星期六",
+        "sections": [
+          {
+            "time": "09:00-11:00",
+            "course": "数据库系统原理",
+            "category": "计算机专业类",
+            "teacher": "陈雨",
+            "classroom": "B208",
+            "note": "开放实验室"
+          }
+        ]
+      }
+    ]
+  }
+}

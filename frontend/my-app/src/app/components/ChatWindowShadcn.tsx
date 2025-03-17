@@ -82,11 +82,15 @@ export default function ChatWindowShadcn({
               continue;
             }
 
+            const documentsData = await fetchWithCSRF(
+              `http://localhost:8000/api/chat/sessions/${session.id}/documents/`
+            )
+
             const messagesData = await fetchWithCSRF(
               `http://localhost:8000/api/chat/sessions/${session.id}/messages/`
             );
             
-            if (messagesData.status === "success" && messagesData.data.length === 0) {
+            if (messagesData.status === "success" && messagesData.data.length === 0 && documentsData.status === "success" && documentsData.data.length === 0) {
               await fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${session.id}/messages/`, {
                 method: "DELETE",
               });

@@ -1,0 +1,129 @@
+{
+    "course_schedule": {
+        "student_info": {
+            "name": "李四",
+            "major": "电子信息工程",
+            "semester": "2024 - 2025学年第二学期"
+        },
+        "weekly_schedule": [
+            {
+                "day": "星期一",
+                "sections": [
+                    {
+                        "time": "08:00 - 09:40",
+                        "course": "高等数学（四）",
+                        "category": "数学类",
+                        "teacher": "林华",
+                        "classroom": "D101",
+                        "note": "重要基础课程"
+                    },
+                    {
+                        "time": "14:00 - 15:40",
+                        "course": "信号与系统",
+                        "category": "电子信息专业类",
+                        "teacher": "赵晓峰",
+                        "classroom": "E201",
+                        "note": "专业核心课"
+                    }
+                ]
+            },
+            {
+                "day": "星期二",
+                "sections": [
+                    {
+                        "time": "08:00 - 09:40",
+                        "course": "线性代数（三）",
+                        "category": "数学类",
+                        "teacher": "孙丽",
+                        "classroom": "D102",
+                        "note": "矩阵运算重点"
+                    },
+                    {
+                        "time": "14:00 - 15:40",
+                        "course": "模拟电子技术",
+                        "category": "电子信息专业类",
+                        "teacher": "王强",
+                        "classroom": "E202",
+                        "note": "含实验操作"
+                    }
+                ]
+            },
+            {
+                "day": "星期三",
+                "sections": [
+                    {
+                        "time": "08:00 - 09:40",
+                        "course": "概率论与数理统计（二）",
+                        "category": "数学类",
+                        "teacher": "刘敏",
+                        "classroom": "D103",
+                        "note": "概率模型应用"
+                    },
+                    {
+                        "time": "14:00 - 15:40",
+                        "course": "数字电子技术",
+                        "category": "电子信息专业类",
+                        "teacher": "陈刚",
+                        "classroom": "E203",
+                        "note": "数字电路设计"
+                    }
+                ]
+            },
+            {
+                "day": "星期四",
+                "sections": [
+                    {
+                        "time": "08:00 - 09:40",
+                        "course": "复变函数与积分变换",
+                        "category": "数学类",
+                        "teacher": "张翔",
+                        "classroom": "D104",
+                        "note": "变换方法学习"
+                    },
+                    {
+                        "time": "14:00 - 15:40",
+                        "course": "通信原理",
+                        "category": "电子信息专业类",
+                        "teacher": "李娜",
+                        "classroom": "E204",
+                        "note": "通信系统原理"
+                    }
+                ]
+            },
+            {
+                "day": "星期五",
+                "sections": [
+                    {
+                        "time": "08:00 - 09:40",
+                        "course": "电磁场与电磁波",
+                        "category": "电子信息专业类",
+                        "teacher": "周勇",
+                        "classroom": "E205",
+                        "note": "场与波理论"
+                    },
+                    {
+                        "time": "14:00 - 15:40",
+                        "course": "单片机原理及应用",
+                        "category": "电子信息专业类",
+                        "teacher": "吴迪",
+                        "classroom": "E206",
+                        "note": "实践编程为主"
+                    }
+                ]
+            },
+            {
+                "day": "星期六",
+                "sections": [
+                    {
+                        "time": "09:00 - 11:00",
+                        "course": "传感器原理与应用",
+                        "category": "电子信息专业类",
+                        "teacher": "郑辉",
+                        "classroom": "E207",
+                        "note": "各类传感器学习"
+                    }
+                ]
+            }
+        ]
+    }
+}

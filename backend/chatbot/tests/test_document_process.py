@@ -1,6 +1,6 @@
 import unittest
 import logging
-from backend.chatbot.documentProcess import process_pdf_document
+from backend.chatbot.PDFdocument.documentProcess import process_pdf_document
 from backend.chatbot.models import PDFDocument
 
 # 配置日志记录

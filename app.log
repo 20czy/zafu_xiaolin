@@ -1,0 +1,1617 @@
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+检测到 JSON 代码块，进行提取
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业的课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业的课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "检查两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业的课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业的课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "检查两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2762 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024学年第一学期"
+      },
+      "reason": "course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024学年第一学期"
+      },
+      "reason": "course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。"
+    },
+    {
+      "task_id": 3,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024学年第一学期"
+      },
+      "reason": "course_scheduler工具可以查询课表并检查时间冲突。需要提供专业和学期信息，使用当前学期作为默认值。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。
+任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。
+任务 3 选择了工具: course_scheduler, 原因: course_scheduler工具可以查询课表并检查时间冲突。需要提供专业和学期信息，使用当前学期作为默认值。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024学年第一学期'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。'}
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024学年第一学期'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。由于用户未指定学期，使用当前学期作为默认值。'}
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2810 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024学年第一学期"
+      },
+      "reason": "course_scheduler专门用于查询课表，且需要专业和学期作为必要参数。这里使用当前学期作为默认值。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024学年第一学期"
+      },
+      "reason": "同样使用course_scheduler查询电子信息专业的课表，使用相同的学期默认值以保证一致性。"
+    },
+    {
+      "task_id": 3,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024学年第一学期",
+        "compare_with": "{TASK_2_RESULT.schedule}"
+      },
+      "reason": "使用course_scheduler的课表比较功能，将计算机专业课表与电子信息专业课表进行对比，检查时间冲突。这里假设course_scheduler支持比较功能，并将任务2的结果作为比较对象。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler专门用于查询课表，且需要专业和学期作为必要参数。这里使用当前学期作为默认值。
+任务 2 选择了工具: course_scheduler, 原因: 同样使用course_scheduler查询电子信息专业的课表，使用相同的学期默认值以保证一致性。
+任务 3 选择了工具: course_scheduler, 原因: 使用course_scheduler的课表比较功能，将计算机专业课表与电子信息专业课表进行对比，检查时间冲突。这里假设course_scheduler支持比较功能，并将任务2的结果作为比较对象。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024学年第一学期'}, 'reason': 'course_scheduler专门用于查询课表，且需要专业和学期作为必要参数。这里使用当前学期作为默认值。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机', 'semester': '2023-2024学年第一学期'}
+任务 1 最终参数: {'major': '计算机', 'semester': '2023-2024学年第一学期'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024学年第一学期'}, 'reason': '同样使用course_scheduler查询电子信息专业的课表，使用相同的学期默认值以保证一致性。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024学年第一学期'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024学年第一学期'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+处理请求时出错: generate_process_response() missing 1 required positional argument: 'process_info'
+Traceback (most recent call last):
+  File "/Users/charn/Desktop/zafugpt/backend/chatbot/LLMController.py", line 590, in LLMcontroller
+    full_response = await generate_process_response(process_info)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: generate_process_response() missing 1 required positional argument: 'process_info'
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业的课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业的课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表，检查是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业的课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业的课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表，检查是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2787 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024-1"
+      },
+      "reason": "course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。这里假设当前学期为2023-2024学年第一学期。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-1"
+      },
+      "reason": "同样使用course_scheduler工具查询电子信息专业的课表，假设当前学期为2023-2024学年第一学期。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "compare_schedules",
+        "schedule1": "{TASK_1_RESULT.schedule}",
+        "schedule2": "{TASK_2_RESULT.schedule}"
+      },
+      "reason": "general_assistant工具可以处理一般性问题，包括比较两个课表的时间冲突。这里使用占位符引用前两个任务的结果。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。这里假设当前学期为2023-2024学年第一学期。
+任务 2 选择了工具: course_scheduler, 原因: 同样使用course_scheduler工具查询电子信息专业的课表，假设当前学期为2023-2024学年第一学期。
+任务 3 选择了工具: general_assistant, 原因: general_assistant工具可以处理一般性问题，包括比较两个课表的时间冲突。这里使用占位符引用前两个任务的结果。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。这里假设当前学期为2023-2024学年第一学期。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业的课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机', 'semester': '2023-2024-1'}
+任务 1 最终参数: {'major': '计算机', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': '同样使用course_scheduler工具查询电子信息专业的课表，假设当前学期为2023-2024学年第一学期。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业的课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业的课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业的课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '比较两个课表，检查是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}], 'final_output_task_id': 3}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。这里假设当前学期为2023-2024学年第一学期。'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': '同样使用course_scheduler工具查询电子信息专业的课表，假设当前学期为2023-2024学年第一学期。'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'compare_schedules', 'schedule1': '{TASK_1_RESULT.schedule}', 'schedule2': '{TASK_2_RESULT.schedule}'}, 'reason': 'general_assistant工具可以处理一般性问题，包括比较两个课表的时间冲突。这里使用占位符引用前两个任务的结果。'}]}, 'task_execution': {1: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 2: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 3: {'status': 'skipped', 'reason': '依赖任务失败'}}}
+处理请求时出错: generate_process_response() missing 1 required positional argument: 'process_info'
+Traceback (most recent call last):
+  File "/Users/charn/Desktop/zafugpt/backend/chatbot/LLMController.py", line 591, in LLMcontroller
+    full_response = await generate_process_response(process_info)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: generate_process_response() missing 1 required positional argument: 'process_info'
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 4 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业的课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业的课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表，检查是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "task": "生成最终回复，告知用户是否有冲突",
+      "input": "冲突检查结果",
+      "depends_on": [
+        3
+      ]
+    }
+  ],
+  "final_output_task_id": 4
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业的课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业的课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表，检查是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}, {"id": 4, "task": "生成最终回复，告知用户是否有冲突", "input": "冲突检查结果", "depends_on": [3]}], "final_output_task_id": 4}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2914 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 4 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024-1"
+      },
+      "reason": "course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-1"
+      },
+      "reason": "course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "compare_schedules",
+        "schedule1": "{TASK_1_RESULT}",
+        "schedule2": "{TASK_2_RESULT}"
+      },
+      "reason": "general_assistant工具可以处理一般性问题，如比较两个课表的时间冲突。"
+    },
+    {
+      "task_id": 4,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "conflict_result",
+        "conflict_result": "{TASK_3_RESULT}"
+      },
+      "reason": "general_assistant工具可以生成最终回复，告知用户是否有冲突。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。
+任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。
+任务 3 选择了工具: general_assistant, 原因: general_assistant工具可以处理一般性问题，如比较两个课表的时间冲突。
+任务 4 选择了工具: general_assistant, 原因: general_assistant工具可以生成最终回复，告知用户是否有冲突。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业的课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机', 'semester': '2023-2024-1'}
+任务 1 最终参数: {'major': '计算机', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业的课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业的课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业的课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '比较两个课表，检查是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}, {'id': 4, 'task': '生成最终回复，告知用户是否有冲突', 'input': '冲突检查结果', 'depends_on': [3]}], 'final_output_task_id': 4}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler工具专门用于查询课表，且需要提供专业和学期信息。'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'compare_schedules', 'schedule1': '{TASK_1_RESULT}', 'schedule2': '{TASK_2_RESULT}'}, 'reason': 'general_assistant工具可以处理一般性问题，如比较两个课表的时间冲突。'}, {'task_id': 4, 'tool': 'general_assistant', 'params': {'query_type': 'conflict_result', 'conflict_result': '{TASK_3_RESULT}'}, 'reason': 'general_assistant工具可以生成最终回复，告知用户是否有冲突。'}]}, 'task_execution': {1: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 2: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 3: {'status': 'skipped', 'reason': '依赖任务失败'}, 4: {'status': 'skipped', 'reason': '依赖任务失败'}}}
+处理请求时出错: object AIMessage can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/charn/Desktop/zafugpt/backend/chatbot/LLMController.py", line 590, in LLMcontroller
+    full_response = await generate_process_response(process_info)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/charn/Desktop/zafugpt/backend/chatbot/LLMController.py", line 622, in generate_process_response
+    response = await llm.invoke([{"role": "system", "content": prompt}])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: object AIMessage can't be used in 'await' expression
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业的课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业的课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表，检查是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业的课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业的课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表，检查是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2787 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机",
+        "semester": "2023-2024-1"
+      },
+      "reason": "course_scheduler专门用于查询课表，且需要major和semester参数。semester使用当前学期作为默认值"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-1"
+      },
+      "reason": "与任务1相同，使用course_scheduler查询电子信息专业的课表，semester同样使用当前学期作为默认值"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "compare_schedules",
+        "schedule1": "{TASK_1_RESULT.schedule}",
+        "schedule2": "{TASK_2_RESULT.schedule}"
+      },
+      "reason": "general_assistant可以处理比较两个课表的时间冲突问题，使用前两个任务的结果作为输入"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler专门用于查询课表，且需要major和semester参数。semester使用当前学期作为默认值
+任务 2 选择了工具: course_scheduler, 原因: 与任务1相同，使用course_scheduler查询电子信息专业的课表，semester同样使用当前学期作为默认值
+任务 3 选择了工具: general_assistant, 原因: general_assistant可以处理比较两个课表的时间冲突问题，使用前两个任务的结果作为输入
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler专门用于查询课表，且需要major和semester参数。semester使用当前学期作为默认值'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业的课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机', 'semester': '2023-2024-1'}
+任务 1 最终参数: {'major': '计算机', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': '与任务1相同，使用course_scheduler查询电子信息专业的课表，semester同样使用当前学期作为默认值'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业的课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-1'}
+API request error for course_scheduler: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业的课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业的课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '比较两个课表，检查是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}], 'final_output_task_id': 3}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机', 'semester': '2023-2024-1'}, 'reason': 'course_scheduler专门用于查询课表，且需要major和semester参数。semester使用当前学期作为默认值'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-1'}, 'reason': '与任务1相同，使用course_scheduler查询电子信息专业的课表，semester同样使用当前学期作为默认值'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'compare_schedules', 'schedule1': '{TASK_1_RESULT.schedule}', 'schedule2': '{TASK_2_RESULT.schedule}'}, 'reason': 'general_assistant可以处理比较两个课表的时间冲突问题，使用前两个任务的结果作为输入'}]}, 'task_execution': {1: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 2: {'status': 'error', 'error': "API请求错误: HTTPSConnectionPool(host='campus-api.zafu.edu.cn', port=443): Max retries exceeded with url: /api/academic/courses (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"}, 3: {'status': 'skipped', 'reason': '依赖任务失败'}}}
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "检查两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "检查两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2852 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机科学",
+        "semester": "2023-2024-2"
+      },
+      "reason": "course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-2"
+      },
+      "reason": "course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "时间冲突检查",
+        "keywords": "{TASK_1_RESULT.key}, {TASK_2_RESULT.key}"
+      },
+      "reason": "general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。
+任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。
+任务 3 选择了工具: general_assistant, 原因: general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+任务 1 最终参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+API request error for course_scheduler: 502 Server Error: Bad Gateway for url: http://127.0.0.1:8000/api/academic/courses
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+API request error for course_scheduler: 502 Server Error: Bad Gateway for url: http://127.0.0.1:8000/api/academic/courses
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '检查两个课表是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}], 'final_output_task_id': 3}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': '时间冲突检查', 'keywords': '{TASK_1_RESULT.key}, {TASK_2_RESULT.key}'}, 'reason': 'general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。'}]}, 'task_execution': {1: {'status': 'error', 'error': 'API请求错误: 502 Server Error: Bad Gateway for url: http://127.0.0.1:8000/api/academic/courses'}, 2: {'status': 'error', 'error': 'API请求错误: 502 Server Error: Bad Gateway for url: http://127.0.0.1:8000/api/academic/courses'}, 3: {'status': 'skipped', 'reason': '依赖任务失败'}}}
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 4 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业的课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业的课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "task": "生成最终回复，告知用户是否有冲突",
+      "input": "比较结果",
+      "depends_on": [
+        3
+      ]
+    }
+  ],
+  "final_output_task_id": 4
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业的课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业的课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}, {"id": 4, "task": "生成最终回复，告知用户是否有冲突", "input": "比较结果", "depends_on": [3]}], "final_output_task_id": 4}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2979 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 4 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机科学",
+        "semester": "2023-2024-2"
+      },
+      "reason": "该工具专门用于查询指定专业和学期的课程信息，符合任务需求。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-2"
+      },
+      "reason": "该工具专门用于查询指定专业和学期的课程信息，符合任务需求。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "compare_schedules",
+        "schedule1": "{TASK_1_RESULT}",
+        "schedule2": "{TASK_2_RESULT}"
+      },
+      "reason": "该任务需要比较两个课表的时间冲突，general_assistant可以处理这种复杂的逻辑判断。"
+    },
+    {
+      "task_id": 4,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "generate_response",
+        "comparison_result": "{TASK_3_RESULT}"
+      },
+      "reason": "该任务需要根据比较结果生成最终回复，general_assistant可以处理这种文本生成任务。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: 该工具专门用于查询指定专业和学期的课程信息，符合任务需求。
+任务 2 选择了工具: course_scheduler, 原因: 该工具专门用于查询指定专业和学期的课程信息，符合任务需求。
+任务 3 选择了工具: general_assistant, 原因: 该任务需要比较两个课表的时间冲突，general_assistant可以处理这种复杂的逻辑判断。
+任务 4 选择了工具: general_assistant, 原因: 该任务需要根据比较结果生成最终回复，general_assistant可以处理这种文本生成任务。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': '该工具专门用于查询指定专业和学期的课程信息，符合任务需求。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业的课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+任务 1 最终参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+API request error for course_scheduler: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/academic/courses
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': '该工具专门用于查询指定专业和学期的课程信息，符合任务需求。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业的课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+API request error for course_scheduler: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/academic/courses
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业的课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业的课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '比较两个课表是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}, {'id': 4, 'task': '生成最终回复，告知用户是否有冲突', 'input': '比较结果', 'depends_on': [3]}], 'final_output_task_id': 4}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': '该工具专门用于查询指定专业和学期的课程信息，符合任务需求。'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': '该工具专门用于查询指定专业和学期的课程信息，符合任务需求。'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'compare_schedules', 'schedule1': '{TASK_1_RESULT}', 'schedule2': '{TASK_2_RESULT}'}, 'reason': '该任务需要比较两个课表的时间冲突，general_assistant可以处理这种复杂的逻辑判断。'}, {'task_id': 4, 'tool': 'general_assistant', 'params': {'query_type': 'generate_response', 'comparison_result': '{TASK_3_RESULT}'}, 'reason': '该任务需要根据比较结果生成最终回复，general_assistant可以处理这种文本生成任务。'}]}, 'task_execution': {1: {'status': 'error', 'error': 'API请求错误: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/academic/courses'}, 2: {'status': 'error', 'error': 'API请求错误: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/academic/courses'}, 3: {'status': 'skipped', 'reason': '依赖任务失败'}, 4: {'status': 'skipped', 'reason': '依赖任务失败'}}}
+开始执行主程序
+开始创建任务计划
+用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+已生成规划提示词
+初始化 LLM 模型
+向 LLM 发送请求
+已收到 LLM 响应
+开始解析 LLM 响应
+成功生成任务计划，包含 3 个任务
+任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "检查两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ],
+  "final_output_task_id": 3
+}
+开始为任务计划选择工具
+输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "检查两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}], "final_output_task_id": 3}
+获取工具能力信息
+生成工具选择提示词
+提示词长度: 2852 字符
+初始化工具选择 LLM 模型
+向 LLM 发送工具选择请求
+已收到 LLM 响应
+开始解析工具选择响应
+检测到 JSON 代码块，进行提取
+成功生成工具选择方案，共 3 个工具选择
+工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "计算机科学",
+        "semester": "2023-2024-2"
+      },
+      "reason": "course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {
+        "major": "电子信息",
+        "semester": "2023-2024-2"
+      },
+      "reason": "course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "query_type": "check_schedule_conflict",
+        "schedule1": "{TASK_1_RESULT.courses}",
+        "schedule2": "{TASK_2_RESULT.courses}"
+      },
+      "reason": "general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。"
+    }
+  ]
+}
+任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。
+任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。
+任务 3 选择了工具: general_assistant, 原因: general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。
+Create a mapping of task_id to selected tool
+Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。'}
+开始执行任务 ID: 1, 任务描述: 获取计算机专业课表, 使用工具: course_scheduler
+任务 1 初始参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+任务 1 最终参数: {'major': '计算机科学', 'semester': '2023-2024-2'}
+Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。'}
+开始执行任务 ID: 2, 任务描述: 获取电子信息专业课表, 使用工具: course_scheduler
+任务 2 初始参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+任务 2 最终参数: {'major': '电子信息', 'semester': '2023-2024-2'}
+Selected tool for task 3: {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'check_schedule_conflict', 'schedule1': '{TASK_1_RESULT.courses}', 'schedule2': '{TASK_2_RESULT.courses}'}, 'reason': 'general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。'}
+开始执行任务 ID: 3, 任务描述: 检查两个课表是否有时间冲突, 使用工具: general_assistant
+任务 3 初始参数: {'query_type': 'check_schedule_conflict', 'schedule1': '{TASK_1_RESULT.courses}', 'schedule2': '{TASK_2_RESULT.courses}'}
+任务 3 参数 schedule1 包含占位符: ['{TASK_1_RESULT.courses}']
+任务 3 参数 schedule2 包含占位符: ['{TASK_2_RESULT.courses}']
+任务 3 最终参数: {'query_type': 'check_schedule_conflict', 'schedule1': '{KEY_courses_NOT_FOUND}', 'schedule2': '{KEY_courses_NOT_FOUND}'}
+API request error for general_assistant: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/campus/info
+Process description: {'user_input': '请检查一下计算机专业课表和电子信息专业课表是否有冲突', 'task_planning': {'tasks': [{'id': 1, 'task': '获取计算机专业课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '检查两个课表是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}], 'final_output_task_id': 3}, 'tool_selection': {'tool_selections': [{'task_id': 1, 'tool': 'course_scheduler', 'params': {'major': '计算机科学', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取计算机专业的课表。'}, {'task_id': 2, 'tool': 'course_scheduler', 'params': {'major': '电子信息', 'semester': '2023-2024-2'}, 'reason': 'course_scheduler工具专门用于查询指定专业和学期的课程信息，适合获取电子信息专业的课表。'}, {'task_id': 3, 'tool': 'general_assistant', 'params': {'query_type': 'check_schedule_conflict', 'schedule1': '{TASK_1_RESULT.courses}', 'schedule2': '{TASK_2_RESULT.courses}'}, 'reason': 'general_assistant工具可以处理一般问题，适合用于检查两个课表是否有时间冲突。'}]}, 'task_execution': {1: {'status': 'success', 'api_result': {'status': 'success', 'data': {'major': '计算机科学', 'semester': '2023-2024-2', 'courses': [{'id': 1, 'course_id': 'CS101', 'course_name': '计算机导论', 'instructor': '张教授', 'major': '计算机科学', 'semester': '2023-2024-2', 'day_of_week': 1, 'start_time': '08:00:00', 'end_time': '09:40:00', 'classroom': 'A101'}, {'id': 2, 'course_id': 'CS102', 'course_name': '数据结构', 'instructor': '李教授', 'major': '计算机科学', 'semester': '2023-2024-2', 'day_of_week': 2, 'start_time': '10:00:00', 'end_time': '11:40:00', 'classroom': 'A102'}]}}}, 2: {'status': 'success', 'api_result': {'status': 'success', 'data': {'major': '电子信息', 'semester': '2023-2024-2', 'courses': [{'id': 3, 'course_id': 'EE101', 'course_name': '电路原理', 'instructor': '王教授', 'major': '电子信息', 'semester': '2023-2024-2', 'day_of_week': 1, 'start_time': '10:00:00', 'end_time': '11:40:00', 'classroom': 'B101'}, {'id': 4, 'course_id': 'EE102', 'course_name': '数字电路', 'instructor': '刘教授', 'major': '电子信息', 'semester': '2023-2024-2', 'day_of_week': 3, 'start_time': '14:00:00', 'end_time': '15:40:00', 'classroom': 'B102'}]}}}, 3: {'status': 'error', 'error': 'API请求错误: 404 Client Error: Not Found for url: http://127.0.0.1:8000/api/campus/info'}}}
+HTTP Error 405: {"detail":"Method \"GET\" not allowed."}
+HTTP Error 405: {"detail":"Method \"GET\" not allowed."}
+HTTP Error 405: {"detail":"Method \"GET\" not allowed."}
+HTTP Error 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Page not found at /api/academic/clubs/basic_info/</title>
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <style>
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font-family: sans-serif; background:#eee; color:#000; }
+    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; margin-bottom:.4em; }
+    h1 small { font-size:60%; color:#666; font-weight:normal; }
+    table { border:none; border-collapse: collapse; width:100%; }
+    td, th { vertical-align:top; padding:2px 3px; }
+    th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    #info { background:#f6f6f6; }
+    #info ol { margin: 0.5em 4em; }
+    #info ol li { font-family: monospace; }
+    #summary { background: #ffc; }
+    #explanation { background:#eee; border-bottom: 0px none; }
+    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }
+  </style>
+</head>
+<body>
+  <header id="summary">
+    <h1>Page not found <small>(404)</small></h1>
+    
+    <table class="meta">
+      <tr>
+        <th scope="row">Request Method:</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th scope="row">Request URL:</th>
+        <td>http://127.0.0.1:8000/api/academic/clubs/basic_info/</td>
+      </tr>
+      
+    </table>
+  </header>
+
+  <main id="info">
+    
+      <p>
+      Using the URLconf defined in <code>main.urls</code>,
+      Django tried these URL patterns, in this order:
+      </p>
+      <ol>
+        
+          <li>
+            
+              <code>
+                admin/
+                
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/
+                [name='chat']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                upload_pdf/
+                [name='upload_pdf']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/
+                [name='chat_sessions']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/&lt;int:session_id&gt;/messages/
+                [name='session_messages']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/&lt;int:session_id&gt;/documents/
+                [name='session_documents']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                ^media/(?P&lt;path&gt;.*)$
+                
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                login/
+                [name='login']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                logout/
+                [name='logout']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                register/
+                [name='register']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                csrf/
+                [name='csrf']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                preferences/
+                [name='user-preferences']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/$
+                [name='club-list']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-list']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/basic_info/$
+                [name='club-basic-info']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/basic_info\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-basic-info']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/(?P&lt;pk&gt;[^/.]+)/$
+                [name='club-detail']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/(?P&lt;pk&gt;[^/.]+)\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-detail']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                
+                [name='api-root']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                &lt;drf_format_suffix:format&gt;
+                [name='api-root']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                academic/courses
+                [name='course_scheduler']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                ^media/(?P&lt;path&gt;.*)$
+                
+              </code>
+            
+          </li>
+        
+      </ol>
+      <p>
+        
+          The current path, <code>api/academic/clubs/basic_info/</code>,
+        
+        didn’t match any of these.
+      </p>
+    
+  </main>
+
+  <footer id="explanation">
+    <p>
+      You’re seeing this error because you have <code>DEBUG = True</code> in
+      your Django settings file. Change that to <code>False</code>, and Django
+      will display a standard 404 page.
+    </p>
+  </footer>
+</body>
+</html>
+
+HTTP Error 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Page not found at /api/users/preferences/</title>
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <style>
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font-family: sans-serif; background:#eee; color:#000; }
+    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; margin-bottom:.4em; }
+    h1 small { font-size:60%; color:#666; font-weight:normal; }
+    table { border:none; border-collapse: collapse; width:100%; }
+    td, th { vertical-align:top; padding:2px 3px; }
+    th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    #info { background:#f6f6f6; }
+    #info ol { margin: 0.5em 4em; }
+    #info ol li { font-family: monospace; }
+    #summary { background: #ffc; }
+    #explanation { background:#eee; border-bottom: 0px none; }
+    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }
+  </style>
+</head>
+<body>
+  <header id="summary">
+    <h1>Page not found <small>(404)</small></h1>
+    
+    <table class="meta">
+      <tr>
+        <th scope="row">Request Method:</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th scope="row">Request URL:</th>
+        <td>http://127.0.0.1:8000/api/users/preferences/</td>
+      </tr>
+      
+    </table>
+  </header>
+
+  <main id="info">
+    
+      <p>
+      Using the URLconf defined in <code>main.urls</code>,
+      Django tried these URL patterns, in this order:
+      </p>
+      <ol>
+        
+          <li>
+            
+              <code>
+                admin/
+                
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/
+                [name='chat']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                upload_pdf/
+                [name='upload_pdf']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/
+                [name='chat_sessions']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/&lt;int:session_id&gt;/messages/
+                [name='session_messages']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                chat/sessions/&lt;int:session_id&gt;/documents/
+                [name='session_documents']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                ^media/(?P&lt;path&gt;.*)$
+                
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                login/
+                [name='login']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                logout/
+                [name='logout']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                register/
+                [name='register']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                csrf/
+                [name='csrf']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                preferences/
+                [name='user-preferences']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/$
+                [name='club-list']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-list']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/basic_info/$
+                [name='club-basic-info']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/basic_info\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-basic-info']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/(?P&lt;pk&gt;[^/.]+)/$
+                [name='club-detail']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                ^clubs/(?P&lt;pk&gt;[^/.]+)\.(?P&lt;format&gt;[a-z0-9]+)/?$
+                [name='club-detail']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                
+                [name='api-root']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                
+                
+              </code>
+            
+              <code>
+                &lt;drf_format_suffix:format&gt;
+                [name='api-root']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                api/
+                
+              </code>
+            
+              <code>
+                academic/courses
+                [name='course_scheduler']
+              </code>
+            
+          </li>
+        
+          <li>
+            
+              <code>
+                ^media/(?P&lt;path&gt;.*)$
+                
+              </code>
+            
+          </li>
+        
+      </ol>
+      <p>
+        
+          The current path, <code>api/users/preferences/</code>,
+        
+        didn’t match any of these.
+      </p>
+    
+  </main>
+
+  <footer id="explanation">
+    <p>
+      You’re seeing this error because you have <code>DEBUG = True</code> in
+      your Django settings file. Change that to <code>False</code>, and Django
+      will display a standard 404 page.
+    </p>
+  </footer>
+</body>
+</html>
+
+Missing required param query for general_assistant
+Missing required param query for general_assistant
+HTTP Error 400: {"error":"请提供消息内容","required_params":["message"]}
+Unexpected error: not enough values to unpack (expected 2, got 0)
+Unexpected error: not enough values to unpack (expected 2, got 0)

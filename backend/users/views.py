@@ -5,6 +5,10 @@ from rest_framework import status
 from .models import User
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import UserPreferencesSerializer
 
 class LoginView(APIView):
     def post(self, request):
@@ -92,4 +96,11 @@ class RegisterView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 def csrf(request):
-    return JsonResponse({'csrfToken': get_token(request)})        
+    return JsonResponse({'csrfToken': get_token(request)})
+
+
+@api_view(['GET'])
+def get_user_preferences(request):
+    root_user = User.objects.get(username='root')  # 获取 root 用户
+    serializer = UserPreferencesSerializer(root_user)
+    return Response(serializer.data)

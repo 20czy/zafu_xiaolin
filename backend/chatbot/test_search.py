@@ -6,7 +6,7 @@ import logging
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 django.setup()
 
-from chatbot.documentSearch import search_all_documents, search_session_documents
+from backend.chatbot.PDFdocument.documentSearch import search_all_documents, search_session_documents
 from chatbot.models import ChatSession
 
 # 配置日志

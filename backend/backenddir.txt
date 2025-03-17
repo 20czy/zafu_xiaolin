@@ -68,3 +68,66 @@ python manage.py makemigrations
 检查一下递归分割的代码，适当增加一下chunk size
 阅读Agentic Chunking
 优化一下loader
+
+connectLLM 添加温度参数
+LLMcontroller 修改为connectLLM
+
+view连上 LLMContorller
+
+@classmethod
+    async def _generate_final_response(cls, task: Dict[str, Any], api_result: Dict[str, Any]) -> str:
+        """
+        Generate a user-friendly response from the API results of the last task
+        
+        Args:
+            task (Dict[str, Any]): The task dictionary containing at least 'task' and 'id' keys.
+            - 'task': A string describing the user's request.
+            - 'id': A unique identifier for the task.
+        api_result (Dict[str, Any]): The result from the API call, containing the data to be formatted.
+            
+        Returns:
+            A string containing the final, user-friendly response.
+        """
+        
+        # Use LLM to create a natural language response from the API data
+        try:
+            prompt = f"""你是浙江农林大学智能校园助手。请根据以下API返回的数据，生成一个友好、专业的回复。
+
+任务: {task['task']}
+
+API返回数据:
+{json.dumps(api_result, ensure_ascii=False, indent=2)}
+
+请将API数据转化为自然、连贯的回复，避免技术性语言，使用适合学生理解的表达方式。如有表格数据，可以使用表格格式展示。
+"""
+            
+            llm = ChatOpenAI(
+                model="deepseek-chat",
+                openai_api_key=os.getenv("DEEPSEEK_API_KEY"),
+                openai_api_base='https://api.deepseek.com',
+                temperature=0.7
+            )
+            # Log the start of response generation
+            logger.info(f"Generating final response for task {task['id']}")
+            
+           # Asynchronously invoke the LLM with a system message and user prompt
+            response = await llm.ainvoke([
+                {"role": "system", "content": "你是浙江农林大学的专业助手。"},
+                {"role": "user", "content": prompt}
+            ])
+
+            # Log a preview of the generated response (first 100 characters)
+            logger.info(f"Final response generated for task {task['id']}: {response.content[:100]}...")
+
+            return response.content
+            
+        except Exception as e:
+            logger.error(f"Error generating final response: {str(e)}", exc_info=True)
+            # Fallback to raw data return
+            return f"查询结果: {json.dumps(api_result, ensure_ascii=False)}"
+
+聊天记录的可维护性存疑
+生成流式输出的可靠性，异步调用
+
+1. 用户登录信息推荐选课
+2. 社团适合案例

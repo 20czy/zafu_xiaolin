@@ -1,21 +1,21 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .connectLLM import create_llm, task_classification
+from .connectLLM import  LLMService
 from .models import PDFDocument, ChatSession
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .documentProcess import process_pdf_document
-from .documentEmbedding import add_documents_to_faiss
-from .documentSearch import search_all_documents
+from .PDFdocument.documentProcess import process_pdf_document
+from .PDFdocument.documentEmbedding import add_documents_to_faiss
+from .PDFdocument.documentSearch import search_all_documents
 import os
 import logging
 from django.conf import settings
 from .promptGenerator import PromptGenerator
 from django.http import StreamingHttpResponse
-from .connectLLM import create_llm, create_streaming_response, create_system_prompt
+from .connectLLM import  create_streaming_response
 from django.core.cache import cache
-from .documentSearch import search_session_documents
+from .PDFdocument.documentSearch import search_session_documents
 
 MAX_HISTORY_LENGTH = 10  # 可根据需要调整
 # 配置日志
@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 def chat(request):
+    """
+    处理用户的聊天请求，加工用户的信息，检索相关的文档，生成回复
+    """
     try:
         # 获取请求体中的数据
         message = request.data.get('message', '').strip()
@@ -35,8 +38,6 @@ def chat(request):
                 'message': '消息内容和会话ID不能为空'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        chat_history = []
-        
         # 记录请求信息
         logger.info("="*50)
         logger.info("新的聊天请求")
@@ -46,35 +47,7 @@ def chat(request):
         
         try:
             chat_session = ChatSession.objects.get(id=session_id)
-
-            # 从 Redis 缓存获取对话历史
-            cache_key = f'chat_history_{session_id}'
-            cached_history = cache.get(cache_key)
-
-            if cached_history:
-                chat_history = cached_history
-                # 如果历史记录太长只保存最近几条    
-                if len(chat_history) > MAX_HISTORY_LENGTH:
-                    chat_history = chat_history[-MAX_HISTORY_LENGTH:]
-                    # 更新缓存
-                    cache.set(cache_key, chat_history, timeout=3600)
-            else:
-                # 缓存未命中，从数据库重建对话历史
-                logger.info("缓存未命中，从数据库重建对话历史")
-                MAX_HISTORY_MESSAGES = 10  # 可根据需要调整
-                history_messages = chat_session.messages.order_by('created_at')[:MAX_HISTORY_MESSAGES]
-                history_messages = sorted(history_messages, key=lambda x: x.created_at)
-
-                chat_history = []
-                for msg in history_messages:
-                    role = "user" if msg.is_user else "assistant"
-                    # 限制消息内容长度为1000字符
-                    # content = msg.content[:1000] if len(msg.content) > 1000 else msg.content
-                    chat_history.append({"role": role, "content": msg.content})
-
-                logger.info(f"从数据库重建对话历史，共 {len(chat_history)} 条消息")
-                # 存入缓存，设置过期时间为1小时
-                cache.set(cache_key, chat_history, timeout=3600)
+            chat_history = ChatHistoryManager.get_chat_history(session_id)
                      
             # 添加当前用户消息
             chat_session.messages.create(
@@ -86,124 +59,264 @@ def chat(request):
             chat_history.append({"role": "user", "content": message})
             
             try:
-                # 创建LLM实例
-                llm = create_llm(model_name='chatglm', stream=True)
-                
-                def response_generator():
-                    nonlocal chat_history
-                    full_response = ""
-                    try:
-                        # 构建系统提示词
-                        system_prompt = create_system_prompt(llm, message, session_id)
-                        # 将历史记录传入对话生成函数
-                        for chunk in create_streaming_response(llm, message, chat_history, system_prompt):
-                            if chunk:
-                                full_response += chunk
-                                yield f"data: {json.dumps({'content': chunk})}\n\n"
-                    finally:
-                        if full_response:
-                            chat_session.messages.create(
-                                content=full_response,
-                                is_user=False
-                            )
-                            
-                            if chat_session.messages.count() <= 2:
-                                chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
-                                chat_session.save()
-
-                            # 更新缓存
-                            chat_history.append({"role": "assistant", "content": full_response})
-                            if len(chat_history) > MAX_HISTORY_LENGTH:
-                                chat_history = chat_history[-MAX_HISTORY_LENGTH:]
-                            cache.set(f'chat_history_{session_id}', chat_history, timeout=3600)
-
-                response = StreamingHttpResponse(
-                    response_generator(),
-                    content_type='text/event-stream'
-                )
-                response['Cache-Control'] = 'no-cache'
-                response['X-Accel-Buffering'] = 'no'
-                return response
-                    
+                return generate_streaming_response(message, chat_session, chat_history)
             except Exception as e:
                 logger.warning(f"流式响应失败，切换到普通对话模式: {str(e)}")
-                
-                try:
-                    # 普通对话模式也传入历史记录
-                    response = llm.invoke(message, chat_history)
-                    response_content = getattr(response, 'content', str(response))
-                    
-                    chat_session.messages.create(
-                        content=response_content,
-                        is_user=False
-                    )
+                return generate_standard_response(message, chat_session, chat_history)
 
-                     # 更新缓存
-                    chat_history.append({"role": "assistant", "content": response_content})
-                    if len(chat_history) > MAX_HISTORY_LENGTH:
-                        chat_history = chat_history[-MAX_HISTORY_LENGTH:]
-                    cache.set(cache_key, chat_history, timeout=3600)
-                    
-                    return Response({
-                        'status': 'success',
-                        'data': {
-                            'content': response_content
-                        }
-                    })
-                except Exception as e:
-                    logger.error(f"对话失败: {str(e)}")
-                    return Response({
-                        'status': 'error',
-                        'message': '对话生成失败，请稍后重试'
-                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    
         except ChatSession.DoesNotExist:
             return Response({
                 'status': 'error',
                 'message': '会话不存在'
-            }, status=status.HTTP_404_NOT_FOUND)
-            
+            }, status=status.HTTP_404_NOT_FOUND)   
+
     except Exception as e:
-        logger.error(f"未预期的错误: {str(e)}")
+        logger.error(f"未预期的错误: {str(e)}", exc_info=True)
         return Response({
             'status': 'error',
             'message': '服务器内部错误'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)            
     
-
-# 获取RAG上下文的函数
-def get_rag_context(query, session_id, max_length=8000):
+def generate_streaming_response(message, chat_session, chat_history):
     """
-    根据查询获取相关RAG上下文
+    Generate a streaming response using the LLM
+    
+    Args:
+        message: User message
+        chat_session: Database chat session object
+        chat_history: List of chat history messages
+        
+    Returns:
+        StreamingHttpResponse for SSE delivery
+    """
+    def response_generator():
+        full_response = ""
+        try:
+            # Use the improved create_streaming_response function
+            for chunk in create_streaming_response(message, chat_history, chat_session.id):
+                if chunk:
+                    full_response += chunk
+                    yield f"data: {json.dumps({'content': chunk})}\n\n"
+        finally:
+            if full_response:
+                # Save response to database
+                chat_session.messages.create(
+                    content=full_response,
+                    is_user=False
+                )
+                
+                # Set session title if this is the first message
+                if chat_session.messages.count() <= 2:
+                    chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
+                    chat_session.save()
+
+                # Update chat history in cache
+                ChatHistoryManager.update_chat_history(
+                    session_id=chat_session.id,
+                    role="assistant",
+                    content=full_response,
+                    chat_history=chat_history
+                )
+
+    response = StreamingHttpResponse(
+        response_generator(),
+        content_type='text/event-stream'
+    )
+    response['Cache-Control'] = 'no-cache'
+    response['X-Accel-Buffering'] = 'no'
+    return response
+    
+def generate_standard_response(message, chat_session, chat_history):
+    """
+    Generate a standard (non-streaming) response using the LLM
+    
+    Args:
+        message: User message
+        chat_session: Database chat session object
+        chat_history: List of chat history messages
+        
+    Returns:
+        Response object with generated content
     """
     try:
-        need_rag, doc_type, query = task_classification(query)
-        if not need_rag:
-            return ""
-            
-        # 根据文档类型获取相关文档
-        if doc_type == 'both':
-            # 同时查询招标书和应标书
-            invitation_docs = search_session_documents(query, session_id, document_type='invitation')
-            offer_docs = search_session_documents(query, session_id, document_type='offer')
-            relevant_docs = invitation_docs + offer_docs
-        else:
-            # 查询指定类型的文档
-            relevant_docs = search_session_documents(query, session_id, document_type=doc_type)
+        # Create LLM instance
+        llm = LLMService.get_llm(model_name='deepseek-chat', stream=False)
         
-        # 合并并裁剪上下文
-        context = ""
-        for doc in relevant_docs:
-            if len(context) + len(doc['content']) <= max_length:
-                context += f"[{doc['document_title']}] " + doc['content'] + "\n\n"
-            else:
-                break
-                
-        return context
+        # 使用基础的系统提示，不再使用PromptManager
+        system_prompt = """你是浙江农林大学的智能校园助手，负责回答学生和教师关于校园信息、学术资源、教学服务等方面的问题。
+        请提供准确、有帮助的回答，语气友好专业。如果你不确定某个问题的答案，请诚实地表明，并建议用户通过官方渠道获取准确信息。
+        回答应简洁明了，条理清晰，必要时可使用列表或表格格式提高可读性。"""
         
+        # Build messages with system prompt
+        messages = [{"role": "system", "content": system_prompt}]
+        messages.extend(chat_history)
+        
+        # Get response from LLM
+        response = llm.invoke(messages)
+        response_content = getattr(response, 'content', str(response))
+        
+        # Save to database
+        chat_session.messages.create(
+            content=response_content,
+            is_user=False
+        )
+
+        # Update chat history
+        ChatHistoryManager.update_chat_history(
+            session_id=chat_session.id,
+            role="assistant",
+            content=response_content,
+            chat_history=chat_history
+        )
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'content': response_content
+            }
+        })
     except Exception as e:
-        logger.error(f"获取RAG上下文失败: {str(e)}")
-        return ""
+        logger.error(f"对话失败: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': '对话生成失败，请稍后重试'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+class ChatHistoryManager:
+    """
+    聊天历史管理器，用于管理和缓存聊天历史
+    """
+
+    # 保存的历史记录最长的长度
+    MAX_HISTORY_LENGTH = 10
+
+    @classmethod
+    def get_chat_history(cls, session_id):
+        """
+        Get chat history from cache or rebuild from database
+        
+        Args:
+            session_id: Session ID to retrieve history for
+            
+        Returns:
+            List of chat messages in the format [{"role": "user", "content": "..."}]
+        """
+        # Try to get from cache first
+        cache_key = f'chat_history_{session_id}'
+        cached_history = cache.get(cache_key)
+
+        if cached_history:
+            # Trim history if too long
+            if len(cached_history) > cls.MAX_HISTORY_LENGTH:
+                cached_history = cached_history[-cls.MAX_HISTORY_LENGTH:]
+                cache.set(cache_key, cached_history, timeout=3600)
+            return cached_history
+        
+        # Cache miss - rebuild from database
+        logger.info("缓存未命中，从数据库重建对话历史")
+        try:
+            chat_session = ChatSession.objects.get(id=session_id)
+            
+            # Get latest messages
+            history_messages = chat_session.messages.order_by('created_at')[:cls.MAX_HISTORY_LENGTH]
+            history_messages = sorted(history_messages, key=lambda x: x.created_at)
+
+            # Format messages for LLM
+            chat_history = []
+            for msg in history_messages:
+                role = "user" if msg.is_user else "assistant"
+                chat_history.append({"role": role, "content": msg.content})
+
+            logger.info(f"从数据库重建对话历史，共 {len(chat_history)} 条消息")
+            
+            # Store in cache for future use
+            cache.set(cache_key, chat_history, timeout=3600)
+            return chat_history
+            
+        except (ChatSession.DoesNotExist, Exception) as e:
+            logger.error(f"重建对话历史失败: {str(e)}")
+            return []
+        
+    @classmethod
+    def update_chat_history(cls, session_id, role, content, chat_history=None):
+        """
+        Update chat history in cache
+        
+        Args:
+            session_id: Session ID
+            role: Message role ("user" or "assistant")
+            content: Message content
+            chat_history: Optional existing chat history to update
+        """
+        cache_key = f'chat_history_{session_id}'
+        
+        if chat_history is None:
+            chat_history = cls.get_chat_history(session_id)
+        
+        # Add new message
+        chat_history.append({"role": role, "content": content})
+        
+        # Trim if necessary
+        if len(chat_history) > cls.MAX_HISTORY_LENGTH:
+            chat_history = chat_history[-cls.MAX_HISTORY_LENGTH:]
+        
+        # Update cache
+        cache.set(cache_key, chat_history, timeout=3600)
+        return chat_history
+    
+
+# # 获取RAG上下文的函数
+# def get_rag_context(query, session_id, max_length=5000):
+#     """
+#     根据查询获取相关RAG上下文
+
+#     Args:
+#         query: 查询文本
+#         session_id: 会话ID
+#         max_length: 上下文最大长度，默认为5000
+
+#     Returns:
+#         str: 上下文文本
+#     """
+#     try:
+#         need_rag, doc_type, optimized_query = TaskClassifier.classify(query)
+
+#         if not need_rag:
+#             return ""
+            
+#         # 根据文档类型获取相关文档
+#         if doc_type == 'both':
+#             # 同时查询招标书和应标书
+#             invitation_docs = search_session_documents(optimized_query, session_id, document_type='invitation')
+#             offer_docs = search_session_documents(optimized_query, session_id, document_type='offer')
+#             relevant_docs = invitation_docs + offer_docs
+#         else:
+#             # 查询指定类型的文档
+#             relevant_docs = search_session_documents(optimized_query, session_id, document_type=doc_type)
+        
+#         context_parts = []
+#         current_length = 0
+
+#         # 合并并裁剪上下文
+#         for doc in relevant_docs:
+#             doc_text = f"[{doc['document_title']}] {doc['content']}\n\n"
+#             doc_length = len(doc_text)
+
+#             if current_length + doc_length <= max_length:
+#                 context_parts.append(doc_text)
+#                 current_length += doc_length
+#             else:
+#                 # If adding whole document exceeds length, add partial document if possible
+#                 remaining_length = max_length - current_length
+#                 if remaining_length > 100:  # Only add if we can include meaningful content
+#                     context_parts.append(f"[{doc['document_title']}] {doc['content'][:remaining_length-50]}...\n\n")
+#                 break
+                
+#         return "".join(context_parts)
+        
+#     except Exception as e:
+#         logger.error(f"获取RAG上下文失败: {str(e)}")
+#         return ""
     
 # 上传pdf文件
 @api_view(['POST'])

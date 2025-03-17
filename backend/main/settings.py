@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "chatbot",
     "users",
+    "rest_framework",
+    "academic",
 ]
 
 MIDDLEWARE = [

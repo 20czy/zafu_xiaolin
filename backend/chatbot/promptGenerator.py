@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import Dict
-from .documentSearch import search_document, search_all_documents
+from .PDFdocument.documentSearch import search_document, search_all_documents
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,9 +32,15 @@ class PromptGenerator:
     ) -> str:
         """生成最终提示"""
         template = self.load_template(template_name)
+
+        if not slot_data:
+            return template
         
         try:
-            # **解包字典，插入对应的占位符
+            # 使用字典解包（**）将 slot_data 字典中的键值对展开，
+            # 并将其作为参数传递给 template.format 方法，
+            # 该方法会将模板中的占位符({})替换为 slot_data 中对应的值，
+            # 最后返回填充好数据的最终提示字符串
             return template.format(**slot_data)
         except KeyError as e:
             raise ValueError(f"Missing required slot data: {e}")

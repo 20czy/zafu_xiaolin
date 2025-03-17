@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import ChatWindowShadcn from './components/ChatWindowShadcn'
-import FileUploader from "./components/FileUploader";
 import Navbar from "./components/Navbar";
 
 export default function Home() {
@@ -13,16 +12,6 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 flex relative"> {/* 添加 relative 定位 */}
-        {/* 文件上传区域 */}
-        <div className="flex-1 flex items-start justify-center gap-8 p-8">
-          <div className="w-1/2 p-4 border-r">
-            <FileUploader side="left" sessionId={activeSessionId} document_type="invitation"/>
-          </div>
-          <div className="w-1/2 p-4">
-            <FileUploader side="right" sessionId={activeSessionId} document_type="offer"/>
-          </div>
-        </div>
-        
         {/* 聊天窗口 - 添加绝对定位和 z-index */}
         <div className="absolute top-0 right-0 z-50">
           <ChatWindowShadcn

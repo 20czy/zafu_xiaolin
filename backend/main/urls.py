@@ -24,4 +24,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include('chatbot.urls')),
     path('api/', include('users.urls')),  # 添加用户认证 URLs
+    path('api/', include('academic.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

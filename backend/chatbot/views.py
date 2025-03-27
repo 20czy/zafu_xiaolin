@@ -1,6 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .connectLLM import  LLMService
 from .models import PDFDocument, ChatSession
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -13,9 +12,12 @@ import logging
 from django.conf import settings
 from .promptGenerator import PromptGenerator
 from django.http import StreamingHttpResponse
-from .connectLLM import  create_streaming_response
+from .agent.ResponseGenerator import ResponseGenerator
 from django.core.cache import cache
 from .PDFdocument.documentSearch import search_session_documents
+from.LLMService import LLMService
+from .agent.LLMController import get_process_info
+
 
 MAX_HISTORY_LENGTH = 10  # 可根据需要调整
 # 配置日志
@@ -79,7 +81,7 @@ def chat(request):
     
 def generate_streaming_response(message, chat_session, chat_history):
     """
-    Generate a streaming response using the LLM
+    Generate a streaming response and persist it.
     
     Args:
         message: User message
@@ -89,11 +91,19 @@ def generate_streaming_response(message, chat_session, chat_history):
     Returns:
         StreamingHttpResponse for SSE delivery
     """
-    def response_generator():
+            
+    def stream_response():
         full_response = ""
         try:
             # Use the improved create_streaming_response function
-            for chunk in create_streaming_response(message, chat_history, chat_session.id):
+            process_info_generator = get_process_info(message)
+            try:
+                while True:
+                    event = next(process_info_generator)
+                    yield f"data: {json.dumps(event)}\n\n"
+            except StopIteration as e:
+                process_info = e.value  # Get the returned process_info
+            for chunk in ResponseGenerator.create_streaming_response(message, process_info, chat_history):
                 if chunk:
                     full_response += chunk
                     yield f"data: {json.dumps({'content': chunk})}\n\n"
@@ -119,7 +129,7 @@ def generate_streaming_response(message, chat_session, chat_history):
                 )
 
     response = StreamingHttpResponse(
-        response_generator(),
+        stream_response(),
         content_type='text/event-stream'
     )
     response['Cache-Control'] = 'no-cache'

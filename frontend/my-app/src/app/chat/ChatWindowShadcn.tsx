@@ -129,6 +129,10 @@ export default function ChatWindowShadcn({
   // 添加状态来跟踪当前正在流式接收的消息
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [processingSteps, setProcessingSteps] = useState<any[]>([]);
+  const [taskPlan, setTaskPlan] = useState([]);
+  const [toolSelections, setToolSelections] = useState({});
+  const [taskResults, setTaskResults] = useState({});
 
   const handleSend = async () => {
     if (!input.trim() || !sessionId) return;
@@ -171,9 +175,29 @@ export default function ChatWindowShadcn({
           if (line.startsWith("data: ")) {
             try {
               const data = JSON.parse(line.slice(5));
-              accumulatedMessage += data.content;
-              // 更新流式消息状态以实现打字机效果
-              setStreamingMessage(accumulatedMessage);
+
+              // 根据事件类型处理不同的数据
+              if (data.type === "step") {
+                // 更新处理步骤信息
+                setProcessingSteps(prev => [...prev, data.content]);
+              } else if (data.type === "data") {
+                // 处理数据信息
+                if (data.subtype === "task_plan") {
+                  setTaskPlan(data.content);
+                } else if (data.subtype === "tool_selection") {
+                  setToolSelections(data.content);
+                } else if (data.subtype === "task_result") {
+                  setTaskResults((prev) => ({
+                    ...prev,
+                    [data.content.task_id]: data.content.result,
+                  }));
+                }
+              } else {
+                // 处理常规的内容响应
+                accumulatedMessage += data.content || "";
+                // 更新流式消息状态以实现打字机效果
+                setStreamingMessage(accumulatedMessage);
+              }
             } catch (e) {
               console.error("解析SSE数据失败:", e);
             }
@@ -188,6 +212,13 @@ export default function ChatWindowShadcn({
       ]);
       setStreamingMessage(""); // 清空流式消息
       setIsStreaming(false);
+
+      // // 重置处理状态
+      // setProcessingSteps([]);
+      // setTaskPlan([]);
+      // setToolSelections({});
+      // setTaskResults({});
+
     } catch (error) {
       console.error("发送消息失败:", error);
       setMessages((prev) => [
@@ -273,7 +304,6 @@ export default function ChatWindowShadcn({
     }
   };
 
-  // 修改 return 部分
   return (
     <div className="h-screen w-full flex p-4">
       <ResizablePanelGroup
@@ -284,7 +314,7 @@ export default function ChatWindowShadcn({
           <Card className="h-full flex flex-col">
             <CardHeader className="p-4 flex flex-row justify-between items-center">
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold">ZAFUgpt</h2>
+                <h2 className="font-extrabold text-lg">农林小林</h2>
                 <Avatar className="pl-0">
                   <AvatarImage
                     src="https://www.zafu.edu.cn/__local/E/17/4D/EADA754B779AD05D115132A676B_4504F299_11407.jpg"
@@ -312,21 +342,24 @@ export default function ChatWindowShadcn({
               onOpenChange={setIsHistoryOpen}
             />
 
-            <CardContent className="p-0 flex-1 overflow-auto">
+            <CardContent className="p-0 flex-1 overflow-hidden">
               <MessageList
                 messages={messages}
                 streamingMessage={isStreaming ? streamingMessage : null}
+                processingSteps={processingSteps}
+                taskPlan={taskPlan}
+                toolSelections={toolSelections}
+                taskResults={taskResults}
+                isProcessing={isStreaming}
               />
             </CardContent>
 
-            <CardFooter className="pl-4 pr-4 pt-4">
-              
+            <CardFooter className="pl-2 pr-2 pb-3">
               <ChatInput
                 input={input}
                 setInput={setInput}
                 handleSend={handleSend}
               />
-              
             </CardFooter>
           </Card>
         </ResizablePanel>
@@ -342,6 +375,7 @@ export default function ChatWindowShadcn({
 // HeaderActions.tsx
 import { Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { set } from "react-hook-form";
 
 const HeaderActions = ({
   onNewSession,

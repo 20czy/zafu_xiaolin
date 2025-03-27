@@ -1,0 +1,1225 @@
+2025-03-20 14:44:43,629 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-20 14:44:43,629 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 帮我推荐一下适合我的社团
+2025-03-20 14:44:43,629 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-20 14:44:43,629 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-20 14:44:43,654 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-20 14:45:01,860 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-20 14:45:01,860 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-20 14:45:01,860 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 4 个任务
+2025-03-20 14:45:01,860 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取用户的兴趣和偏好",
+      "input": "用户提供的兴趣和偏好信息",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取所有社团的详细信息",
+      "input": "校园社团数据库",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "根据用户的兴趣和偏好匹配社团",
+      "input": "任务1和任务2的结果",
+      "depends_on": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "task": "生成推荐社团列表",
+      "input": "任务3的结果",
+      "depends_on": [
+        3
+      ]
+    }
+  ]
+}
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "获取用户的兴趣和偏好", "input": "用户提供的兴趣和偏好信息", "depends_on": []}, {"id": 2, "task": "获取所有社团的详细信息", "input": "校园社团数据库", "depends_on": []}, {"id": 3, "task": "根据用户的兴趣和偏好匹配社团", "input": "任务1和任务2的结果", "depends_on": [1, 2]}, {"id": 4, "task": "生成推荐社团列表", "input": "任务3的结果", "depends_on": [3]}]}
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2602 字符
+2025-03-20 14:45:01,861 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-20 14:45:01,888 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-20 14:45:19,322 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 4 个工具选择
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "user_preferences",
+      "params": {},
+      "reason": "该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。"
+    },
+    {
+      "task_id": 2,
+      "tool": "club_info",
+      "params": {},
+      "reason": "该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "message": "根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团"
+      },
+      "reason": "该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。"
+    },
+    {
+      "task_id": 4,
+      "tool": "general_assistant",
+      "params": {
+        "message": "生成推荐社团列表{TASK_3_RESULT}"
+      },
+      "reason": "该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。"
+    }
+  ]
+}
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: user_preferences, 原因: 该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 任务 2 选择了工具: club_info, 原因: 该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 任务 3 选择了工具: general_assistant, 原因: 该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。
+2025-03-20 14:45:19,323 - chatbot.agent.ToolSelector - DEBUG - 任务 4 选择了工具: general_assistant, 原因: 该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。
+2025-03-20 14:45:19,323 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-20 14:45:19,324 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'user_preferences', 'params': {}, 'reason': '该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。'}, 2: {'task_id': 2, 'tool': 'club_info', 'params': {}, 'reason': '该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。'}, 3: {'task_id': 3, 'tool': 'general_assistant', 'params': {'message': '根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团'}, 'reason': '该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。'}, 4: {'task_id': 4, 'tool': 'general_assistant', 'params': {'message': '生成推荐社团列表{TASK_3_RESULT}'}, 'reason': '该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。'}}
+2025-03-20 14:45:19,324 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'user_preferences', 'params': {}, 'reason': '该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。'}
+2025-03-20 14:45:19,324 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 获取用户的兴趣和偏好, 使用工具: user_preferences
+2025-03-20 14:45:19,324 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-20 14:45:19,324 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-20 14:45:19,332 - chatbot.agent.LLMController - INFO - Selected tool for task 2: {'task_id': 2, 'tool': 'club_info', 'params': {}, 'reason': '该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。'}
+2025-03-20 14:45:19,332 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 2, 任务描述: 获取所有社团的详细信息, 使用工具: club_info
+2025-03-20 14:45:19,332 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 初始参数: {}
+2025-03-20 14:45:19,332 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 最终参数: {}
+2025-03-20 14:45:19,336 - chatbot.agent.LLMController - INFO - Selected tool for task 3: {'task_id': 3, 'tool': 'general_assistant', 'params': {'message': '根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团'}, 'reason': '该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。'}
+2025-03-20 14:45:19,336 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 3, 任务描述: 根据用户的兴趣和偏好匹配社团, 使用工具: general_assistant
+2025-03-20 14:45:19,336 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 初始参数: {'message': '根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团'}
+2025-03-20 14:45:19,336 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 参数 message 包含占位符: ['{TASK_1_RESULT}', '{TASK_2_RESULT}']
+2025-03-20 14:45:19,336 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 最终参数: {'message': "根据用户兴趣{TASK_1_RESULT}和社团信息{'status': 'success', 'data': [{'club_name': '摄影协会', 'description': '致力于培养学生的摄影技能和艺术鉴赏能力'}, {'club_name': '编程俱乐部', 'description': '培养编程兴趣，提升技术能力'}, {'club_name': '街舞社', 'description': '探索现代舞蹈艺术，培养舞蹈爱好者'}]}匹配社团"}
+2025-03-20 14:45:26,094 - chatbot.agent.LLMController - INFO - Selected tool for task 4: {'task_id': 4, 'tool': 'general_assistant', 'params': {'message': '生成推荐社团列表{TASK_3_RESULT}'}, 'reason': '该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。'}
+2025-03-20 14:45:26,094 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 4, 任务描述: 生成推荐社团列表, 使用工具: general_assistant
+2025-03-20 14:45:26,094 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 初始参数: {'message': '生成推荐社团列表{TASK_3_RESULT}'}
+2025-03-20 14:45:26,095 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 参数 message 包含占位符: ['{TASK_3_RESULT}']
+2025-03-20 14:45:26,095 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 最终参数: {'message': "生成推荐社团列表{'status': 'success', 'data': {'response': '根据用户兴趣{TASK_1_RESULT}（这里假设用户的兴趣是“艺术”）和提供的社团信息，以下是与用户兴趣相匹配的社团：\\n\\n1. 摄影协会\\n   - 描述：致力于培养学生的摄影技能和艺术鉴赏能力\\n   - 匹配理由：摄影是一种艺术形式，与用户对艺术的兴趣相符合。\\n\\n2. 街舞社\\n   - 描述：探索现代舞蹈艺术，培养舞蹈爱好者\\n   - 匹配理由：街舞也是一种现代舞蹈艺术，与用户对艺术的兴趣相吻合。\\n\\n编程俱乐部虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的，因此不推荐作为匹配社团。'}}"}
+2025-03-20 14:45:40,470 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-20 14:45:40,471 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "帮我推荐一下适合我的社团", "task_planning": {"tasks": [{"id": 1, "task": "获取用户的兴趣和偏好", "input": "用户提供的兴趣和偏好信息", "depends_on": []}, {"id": 2, "task": "获取所有社团的详细信息", "input": "校园社团数据库", "depends_on": []}, {"id": 3, "task": "根据用户的兴趣和偏好匹配社团", "input": "任务1和任务2的结果", "depends_on": [1, 2]}, {"id": 4, "task": "生成推荐社团列表", "input": "任务3的结果", "depends_on": [3]}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "user_preferences", "params": {}, "reason": "该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。"}, {"task_id": 2, "tool": "club_info", "params": {}, "reason": "该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。"}, {"task_id": 3, "tool": "general_assistant", "params": {"message": "根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团"}, "reason": "该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。"}, {"task_id": 4, "tool": "general_assistant", "params": {"message": "生成推荐社团列表{TASK_3_RESULT}"}, "reason": "该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"interests": "爱好钢琴，喜欢阅读，喜欢投资，喜欢编程", "bio": "大家好，我是来自诸暨的陈泽阳，我的mbti是intj"}}, "2": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}, "3": {"status": "success", "api_result": {"status": "success", "data": {"response": "根据用户兴趣{TASK_1_RESULT}（这里假设用户的兴趣是“艺术”）和提供的社团信息，以下是与用户兴趣相匹配的社团：\n\n1. 摄影协会\n   - 描述：致力于培养学生的摄影技能和艺术鉴赏能力\n   - 匹配理由：摄影是一种艺术形式，与用户对艺术的兴趣相符合。\n\n2. 街舞社\n   - 描述：探索现代舞蹈艺术，培养舞蹈爱好者\n   - 匹配理由：街舞也是一种现代舞蹈艺术，与用户对艺术的兴趣相吻合。\n\n编程俱乐部虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的，因此不推荐作为匹配社团。"}}}, "4": {"status": "success", "api_result": {"status": "success", "data": {"response": "```python\n# 假设用户的兴趣是“艺术”，下面是一个生成推荐社团列表的示例代码\n\ndef recommend_clubs(interest):\n    # 社团信息字典\n    clubs_info = {\n        '摄影协会': {\n            'description': '致力于培养学生的摄影技能和艺术鉴赏能力',\n            'match_reason': '摄影是一种艺术形式，与用户对艺术的兴趣相符合。'\n        },\n        '街舞社': {\n            'description': '探索现代舞蹈艺术，培养舞蹈爱好者',\n            'match_reason': '街舞也是一种现代舞蹈艺术，与用户对艺术的兴趣相吻合。'\n        },\n        '编程俱乐部': {\n            'description': '提升技术能力',\n            'match_reason': '虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的。'\n        }\n    }\n    \n    # 根据兴趣推荐社团\n    recommended_clubs = {}\n    for club, info in clubs_info.items():\n        if '艺术' in club or '艺术' in info['match_reason']:\n            recommended_clubs[club] = {\n                'description': info['description'],\n                'match_reason': info['match_reason']\n            }\n    \n    # 构建推荐社团列表的响应\n    response = '根据用户兴趣“艺术”和提供的社团信息，以下是与用户兴趣相匹配的社团：\\n\\n'\n    for club, info in recommended_clubs.items():\n        response += f\"1. {club}\\n   - 描述：{info['description']}\\n   - 匹配理由：{info['match_reason']}\\n\\n\"\n    \n    # 添加编程俱乐部的不匹配理由\n    if '编程俱乐部' in clubs_info:\n        response += f\"编程俱乐部虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的，因此不推荐作为匹配社团。\\n\"\n    \n    return {\n        'status': 'success',\n        'data': {\n            'response': response\n        }\n    }\n\n# 假设用户兴趣为“艺术”，调用函数\nuser_interest = '艺术'\nrecommendation = recommend_clubs(user_interest)\nprint(recommendation['data']['response'])\n```"}}}}}
+2025-03-20 14:45:40,472 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 帮我推荐一下适合我的社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "获取用户的兴趣和偏好",\n      "input": "用户提供的兴趣和偏好信息",\n      "depends_on": []\n    },\n    {\n      "id": 2,\n      "task": "获取所有社团的详细信息",\n      "input": "校园社团数据库",\n      "depends_on": []\n    },\n    {\n      "id": 3,\n      "task": "根据用户的兴趣和偏好匹配社团",\n      "input": "任务1和任务2的结果",\n      "depends_on": [\n        1,\n        2\n      ]\n    },\n    {\n      "id": 4,\n      "task": "生成推荐社团列表",\n      "input": "任务3的结果",\n      "depends_on": [\n        3\n      ]\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "user_preferences",\n      "params": {},\n      "reason": "该工具专门用于查询用户的兴趣和偏好信息，适合获取用户的个人偏好。"\n    },\n    {\n      "task_id": 2,\n      "tool": "club_info",\n      "params": {},\n      "reason": "该工具用于查询校园社团的详细信息，适合获取所有社团的基本信息。"\n    },\n    {\n      "task_id": 3,\n      "tool": "general_assistant",\n      "params": {\n        "message": "根据用户兴趣{TASK_1_RESULT}和社团信息{TASK_2_RESULT}匹配社团"\n      },\n      "reason": "该工具可以处理复杂的匹配逻辑，适合根据用户兴趣和社团信息进行匹配。"\n    },\n    {\n      "task_id": 4,\n      "tool": "general_assistant",\n      "params": {\n        "message": "生成推荐社团列表{TASK_3_RESULT}"\n      },\n      "reason": "该工具可以生成推荐列表，适合根据匹配结果生成推荐社团列表。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "interests": "爱好钢琴，喜欢阅读，喜欢投资，喜欢编程",\n      "bio": "大家好，我是来自诸暨的陈泽阳，我的mbti是intj"\n    }\n  },\n  "2": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  },\n  "3": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "response": "根据用户兴趣{TASK_1_RESULT}（这里假设用户的兴趣是“艺术”）和提供的社团信息，以下是与用户兴趣相匹配的社团：\\n\\n1. 摄影协会\\n   - 描述：致力于培养学生的摄影技能和艺术鉴赏能力\\n   - 匹配理由：摄影是一种艺术形式，与用户对艺术的兴趣相符合。\\n\\n2. 街舞社\\n   - 描述：探索现代舞蹈艺术，培养舞蹈爱好者\\n   - 匹配理由：街舞也是一种现代舞蹈艺术，与用户对艺术的兴趣相吻合。\\n\\n编程俱乐部虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的，因此不推荐作为匹配社团。"\n      }\n    }\n  },\n  "4": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "response": "```python\\n# 假设用户的兴趣是“艺术”，下面是一个生成推荐社团列表的示例代码\\n\\ndef recommend_clubs(interest):\\n    # 社团信息字典\\n    clubs_info = {\\n        \'摄影协会\': {\\n            \'description\': \'致力于培养学生的摄影技能和艺术鉴赏能力\',\\n            \'match_reason\': \'摄影是一种艺术形式，与用户对艺术的兴趣相符合。\'\\n        },\\n        \'街舞社\': {\\n            \'description\': \'探索现代舞蹈艺术，培养舞蹈爱好者\',\\n            \'match_reason\': \'街舞也是一种现代舞蹈艺术，与用户对艺术的兴趣相吻合。\'\\n        },\\n        \'编程俱乐部\': {\\n            \'description\': \'提升技术能力\',\\n            \'match_reason\': \'虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的。\'\\n        }\\n    }\\n    \\n    # 根据兴趣推荐社团\\n    recommended_clubs = {}\\n    for club, info in clubs_info.items():\\n        if \'艺术\' in club or \'艺术\' in info[\'match_reason\']:\\n            recommended_clubs[club] = {\\n                \'description\': info[\'description\'],\\n                \'match_reason\': info[\'match_reason\']\\n            }\\n    \\n    # 构建推荐社团列表的响应\\n    response = \'根据用户兴趣“艺术”和提供的社团信息，以下是与用户兴趣相匹配的社团：\\\\n\\\\n\'\\n    for club, info in recommended_clubs.items():\\n        response += f\\"1. {club}\\\\n   - 描述：{info[\'description\']}\\\\n   - 匹配理由：{info[\'match_reason\']}\\\\n\\\\n\\"\\n    \\n    # 添加编程俱乐部的不匹配理由\\n    if \'编程俱乐部\' in clubs_info:\\n        response += f\\"编程俱乐部虽然能够提升技术能力，但它与用户对艺术的兴趣不是直接相关的，因此不推荐作为匹配社团。\\\\n\\"\\n    \\n    return {\\n        \'status\': \'success\',\\n        \'data\': {\\n            \'response\': response\\n        }\\n    }\\n\\n# 假设用户兴趣为“艺术”，调用函数\\nuser_interest = \'艺术\'\\nrecommendation = recommend_clubs(user_interest)\\nprint(recommendation[\'data\'][\'response\'])\\n```"\n      }\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '帮我推荐一下适合我的社团'}, {'role': 'user', 'content': '帮我推荐一下适合我的社团'}]
+2025-03-20 14:45:40,473 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-20 14:50:00,931 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-20 14:50:00,932 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-20 14:50:00,932 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-20 14:50:00,932 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-20 14:50:00,932 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-20 14:50:11,041 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-20 14:50:11,043 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-20 14:50:11,043 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-20 14:50:11,044 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-20 14:50:11,044 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-20 14:50:11,045 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-20 14:50:21,773 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-20 14:50:21,774 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-20 14:50:21,774 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-20 14:50:21,774 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-20 14:50:21,774 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-20 14:50:21,774 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-20 14:50:21,774 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-20 14:50:21,774 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-20 14:50:21,774 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-20 14:50:21,774 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-20 14:50:21,774 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-20 14:50:21,774 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-20 14:50:21,782 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-20 14:50:21,782 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-20 14:50:21,782 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-20 14:50:21,782 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 03:05:58,594 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 03:05:58,595 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 03:05:58,595 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 03:05:58,595 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 03:05:58,648 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 03:06:05,816 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 03:06:05,816 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 03:06:05,816 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 03:06:05,817 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-23 03:06:05,817 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 03:06:05,853 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-23 03:06:15,136 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-23 03:06:15,137 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 03:06:15,138 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-23 05:45:34,646 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 05:45:34,646 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 05:45:34,646 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 05:45:34,646 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 05:45:34,691 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 05:45:43,393 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 05:45:43,393 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 05:45:43,393 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 05:45:43,393 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团的列表",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2231 字符
+2025-03-23 05:45:43,394 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 05:45:43,418 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 05:45:51,616 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 05:45:51,617 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 05:45:51,617 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 05:45:51,617 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 05:45:51,618 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"
+    }
+  ]
+}
+2025-03-23 05:45:51,618 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询所有社团的列表
+2025-03-23 05:45:51,618 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 05:45:51,620 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询所有社团的列表'}}
+2025-03-23 05:45:51,620 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询所有社团的列表'}
+2025-03-23 05:45:51,621 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团的列表, 使用工具: club_info
+2025-03-23 05:45:51,621 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 05:45:51,621 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 05:45:51,636 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 05:45:51,637 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 05:45:51,674 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团的列表",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 05:45:51,674 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 07:40:18,191 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 07:40:18,191 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 07:40:18,191 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 07:40:18,192 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 07:40:18,192 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 07:40:26,163 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 07:40:26,164 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 07:40:26,164 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 07:40:26,164 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 07:40:26,164 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 07:40:35,399 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 07:40:35,400 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 07:40:35,401 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 07:40:35,401 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 07:40:35,401 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-23 07:40:35,401 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-23 07:40:35,402 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 07:40:35,404 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-23 07:40:35,404 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-23 07:40:35,405 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-23 07:40:35,405 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 07:40:35,405 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 07:40:35,416 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 07:40:35,416 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 07:40:35,417 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 07:40:35,417 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 07:51:23,395 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 07:51:23,396 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 07:51:23,396 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 07:51:23,396 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 07:51:23,396 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 07:51:31,896 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 07:51:31,898 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 07:51:31,898 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 07:51:31,898 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团的列表",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 07:51:31,899 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 07:51:31,899 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}
+2025-03-23 07:51:31,900 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 07:51:31,900 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 07:51:31,900 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2231 字符
+2025-03-23 07:51:31,900 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 07:51:31,900 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 07:51:40,529 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 07:51:40,529 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 07:51:40,529 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 07:51:40,530 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 07:51:40,530 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"
+    }
+  ]
+}
+2025-03-23 07:51:40,530 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询所有社团的列表
+2025-03-23 07:51:40,530 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 07:51:40,531 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询所有社团的列表'}}
+2025-03-23 07:51:40,532 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询所有社团的列表'}
+2025-03-23 07:51:40,532 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团的列表, 使用工具: club_info
+2025-03-23 07:51:40,532 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 07:51:40,533 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 07:51:40,543 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 07:51:40,543 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 07:51:40,543 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团的列表",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询所有社团的列表"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 07:51:40,543 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 07:55:36,817 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 07:55:36,817 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 07:55:36,817 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 07:55:36,817 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 07:55:36,817 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 07:55:46,740 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 07:55:46,740 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 07:55:46,741 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 07:55:46,741 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 07:55:46,741 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 07:55:46,742 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-23 07:55:46,742 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 07:55:46,742 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 07:55:46,742 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-23 07:55:46,742 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 07:55:46,743 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-23 07:55:55,437 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-23 07:55:55,438 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 07:55:55,438 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-23 07:55:55,438 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-23 07:55:55,438 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-23 07:55:55,438 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 07:55:55,438 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 07:55:55,443 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 07:55:55,443 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 07:55:55,444 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 07:55:55,444 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 15:29:47,993 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 15:29:47,993 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 15:29:47,993 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 15:29:47,993 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 15:29:47,994 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 15:29:56,718 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 15:29:56,718 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 15:29:56,718 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 15:29:56,719 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 15:29:56,719 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 15:30:05,840 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 15:30:05,841 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 15:30:05,841 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 15:30:05,841 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 15:30:05,842 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-23 15:30:05,842 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-23 15:30:05,842 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 15:30:05,844 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-23 15:30:05,845 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-23 15:30:05,847 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-23 15:30:05,848 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 15:30:05,848 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 15:30:05,863 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 15:30:05,863 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 15:30:05,863 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 15:30:05,863 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-23 15:33:52,484 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-23 15:33:52,484 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-23 15:33:52,484 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-23 15:33:52,484 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-23 15:33:52,485 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-23 15:33:59,842 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-23 15:33:59,843 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-23 15:33:59,843 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-23 15:33:59,843 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-23 15:33:59,844 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-23 15:33:59,844 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-23 15:33:59,844 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-23 15:33:59,845 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-23 15:33:59,845 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-23 15:33:59,845 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-23 15:33:59,847 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-23 15:34:09,312 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-23 15:34:09,313 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-23 15:34:09,314 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-23 15:34:09,314 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-23 15:34:09,314 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-23 15:34:09,315 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-23 15:34:09,315 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-23 15:34:09,315 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-23 15:34:09,316 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-23 15:34:09,318 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-23 15:34:09,319 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-23 15:34:09,320 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-23 15:34:09,327 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-23 15:34:09,327 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-23 15:34:09,327 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-23 15:34:09,328 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 02:18:30,984 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 02:18:30,984 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 02:18:30,985 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 02:18:30,985 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 02:18:31,037 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 02:18:40,706 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 02:18:40,706 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 02:18:40,706 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 02:18:40,707 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 02:18:40,711 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 02:18:40,739 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 02:18:49,921 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 02:18:49,921 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 02:18:49,921 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 02:18:49,922 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 02:18:49,922 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 02:18:49,922 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 02:18:49,922 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 02:18:49,929 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 02:18:49,929 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 02:18:49,959 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 02:18:49,959 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 02:36:28,081 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 02:36:28,082 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 02:36:28,082 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 02:36:28,083 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 02:36:28,142 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 02:36:38,167 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 02:36:38,167 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 02:36:38,167 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 02:36:38,167 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 02:36:38,176 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 02:36:38,176 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 02:36:38,176 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 02:36:38,177 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 02:36:38,177 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 02:36:38,177 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 02:36:38,211 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 02:36:48,283 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 02:36:48,285 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 02:36:48,285 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 02:36:48,285 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 02:36:48,285 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 02:36:48,285 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 02:36:48,286 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 02:36:48,287 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 02:36:48,287 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 02:36:48,288 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 02:36:48,289 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 02:36:48,289 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 02:36:48,301 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 02:36:48,301 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 02:36:48,337 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 02:36:48,338 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 02:45:43,592 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 02:45:43,592 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 02:45:43,592 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 02:45:43,592 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 02:45:43,639 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 02:45:52,101 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 02:45:52,101 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 02:45:52,101 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 02:45:52,101 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团的列表",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 02:45:52,101 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团的列表', 'input': '无', 'depends_on': []}]
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2231 字符
+2025-03-24 02:45:52,102 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 02:45:52,138 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 02:46:00,787 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 02:46:00,787 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 02:46:00,787 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 02:46:00,787 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 02:46:00,788 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合用于获取所有社团的列表"
+    }
+  ]
+}
+2025-03-24 02:46:00,788 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合用于获取所有社团的列表
+2025-03-24 02:46:00,788 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 02:46:00,789 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合用于获取所有社团的列表'}}
+2025-03-24 02:46:00,789 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合用于获取所有社团的列表'}
+2025-03-24 02:46:00,790 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团的列表, 使用工具: club_info
+2025-03-24 02:46:00,791 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 02:46:00,791 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 02:46:00,805 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 02:46:00,805 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团的列表", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合用于获取所有社团的列表"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 02:46:00,843 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团的列表",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合用于获取所有社团的列表"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 02:46:00,843 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 02:48:15,773 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 02:48:15,773 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 02:48:15,773 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 02:48:15,773 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 02:48:15,773 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 02:48:25,181 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 02:48:25,182 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 02:48:25,182 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 02:48:25,182 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 02:48:25,183 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 02:48:25,183 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 02:48:25,184 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 02:48:25,185 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 02:48:25,185 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 02:48:25,186 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 02:48:25,186 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 02:48:25,186 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 02:48:33,888 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 02:48:33,888 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 02:48:33,888 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 02:48:33,889 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 02:48:33,889 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 02:48:33,889 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 02:48:33,890 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 02:48:33,890 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 02:48:33,891 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 02:48:33,892 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 02:48:33,892 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 02:48:33,893 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 02:48:33,901 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 02:48:33,901 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 02:48:33,901 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 02:48:33,901 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 05:51:41,427 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 05:51:41,427 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 05:51:41,427 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 05:51:41,427 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 05:51:41,428 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 05:51:50,998 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 05:51:50,999 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 05:51:50,999 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 05:51:50,999 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 05:51:50,999 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 05:51:50,999 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 05:51:50,999 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 05:51:50,999 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 05:51:50,999 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 05:51:51,000 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 05:51:51,000 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 05:51:51,000 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 05:52:00,312 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 05:52:00,312 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 05:52:00,312 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 05:52:00,313 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 05:52:00,313 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 05:52:00,313 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 05:52:00,313 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 05:52:00,313 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 05:52:00,313 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 05:52:00,313 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 05:52:00,313 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 05:52:00,313 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 05:52:00,322 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 05:52:00,322 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 05:52:00,323 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 05:52:00,323 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 05:57:25,679 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 05:57:25,679 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 05:57:25,679 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 05:57:25,679 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 05:57:25,680 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 05:57:36,779 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 05:57:36,780 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 05:57:36,780 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 05:57:36,780 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 05:57:36,780 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 05:57:36,781 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 05:57:45,571 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 05:57:45,571 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 05:57:45,571 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 05:57:45,571 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 05:57:45,572 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 05:57:45,572 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 05:57:45,572 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 05:57:45,576 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 05:57:45,576 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 05:57:45,576 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 05:57:45,576 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 06:01:30,669 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 06:01:30,669 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 06:01:30,669 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 06:01:30,669 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 06:01:30,669 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 06:01:38,900 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 06:01:38,900 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 06:01:38,900 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 06:01:38,900 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 06:01:38,901 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 06:01:38,901 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 06:01:48,062 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 06:01:48,064 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 06:01:48,064 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 06:01:48,065 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 06:01:48,065 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 06:01:48,065 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 06:01:48,066 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 06:01:48,066 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 06:01:48,067 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 06:01:48,067 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 06:01:48,067 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 06:01:48,068 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 06:01:48,075 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 06:01:48,075 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 06:01:48,075 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 06:01:48,076 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 07:11:46,777 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 07:11:46,777 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 07:11:46,777 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 07:11:46,777 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 07:11:46,777 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 07:11:54,837 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 07:11:54,838 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 07:11:54,839 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 07:11:54,839 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 07:11:54,840 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 07:11:54,840 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 07:11:54,841 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 07:11:54,841 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 07:11:54,841 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 07:11:54,842 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 07:11:54,842 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 07:11:54,842 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 07:12:04,899 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 07:12:04,900 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 07:12:04,901 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 07:12:04,901 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 07:12:04,901 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 07:12:04,901 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 07:12:04,902 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 07:12:04,903 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 07:12:04,903 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 07:12:04,904 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 07:12:04,904 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 07:12:04,904 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 07:12:04,914 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 07:12:04,914 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 07:12:04,915 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 07:12:04,915 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 07:24:54,068 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 07:24:54,069 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 我们学校有哪些社团
+2025-03-24 07:24:54,069 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 07:24:54,069 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 07:24:54,069 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 07:25:02,064 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 07:25:02,066 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 07:25:02,066 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 1 个任务
+2025-03-24 07:25:02,067 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "查询浙江农林大学所有社团信息",
+      "input": "无",
+      "depends_on": []
+    }
+  ]
+}
+2025-03-24 07:25:02,067 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '查询浙江农林大学所有社团信息', 'input': '无', 'depends_on': []}]
+2025-03-24 07:25:02,068 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 07:25:02,069 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}
+2025-03-24 07:25:02,069 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 07:25:02,070 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 07:25:02,070 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2230 字符
+2025-03-24 07:25:02,071 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 07:25:02,071 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 07:25:12,487 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 07:25:12,489 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 07:25:12,489 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 07:25:12,489 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 1 个工具选择
+2025-03-24 07:25:12,490 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "club_info",
+      "params": {},
+      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"
+    }
+  ]
+}
+2025-03-24 07:25:12,490 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: club_info, 原因: club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。
+2025-03-24 07:25:12,490 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 07:25:12,491 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}}
+2025-03-24 07:25:12,491 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'club_info', 'params': {}, 'reason': 'club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。'}
+2025-03-24 07:25:12,492 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 查询浙江农林大学所有社团信息, 使用工具: club_info
+2025-03-24 07:25:12,492 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 07:25:12,495 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 07:25:12,503 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 07:25:12,503 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "我们学校有哪些社团", "task_planning": {"tasks": [{"id": 1, "task": "查询浙江农林大学所有社团信息", "input": "无", "depends_on": []}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "club_info", "params": {}, "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": [{"club_name": "摄影协会", "description": "致力于培养学生的摄影技能和艺术鉴赏能力"}, {"club_name": "编程俱乐部", "description": "培养编程兴趣，提升技术能力"}, {"club_name": "街舞社", "description": "探索现代舞蹈艺术，培养舞蹈爱好者"}]}}}}
+2025-03-24 07:25:12,504 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 我们学校有哪些社团\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "查询浙江农林大学所有社团信息",\n      "input": "无",\n      "depends_on": []\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "club_info",\n      "params": {},\n      "reason": "club_info工具专门用于查询社团信息，适合查询浙江农林大学所有社团信息的需求。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "club_name": "摄影协会",\n          "description": "致力于培养学生的摄影技能和艺术鉴赏能力"\n        },\n        {\n          "club_name": "编程俱乐部",\n          "description": "培养编程兴趣，提升技术能力"\n        },\n        {\n          "club_name": "街舞社",\n          "description": "探索现代舞蹈艺术，培养舞蹈爱好者"\n        }\n      ]\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '我们学校有哪些社团'}, {'role': 'user', 'content': '我们学校有哪些社团'}]
+2025-03-24 07:25:12,504 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 07:31:18,317 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 07:31:18,318 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 请检查一下计算机专业课表和电子信息专业课表是否有冲突
+2025-03-24 07:31:18,318 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 07:31:18,318 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 07:31:18,318 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 07:31:30,097 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 07:31:30,097 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 07:31:30,098 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 3 个任务
+2025-03-24 07:31:30,098 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取计算机专业课表",
+      "input": "计算机专业",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取电子信息专业课表",
+      "input": "电子信息专业",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "比较两个课表是否有时间冲突",
+      "input": "计算机专业课表和电子信息专业课表",
+      "depends_on": [
+        1,
+        2
+      ]
+    }
+  ]
+}
+2025-03-24 07:31:30,098 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '获取计算机专业课表', 'input': '计算机专业', 'depends_on': []}, {'id': 2, 'task': '获取电子信息专业课表', 'input': '电子信息专业', 'depends_on': []}, {'id': 3, 'task': '比较两个课表是否有时间冲突', 'input': '计算机专业课表和电子信息专业课表', 'depends_on': [1, 2]}]
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "获取计算机专业课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}]}
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 2478 字符
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 07:31:30,098 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 07:31:44,323 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 07:31:44,324 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 07:31:44,325 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 07:31:44,325 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 3 个工具选择
+2025-03-24 07:31:44,325 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "course_scheduler",
+      "params": {},
+      "reason": "course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {},
+      "reason": "course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。"
+    },
+    {
+      "task_id": 3,
+      "tool": "general_assistant",
+      "params": {
+        "message": "请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。"
+      },
+      "reason": "general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。"
+    }
+  ]
+}
+2025-03-24 07:31:44,326 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。
+2025-03-24 07:31:44,326 - chatbot.agent.ToolSelector - DEBUG - 任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。
+2025-03-24 07:31:44,326 - chatbot.agent.ToolSelector - DEBUG - 任务 3 选择了工具: general_assistant, 原因: general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。
+2025-03-24 07:31:44,327 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 07:31:44,327 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。'}, 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。'}, 3: {'task_id': 3, 'tool': 'general_assistant', 'params': {'message': '请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。'}, 'reason': 'general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。'}}
+2025-03-24 07:31:44,327 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。'}
+2025-03-24 07:31:44,327 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 获取计算机专业课表, 使用工具: course_scheduler
+2025-03-24 07:31:44,327 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 07:31:44,327 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 07:31:44,338 - chatbot.agent.LLMController - INFO - Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。'}
+2025-03-24 07:31:44,338 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 2, 任务描述: 获取电子信息专业课表, 使用工具: course_scheduler
+2025-03-24 07:31:44,338 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 初始参数: {}
+2025-03-24 07:31:44,338 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 最终参数: {}
+2025-03-24 07:31:44,346 - chatbot.agent.LLMController - INFO - Selected tool for task 3: {'task_id': 3, 'tool': 'general_assistant', 'params': {'message': '请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。'}, 'reason': 'general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。'}
+2025-03-24 07:31:44,346 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 3, 任务描述: 比较两个课表是否有时间冲突, 使用工具: general_assistant
+2025-03-24 07:31:44,346 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 初始参数: {'message': '请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。'}
+2025-03-24 07:31:44,346 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 最终参数: {'message': '请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。'}
+2025-03-24 07:31:56,103 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 07:31:56,103 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "请检查一下计算机专业课表和电子信息专业课表是否有冲突", "task_planning": {"tasks": [{"id": 1, "task": "获取计算机专业课表", "input": "计算机专业", "depends_on": []}, {"id": 2, "task": "获取电子信息专业课表", "input": "电子信息专业", "depends_on": []}, {"id": 3, "task": "比较两个课表是否有时间冲突", "input": "计算机专业课表和电子信息专业课表", "depends_on": [1, 2]}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "course_scheduler", "params": {}, "reason": "course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。"}, {"task_id": 2, "tool": "course_scheduler", "params": {}, "reason": "course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。"}, {"task_id": 3, "tool": "general_assistant", "params": {"message": "请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。"}, "reason": "general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": {"courses": [{"id": 1, "course_id": "CS101", "course_name": "计算机导论", "instructor": "张教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "08:00:00", "end_time": "09:40:00", "classroom": "A101"}, {"id": 3, "course_id": "EE101", "course_name": "电路原理", "instructor": "王教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "B101"}, {"id": 2, "course_id": "CS102", "course_name": "数据结构", "instructor": "李教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 2, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "A102"}, {"id": 4, "course_id": "EE102", "course_name": "数字电路", "instructor": "刘教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 3, "start_time": "14:00:00", "end_time": "15:40:00", "classroom": "B102"}]}}}, "2": {"status": "success", "api_result": {"status": "success", "data": {"courses": [{"id": 1, "course_id": "CS101", "course_name": "计算机导论", "instructor": "张教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "08:00:00", "end_time": "09:40:00", "classroom": "A101"}, {"id": 3, "course_id": "EE101", "course_name": "电路原理", "instructor": "王教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "B101"}, {"id": 2, "course_id": "CS102", "course_name": "数据结构", "instructor": "李教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 2, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "A102"}, {"id": 4, "course_id": "EE102", "course_name": "数字电路", "instructor": "刘教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 3, "start_time": "14:00:00", "end_time": "15:40:00", "classroom": "B102"}]}}}, "3": {"status": "success", "api_result": {"status": "success", "data": {"response": "很抱歉，但作为一个AI，我无法直接访问或比较实际的课程表。不过，我可以提供一个比较课程表的一般步骤，你可以按照以下步骤来检查计算机科学与技术专业和电子信息工程专业是否有时间冲突：\n\n1. **获取课程表**：\n   - 计算机科学与技术专业的课程表。\n   - 电子信息工程专业的课程表。\n\n2. **整理课程信息**：\n   - 将每门课程的名称、上课时间和地点记录下来。\n\n3. **创建比较矩阵**：\n   - 在表格中列出所有课程。\n   - 为每个课程列出所有可能的上课时间（例如：周一上午、周二下午等）。\n\n4. **交叉检查**：\n   - 逐个检查每门课程的时间安排。\n   - 如果某个时间点有多个课程同时进行，则存在时间冲突。\n\n5. **记录冲突**：\n   - 将所有冲突的课程记录下来。\n\n6. **解决问题**：\n   - 根据冲突情况，与学生、教师或教务部门沟通，尝试调整课程安排或选择其他时间段上课。\n\n以下是一个简化的示例步骤：\n\n- **步骤1**：获取两个专业的课程表。\n- **步骤2**：假设课程表如下（仅为示例）：\n\n  | 时间 | 计算机科学与技术专业 | 电子信息工程专业 |\n  | --- | --- | --- |\n  | 周一上午 | 算法设计与分析 | 数字信号处理 |\n  | 周二上午 | 计算机组成原理 | 微电子学 |\n  | 周二下午 | 操作系统 | 通信原理 |\n  | 周三上午 | 数据库系统 | 数字电路 |\n\n- **步骤3**：创建一个包含所有课程和时间的表格。\n- **步骤4**：检查每个时间点，发现以下冲突：\n  - 周二上午，两个专业都有课程。\n  - 周三上午，两个专业都有课程。\n\n- **步骤5**：记录冲突时间点。\n- **步骤6**：与学生沟通，可能需要调整课程安排或选择其他时间段。\n\n请根据实际情况执行上述步骤，以确保课程安排的合理性和可行性。"}}}}}
+2025-03-24 07:31:56,104 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 请检查一下计算机专业课表和电子信息专业课表是否有冲突\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "获取计算机专业课表",\n      "input": "计算机专业",\n      "depends_on": []\n    },\n    {\n      "id": 2,\n      "task": "获取电子信息专业课表",\n      "input": "电子信息专业",\n      "depends_on": []\n    },\n    {\n      "id": 3,\n      "task": "比较两个课表是否有时间冲突",\n      "input": "计算机专业课表和电子信息专业课表",\n      "depends_on": [\n        1,\n        2\n      ]\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "course_scheduler",\n      "params": {},\n      "reason": "course_scheduler工具专门用于查询课程表信息，适合获取计算机专业的课表。"\n    },\n    {\n      "task_id": 2,\n      "tool": "course_scheduler",\n      "params": {},\n      "reason": "course_scheduler工具专门用于查询课程表信息，适合获取电子信息专业的课表。"\n    },\n    {\n      "task_id": 3,\n      "tool": "general_assistant",\n      "params": {\n        "message": "请比较计算机专业课表和电子信息专业课表，检查是否有时间冲突。"\n      },\n      "reason": "general_assistant工具可以处理一般性问题，适合用于比较两个课表的时间冲突。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "courses": [\n          {\n            "id": 1,\n            "course_id": "CS101",\n            "course_name": "计算机导论",\n            "instructor": "张教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "08:00:00",\n            "end_time": "09:40:00",\n            "classroom": "A101"\n          },\n          {\n            "id": 3,\n            "course_id": "EE101",\n            "course_name": "电路原理",\n            "instructor": "王教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "B101"\n          },\n          {\n            "id": 2,\n            "course_id": "CS102",\n            "course_name": "数据结构",\n            "instructor": "李教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 2,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "A102"\n          },\n          {\n            "id": 4,\n            "course_id": "EE102",\n            "course_name": "数字电路",\n            "instructor": "刘教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 3,\n            "start_time": "14:00:00",\n            "end_time": "15:40:00",\n            "classroom": "B102"\n          }\n        ]\n      }\n    }\n  },\n  "2": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "courses": [\n          {\n            "id": 1,\n            "course_id": "CS101",\n            "course_name": "计算机导论",\n            "instructor": "张教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "08:00:00",\n            "end_time": "09:40:00",\n            "classroom": "A101"\n          },\n          {\n            "id": 3,\n            "course_id": "EE101",\n            "course_name": "电路原理",\n            "instructor": "王教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "B101"\n          },\n          {\n            "id": 2,\n            "course_id": "CS102",\n            "course_name": "数据结构",\n            "instructor": "李教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 2,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "A102"\n          },\n          {\n            "id": 4,\n            "course_id": "EE102",\n            "course_name": "数字电路",\n            "instructor": "刘教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 3,\n            "start_time": "14:00:00",\n            "end_time": "15:40:00",\n            "classroom": "B102"\n          }\n        ]\n      }\n    }\n  },\n  "3": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "response": "很抱歉，但作为一个AI，我无法直接访问或比较实际的课程表。不过，我可以提供一个比较课程表的一般步骤，你可以按照以下步骤来检查计算机科学与技术专业和电子信息工程专业是否有时间冲突：\\n\\n1. **获取课程表**：\\n   - 计算机科学与技术专业的课程表。\\n   - 电子信息工程专业的课程表。\\n\\n2. **整理课程信息**：\\n   - 将每门课程的名称、上课时间和地点记录下来。\\n\\n3. **创建比较矩阵**：\\n   - 在表格中列出所有课程。\\n   - 为每个课程列出所有可能的上课时间（例如：周一上午、周二下午等）。\\n\\n4. **交叉检查**：\\n   - 逐个检查每门课程的时间安排。\\n   - 如果某个时间点有多个课程同时进行，则存在时间冲突。\\n\\n5. **记录冲突**：\\n   - 将所有冲突的课程记录下来。\\n\\n6. **解决问题**：\\n   - 根据冲突情况，与学生、教师或教务部门沟通，尝试调整课程安排或选择其他时间段上课。\\n\\n以下是一个简化的示例步骤：\\n\\n- **步骤1**：获取两个专业的课程表。\\n- **步骤2**：假设课程表如下（仅为示例）：\\n\\n  | 时间 | 计算机科学与技术专业 | 电子信息工程专业 |\\n  | --- | --- | --- |\\n  | 周一上午 | 算法设计与分析 | 数字信号处理 |\\n  | 周二上午 | 计算机组成原理 | 微电子学 |\\n  | 周二下午 | 操作系统 | 通信原理 |\\n  | 周三上午 | 数据库系统 | 数字电路 |\\n\\n- **步骤3**：创建一个包含所有课程和时间的表格。\\n- **步骤4**：检查每个时间点，发现以下冲突：\\n  - 周二上午，两个专业都有课程。\\n  - 周三上午，两个专业都有课程。\\n\\n- **步骤5**：记录冲突时间点。\\n- **步骤6**：与学生沟通，可能需要调整课程安排或选择其他时间段。\\n\\n请根据实际情况执行上述步骤，以确保课程安排的合理性和可行性。"\n      }\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '请检查一下计算机专业课表和电子信息专业课表是否有冲突'}, {'role': 'user', 'content': '请检查一下计算机专业课表和电子信息专业课表是否有冲突'}]
+2025-03-24 07:31:56,105 - chatbot.agent.ResponseGenerator - INFO - ------------------------------
+2025-03-24 07:36:22,220 - chatbot.agent.TaskPlanner - INFO - 开始创建任务计划
+2025-03-24 07:36:22,220 - chatbot.agent.TaskPlanner - DEBUG - 用户请求: 请结合学校活动安排信息，课表信息和天气信息确定一个开运动会的合适时间
+2025-03-24 07:36:22,220 - chatbot.agent.TaskPlanner - DEBUG - 已生成规划提示词
+2025-03-24 07:36:22,220 - chatbot.agent.TaskPlanner - INFO - 初始化 LLM 模型
+2025-03-24 07:36:22,220 - chatbot.agent.TaskPlanner - INFO - 向 LLM 发送请求
+2025-03-24 07:36:42,707 - chatbot.agent.TaskPlanner - DEBUG - 已收到 LLM 响应
+2025-03-24 07:36:42,707 - chatbot.agent.TaskPlanner - DEBUG - 开始解析 LLM 响应
+2025-03-24 07:36:42,708 - chatbot.agent.TaskPlanner - INFO - 成功生成任务计划，包含 7 个任务
+2025-03-24 07:36:42,708 - chatbot.agent.TaskPlanner - DEBUG - 任务计划详情: {
+  "tasks": [
+    {
+      "id": 1,
+      "task": "获取学校活动安排信息",
+      "input": "学校活动安排信息",
+      "depends_on": []
+    },
+    {
+      "id": 2,
+      "task": "获取课表信息",
+      "input": "课表信息",
+      "depends_on": []
+    },
+    {
+      "id": 3,
+      "task": "获取天气信息",
+      "input": "天气信息",
+      "depends_on": []
+    },
+    {
+      "id": 4,
+      "task": "分析学校活动安排信息，找出空闲时间段",
+      "input": "学校活动安排信息",
+      "depends_on": [
+        1
+      ]
+    },
+    {
+      "id": 5,
+      "task": "分析课表信息，找出学生和教师空闲时间段",
+      "input": "课表信息",
+      "depends_on": [
+        2
+      ]
+    },
+    {
+      "id": 6,
+      "task": "分析天气信息，找出适合户外活动的时间段",
+      "input": "天气信息",
+      "depends_on": [
+        3
+      ]
+    },
+    {
+      "id": 7,
+      "task": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间",
+      "input": "空闲时间段、学生和教师空闲时间段、适合户外活动的时间段",
+      "depends_on": [
+        4,
+        5,
+        6
+      ]
+    }
+  ]
+}
+2025-03-24 07:36:42,708 - chatbot.agent.LLMController - DEBUG - tasks: [{'id': 1, 'task': '获取学校活动安排信息', 'input': '学校活动安排信息', 'depends_on': []}, {'id': 2, 'task': '获取课表信息', 'input': '课表信息', 'depends_on': []}, {'id': 3, 'task': '获取天气信息', 'input': '天气信息', 'depends_on': []}, {'id': 4, 'task': '分析学校活动安排信息，找出空闲时间段', 'input': '学校活动安排信息', 'depends_on': [1]}, {'id': 5, 'task': '分析课表信息，找出学生和教师空闲时间段', 'input': '课表信息', 'depends_on': [2]}, {'id': 6, 'task': '分析天气信息，找出适合户外活动的时间段', 'input': '天气信息', 'depends_on': [3]}, {'id': 7, 'task': '结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间', 'input': '空闲时间段、学生和教师空闲时间段、适合户外活动的时间段', 'depends_on': [4, 5, 6]}]
+2025-03-24 07:36:42,708 - chatbot.agent.ToolSelector - INFO - 开始为任务计划选择工具
+2025-03-24 07:36:42,708 - chatbot.agent.ToolSelector - DEBUG - 输入的任务计划: {"tasks": [{"id": 1, "task": "获取学校活动安排信息", "input": "学校活动安排信息", "depends_on": []}, {"id": 2, "task": "获取课表信息", "input": "课表信息", "depends_on": []}, {"id": 3, "task": "获取天气信息", "input": "天气信息", "depends_on": []}, {"id": 4, "task": "分析学校活动安排信息，找出空闲时间段", "input": "学校活动安排信息", "depends_on": [1]}, {"id": 5, "task": "分析课表信息，找出学生和教师空闲时间段", "input": "课表信息", "depends_on": [2]}, {"id": 6, "task": "分析天气信息，找出适合户外活动的时间段", "input": "天气信息", "depends_on": [3]}, {"id": 7, "task": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间", "input": "空闲时间段、学生和教师空闲时间段、适合户外活动的时间段", "depends_on": [4, 5, 6]}]}
+2025-03-24 07:36:42,709 - chatbot.agent.ToolSelector - DEBUG - 获取工具能力信息
+2025-03-24 07:36:42,709 - chatbot.agent.ToolSelector - DEBUG - 生成工具选择提示词
+2025-03-24 07:36:42,709 - chatbot.agent.ToolSelector - DEBUG - 提示词长度: 3014 字符
+2025-03-24 07:36:42,709 - chatbot.agent.ToolSelector - INFO - 初始化工具选择 LLM 模型
+2025-03-24 07:36:42,709 - chatbot.agent.ToolSelector - INFO - 向 LLM 发送工具选择请求
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 已收到 LLM 响应
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 开始解析工具选择响应
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 检测到 JSON 代码块，进行提取
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - INFO - 成功生成工具选择方案，共 7 个工具选择
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 工具选择详情: {
+  "tool_selections": [
+    {
+      "task_id": 1,
+      "tool": "event_planner",
+      "params": {},
+      "reason": "event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。"
+    },
+    {
+      "task_id": 2,
+      "tool": "course_scheduler",
+      "params": {},
+      "reason": "course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。"
+    },
+    {
+      "task_id": 3,
+      "tool": "weather_report",
+      "params": {},
+      "reason": "weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。"
+    },
+    {
+      "task_id": 4,
+      "tool": "event_planner",
+      "params": {
+        "input": "{TASK_1_RESULT}"
+      },
+      "reason": "event_planner工具可以分析学校活动安排信息，找出空闲时间段。"
+    },
+    {
+      "task_id": 5,
+      "tool": "course_scheduler",
+      "params": {
+        "input": "{TASK_2_RESULT}"
+      },
+      "reason": "course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。"
+    },
+    {
+      "task_id": 6,
+      "tool": "weather_report",
+      "params": {
+        "input": "{TASK_3_RESULT}"
+      },
+      "reason": "weather_report工具可以分析天气信息，找出适合户外活动的时间段。"
+    },
+    {
+      "task_id": 7,
+      "tool": "general_assistant",
+      "params": {
+        "message": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。"
+      },
+      "reason": "general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。"
+    }
+  ]
+}
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 1 选择了工具: event_planner, 原因: event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 2 选择了工具: course_scheduler, 原因: course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 3 选择了工具: weather_report, 原因: weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 4 选择了工具: event_planner, 原因: event_planner工具可以分析学校活动安排信息，找出空闲时间段。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 5 选择了工具: course_scheduler, 原因: course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 6 选择了工具: weather_report, 原因: weather_report工具可以分析天气信息，找出适合户外活动的时间段。
+2025-03-24 07:37:07,381 - chatbot.agent.ToolSelector - DEBUG - 任务 7 选择了工具: general_assistant, 原因: general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。
+2025-03-24 07:37:07,382 - chatbot.agent.LLMController - INFO - Create a mapping of task_id to selected tool
+2025-03-24 07:37:07,382 - chatbot.agent.LLMController - DEBUG - Task to tool mapping: {1: {'task_id': 1, 'tool': 'event_planner', 'params': {}, 'reason': 'event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。'}, 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。'}, 3: {'task_id': 3, 'tool': 'weather_report', 'params': {}, 'reason': 'weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。'}, 4: {'task_id': 4, 'tool': 'event_planner', 'params': {'input': '{TASK_1_RESULT}'}, 'reason': 'event_planner工具可以分析学校活动安排信息，找出空闲时间段。'}, 5: {'task_id': 5, 'tool': 'course_scheduler', 'params': {'input': '{TASK_2_RESULT}'}, 'reason': 'course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。'}, 6: {'task_id': 6, 'tool': 'weather_report', 'params': {'input': '{TASK_3_RESULT}'}, 'reason': 'weather_report工具可以分析天气信息，找出适合户外活动的时间段。'}, 7: {'task_id': 7, 'tool': 'general_assistant', 'params': {'message': '结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。'}, 'reason': 'general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。'}}
+2025-03-24 07:37:07,382 - chatbot.agent.LLMController - INFO - Selected tool for task 1: {'task_id': 1, 'tool': 'event_planner', 'params': {}, 'reason': 'event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。'}
+2025-03-24 07:37:07,382 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 1, 任务描述: 获取学校活动安排信息, 使用工具: event_planner
+2025-03-24 07:37:07,382 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 初始参数: {}
+2025-03-24 07:37:07,382 - chatbot.agent.TaskExecutor - DEBUG - 任务 1 最终参数: {}
+2025-03-24 07:37:07,387 - chatbot.agent.LLMController - INFO - Selected tool for task 2: {'task_id': 2, 'tool': 'course_scheduler', 'params': {}, 'reason': 'course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。'}
+2025-03-24 07:37:07,387 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 2, 任务描述: 获取课表信息, 使用工具: course_scheduler
+2025-03-24 07:37:07,387 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 初始参数: {}
+2025-03-24 07:37:07,387 - chatbot.agent.TaskExecutor - DEBUG - 任务 2 最终参数: {}
+2025-03-24 07:37:07,391 - chatbot.agent.LLMController - INFO - Selected tool for task 3: {'task_id': 3, 'tool': 'weather_report', 'params': {}, 'reason': 'weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。'}
+2025-03-24 07:37:07,391 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 3, 任务描述: 获取天气信息, 使用工具: weather_report
+2025-03-24 07:37:07,392 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 初始参数: {}
+2025-03-24 07:37:07,392 - chatbot.agent.TaskExecutor - DEBUG - 任务 3 最终参数: {}
+2025-03-24 07:37:07,395 - chatbot.agent.LLMController - INFO - Selected tool for task 4: {'task_id': 4, 'tool': 'event_planner', 'params': {'input': '{TASK_1_RESULT}'}, 'reason': 'event_planner工具可以分析学校活动安排信息，找出空闲时间段。'}
+2025-03-24 07:37:07,395 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 4, 任务描述: 分析学校活动安排信息，找出空闲时间段, 使用工具: event_planner
+2025-03-24 07:37:07,395 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 初始参数: {'input': '{TASK_1_RESULT}'}
+2025-03-24 07:37:07,396 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 参数 input 包含占位符: ['{TASK_1_RESULT}']
+2025-03-24 07:37:07,396 - chatbot.agent.TaskExecutor - DEBUG - 任务 4 最终参数: {'input': "{'status': 'success', 'data': {'events': [{'title': '2024春季校园招聘会', 'date': '2024-02-01', 'time': '14:00-17:00', 'location': '图书馆报告厅', 'organizer': '就业指导中心', 'description': '邀请50家企业参加的大型招聘会'}, {'title': '元宵节文化晚会', 'date': '2024-02-15', 'time': '19:00-21:00', 'location': '大学生活动中心', 'organizer': '学生会', 'description': '传统文化展示与互动游戏'}]}}"}
+2025-03-24 07:37:07,399 - chatbot.agent.LLMController - INFO - Selected tool for task 5: {'task_id': 5, 'tool': 'course_scheduler', 'params': {'input': '{TASK_2_RESULT}'}, 'reason': 'course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。'}
+2025-03-24 07:37:07,400 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 5, 任务描述: 分析课表信息，找出学生和教师空闲时间段, 使用工具: course_scheduler
+2025-03-24 07:37:07,400 - chatbot.agent.TaskExecutor - DEBUG - 任务 5 初始参数: {'input': '{TASK_2_RESULT}'}
+2025-03-24 07:37:07,400 - chatbot.agent.TaskExecutor - DEBUG - 任务 5 参数 input 包含占位符: ['{TASK_2_RESULT}']
+2025-03-24 07:37:07,400 - chatbot.agent.TaskExecutor - DEBUG - 任务 5 最终参数: {'input': "{'status': 'success', 'data': {'courses': [{'id': 1, 'course_id': 'CS101', 'course_name': '计算机导论', 'instructor': '张教授', 'major': '计算机科学', 'semester': '2023-2024-2', 'day_of_week': 1, 'start_time': '08:00:00', 'end_time': '09:40:00', 'classroom': 'A101'}, {'id': 3, 'course_id': 'EE101', 'course_name': '电路原理', 'instructor': '王教授', 'major': '电子信息', 'semester': '2023-2024-2', 'day_of_week': 1, 'start_time': '10:00:00', 'end_time': '11:40:00', 'classroom': 'B101'}, {'id': 2, 'course_id': 'CS102', 'course_name': '数据结构', 'instructor': '李教授', 'major': '计算机科学', 'semester': '2023-2024-2', 'day_of_week': 2, 'start_time': '10:00:00', 'end_time': '11:40:00', 'classroom': 'A102'}, {'id': 4, 'course_id': 'EE102', 'course_name': '数字电路', 'instructor': '刘教授', 'major': '电子信息', 'semester': '2023-2024-2', 'day_of_week': 3, 'start_time': '14:00:00', 'end_time': '15:40:00', 'classroom': 'B102'}]}}"}
+2025-03-24 07:37:07,404 - chatbot.agent.LLMController - INFO - Selected tool for task 6: {'task_id': 6, 'tool': 'weather_report', 'params': {'input': '{TASK_3_RESULT}'}, 'reason': 'weather_report工具可以分析天气信息，找出适合户外活动的时间段。'}
+2025-03-24 07:37:07,404 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 6, 任务描述: 分析天气信息，找出适合户外活动的时间段, 使用工具: weather_report
+2025-03-24 07:37:07,404 - chatbot.agent.TaskExecutor - DEBUG - 任务 6 初始参数: {'input': '{TASK_3_RESULT}'}
+2025-03-24 07:37:07,405 - chatbot.agent.TaskExecutor - DEBUG - 任务 6 参数 input 包含占位符: ['{TASK_3_RESULT}']
+2025-03-24 07:37:07,405 - chatbot.agent.TaskExecutor - DEBUG - 任务 6 最终参数: {'input': "{'status': 'success', 'data': [{'city': '临安市', 'date': '2024-01-21', 'weather': '多云', 'temperature': {'min': 6, 'max': 14}}]}"}
+2025-03-24 07:37:07,408 - chatbot.agent.LLMController - INFO - Selected tool for task 7: {'task_id': 7, 'tool': 'general_assistant', 'params': {'message': '结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。'}, 'reason': 'general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。'}
+2025-03-24 07:37:07,408 - chatbot.agent.TaskExecutor - INFO - 开始执行任务 ID: 7, 任务描述: 结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间, 使用工具: general_assistant
+2025-03-24 07:37:07,408 - chatbot.agent.TaskExecutor - DEBUG - 任务 7 初始参数: {'message': '结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。'}
+2025-03-24 07:37:07,408 - chatbot.agent.TaskExecutor - DEBUG - 任务 7 最终参数: {'message': '结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。'}
+2025-03-24 07:37:17,217 - chatbot.agent.LLMController - INFO - 处理过程信息已生成
+2025-03-24 07:37:17,217 - chatbot.agent.LLMController - DEBUG - Process info: {"user_input": "请结合学校活动安排信息，课表信息和天气信息确定一个开运动会的合适时间", "task_planning": {"tasks": [{"id": 1, "task": "获取学校活动安排信息", "input": "学校活动安排信息", "depends_on": []}, {"id": 2, "task": "获取课表信息", "input": "课表信息", "depends_on": []}, {"id": 3, "task": "获取天气信息", "input": "天气信息", "depends_on": []}, {"id": 4, "task": "分析学校活动安排信息，找出空闲时间段", "input": "学校活动安排信息", "depends_on": [1]}, {"id": 5, "task": "分析课表信息，找出学生和教师空闲时间段", "input": "课表信息", "depends_on": [2]}, {"id": 6, "task": "分析天气信息，找出适合户外活动的时间段", "input": "天气信息", "depends_on": [3]}, {"id": 7, "task": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间", "input": "空闲时间段、学生和教师空闲时间段、适合户外活动的时间段", "depends_on": [4, 5, 6]}]}, "tool_selection": {"tool_selections": [{"task_id": 1, "tool": "event_planner", "params": {}, "reason": "event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。"}, {"task_id": 2, "tool": "course_scheduler", "params": {}, "reason": "course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。"}, {"task_id": 3, "tool": "weather_report", "params": {}, "reason": "weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。"}, {"task_id": 4, "tool": "event_planner", "params": {"input": "{TASK_1_RESULT}"}, "reason": "event_planner工具可以分析学校活动安排信息，找出空闲时间段。"}, {"task_id": 5, "tool": "course_scheduler", "params": {"input": "{TASK_2_RESULT}"}, "reason": "course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。"}, {"task_id": 6, "tool": "weather_report", "params": {"input": "{TASK_3_RESULT}"}, "reason": "weather_report工具可以分析天气信息，找出适合户外活动的时间段。"}, {"task_id": 7, "tool": "general_assistant", "params": {"message": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。"}, "reason": "general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。"}]}, "task_execution": {"1": {"status": "success", "api_result": {"status": "success", "data": {"events": [{"title": "2024春季校园招聘会", "date": "2024-02-01", "time": "14:00-17:00", "location": "图书馆报告厅", "organizer": "就业指导中心", "description": "邀请50家企业参加的大型招聘会"}, {"title": "元宵节文化晚会", "date": "2024-02-15", "time": "19:00-21:00", "location": "大学生活动中心", "organizer": "学生会", "description": "传统文化展示与互动游戏"}]}}}, "2": {"status": "success", "api_result": {"status": "success", "data": {"courses": [{"id": 1, "course_id": "CS101", "course_name": "计算机导论", "instructor": "张教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "08:00:00", "end_time": "09:40:00", "classroom": "A101"}, {"id": 3, "course_id": "EE101", "course_name": "电路原理", "instructor": "王教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "B101"}, {"id": 2, "course_id": "CS102", "course_name": "数据结构", "instructor": "李教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 2, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "A102"}, {"id": 4, "course_id": "EE102", "course_name": "数字电路", "instructor": "刘教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 3, "start_time": "14:00:00", "end_time": "15:40:00", "classroom": "B102"}]}}}, "3": {"status": "success", "api_result": {"status": "success", "data": [{"city": "临安市", "date": "2024-01-21", "weather": "多云", "temperature": {"min": 6, "max": 14}}]}}, "4": {"status": "success", "api_result": {"status": "success", "data": {"events": [{"title": "2024春季校园招聘会", "date": "2024-02-01", "time": "14:00-17:00", "location": "图书馆报告厅", "organizer": "就业指导中心", "description": "邀请50家企业参加的大型招聘会"}, {"title": "元宵节文化晚会", "date": "2024-02-15", "time": "19:00-21:00", "location": "大学生活动中心", "organizer": "学生会", "description": "传统文化展示与互动游戏"}]}}}, "5": {"status": "success", "api_result": {"status": "success", "data": {"courses": [{"id": 1, "course_id": "CS101", "course_name": "计算机导论", "instructor": "张教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "08:00:00", "end_time": "09:40:00", "classroom": "A101"}, {"id": 3, "course_id": "EE101", "course_name": "电路原理", "instructor": "王教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 1, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "B101"}, {"id": 2, "course_id": "CS102", "course_name": "数据结构", "instructor": "李教授", "major": "计算机科学", "semester": "2023-2024-2", "day_of_week": 2, "start_time": "10:00:00", "end_time": "11:40:00", "classroom": "A102"}, {"id": 4, "course_id": "EE102", "course_name": "数字电路", "instructor": "刘教授", "major": "电子信息", "semester": "2023-2024-2", "day_of_week": 3, "start_time": "14:00:00", "end_time": "15:40:00", "classroom": "B102"}]}}}, "6": {"status": "success", "api_result": {"status": "success", "data": [{"city": "临安市", "date": "2024-01-21", "weather": "多云", "temperature": {"min": 6, "max": 14}}]}}, "7": {"status": "success", "api_result": {"status": "success", "data": {"response": "确定一个合适的运动会时间需要考虑以下因素：\n\n1. 学生和教师的空闲时间段：选择一个大多数学生和教师都能参加的时间。\n2. 空闲时间段：确保场地和设施在运动会期间可用。\n3. 适合户外活动的时间段：避免极端天气和高温时段。\n\n以下是一个确定运动会时间的基本步骤：\n\n### 第一步：确定学生和教师的空闲时间段\n- 与学校管理层沟通，了解学生和教师的日程安排。\n- 确定一个或多个时间段，这些时间段内大多数学生和教师都有空闲。\n\n### 第二步：考虑学校的空闲时间段\n- 检查学校的场地和设施使用情况，确保所选时间段内场地和设施可用。\n- 考虑到学校其他活动，如考试、家长会等，确保运动会不会与这些活动冲突。\n\n### 第三步：分析适合户外活动的时间段\n- 考虑当地的气候和天气情况，避免在极端天气下进行户外活动。\n- 选择一天中温度较为适宜、阳光充足的时间段，比如上午9点到下午3点之间。\n\n### 第四步：综合以上因素，确定具体时间\n以下是一个示例流程：\n\n1. **学生和教师空闲时间段**：假设学校确定周六下午为大多数学生和教师的空闲时间。\n2. **学校空闲时间段**：周六下午学校场地和设施可用。\n3. **适合户外活动的时间段**：周六下午天气预计晴朗，温度适宜。\n\n### 结论\n基于以上信息，周六下午可能是一个开运动会的合适时间。具体时间可以定在下午1点到4点，这样既避开了学生上午的上课时间，又确保了下午时段适合户外活动。\n\n当然，这只是一个基本框架，实际操作中还需要考虑更多细节，如学生的具体课程安排、学校的具体要求等。"}}}}}
+2025-03-24 07:37:17,218 - chatbot.agent.ResponseGenerator - INFO - sending messages: [{'role': 'system', 'content': '你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的请求并且以第一人称解释我处理请求的过程，包括我计划的任务、使用的工具和每个任务的结果。如果有任务失败或被跳过，也请说明。以下是任务处理的过程信息：\n**过程信息：**\n用户输入: 请结合学校活动安排信息，课表信息和天气信息确定一个开运动会的合适时间\n\n任务规划:\n{\n  "tasks": [\n    {\n      "id": 1,\n      "task": "获取学校活动安排信息",\n      "input": "学校活动安排信息",\n      "depends_on": []\n    },\n    {\n      "id": 2,\n      "task": "获取课表信息",\n      "input": "课表信息",\n      "depends_on": []\n    },\n    {\n      "id": 3,\n      "task": "获取天气信息",\n      "input": "天气信息",\n      "depends_on": []\n    },\n    {\n      "id": 4,\n      "task": "分析学校活动安排信息，找出空闲时间段",\n      "input": "学校活动安排信息",\n      "depends_on": [\n        1\n      ]\n    },\n    {\n      "id": 5,\n      "task": "分析课表信息，找出学生和教师空闲时间段",\n      "input": "课表信息",\n      "depends_on": [\n        2\n      ]\n    },\n    {\n      "id": 6,\n      "task": "分析天气信息，找出适合户外活动的时间段",\n      "input": "天气信息",\n      "depends_on": [\n        3\n      ]\n    },\n    {\n      "id": 7,\n      "task": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间",\n      "input": "空闲时间段、学生和教师空闲时间段、适合户外活动的时间段",\n      "depends_on": [\n        4,\n        5,\n        6\n      ]\n    }\n  ]\n}\n\n工具选择:\n{\n  "tool_selections": [\n    {\n      "task_id": 1,\n      "tool": "event_planner",\n      "params": {},\n      "reason": "event_planner工具专门用于查询校园活动和日程安排信息，适合获取学校活动安排信息。"\n    },\n    {\n      "task_id": 2,\n      "tool": "course_scheduler",\n      "params": {},\n      "reason": "course_scheduler工具用于查询所有专业的课程信息，适合获取课表信息。"\n    },\n    {\n      "task_id": 3,\n      "tool": "weather_report",\n      "params": {},\n      "reason": "weather_report工具用于查询临安地区接下来一周的天气情况，适合获取天气信息。"\n    },\n    {\n      "task_id": 4,\n      "tool": "event_planner",\n      "params": {\n        "input": "{TASK_1_RESULT}"\n      },\n      "reason": "event_planner工具可以分析学校活动安排信息，找出空闲时间段。"\n    },\n    {\n      "task_id": 5,\n      "tool": "course_scheduler",\n      "params": {\n        "input": "{TASK_2_RESULT}"\n      },\n      "reason": "course_scheduler工具可以分析课表信息，找出学生和教师空闲时间段。"\n    },\n    {\n      "task_id": 6,\n      "tool": "weather_report",\n      "params": {\n        "input": "{TASK_3_RESULT}"\n      },\n      "reason": "weather_report工具可以分析天气信息，找出适合户外活动的时间段。"\n    },\n    {\n      "task_id": 7,\n      "tool": "general_assistant",\n      "params": {\n        "message": "结合空闲时间段、学生和教师空闲时间段以及适合户外活动的时间段，确定一个开运动会的合适时间。"\n      },\n      "reason": "general_assistant工具可以结合多个任务的结果，综合分析并确定一个开运动会的合适时间。"\n    }\n  ]\n}\n\n任务执行:\n{\n  "1": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "events": [\n          {\n            "title": "2024春季校园招聘会",\n            "date": "2024-02-01",\n            "time": "14:00-17:00",\n            "location": "图书馆报告厅",\n            "organizer": "就业指导中心",\n            "description": "邀请50家企业参加的大型招聘会"\n          },\n          {\n            "title": "元宵节文化晚会",\n            "date": "2024-02-15",\n            "time": "19:00-21:00",\n            "location": "大学生活动中心",\n            "organizer": "学生会",\n            "description": "传统文化展示与互动游戏"\n          }\n        ]\n      }\n    }\n  },\n  "2": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "courses": [\n          {\n            "id": 1,\n            "course_id": "CS101",\n            "course_name": "计算机导论",\n            "instructor": "张教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "08:00:00",\n            "end_time": "09:40:00",\n            "classroom": "A101"\n          },\n          {\n            "id": 3,\n            "course_id": "EE101",\n            "course_name": "电路原理",\n            "instructor": "王教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "B101"\n          },\n          {\n            "id": 2,\n            "course_id": "CS102",\n            "course_name": "数据结构",\n            "instructor": "李教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 2,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "A102"\n          },\n          {\n            "id": 4,\n            "course_id": "EE102",\n            "course_name": "数字电路",\n            "instructor": "刘教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 3,\n            "start_time": "14:00:00",\n            "end_time": "15:40:00",\n            "classroom": "B102"\n          }\n        ]\n      }\n    }\n  },\n  "3": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "city": "临安市",\n          "date": "2024-01-21",\n          "weather": "多云",\n          "temperature": {\n            "min": 6,\n            "max": 14\n          }\n        }\n      ]\n    }\n  },\n  "4": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "events": [\n          {\n            "title": "2024春季校园招聘会",\n            "date": "2024-02-01",\n            "time": "14:00-17:00",\n            "location": "图书馆报告厅",\n            "organizer": "就业指导中心",\n            "description": "邀请50家企业参加的大型招聘会"\n          },\n          {\n            "title": "元宵节文化晚会",\n            "date": "2024-02-15",\n            "time": "19:00-21:00",\n            "location": "大学生活动中心",\n            "organizer": "学生会",\n            "description": "传统文化展示与互动游戏"\n          }\n        ]\n      }\n    }\n  },\n  "5": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "courses": [\n          {\n            "id": 1,\n            "course_id": "CS101",\n            "course_name": "计算机导论",\n            "instructor": "张教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "08:00:00",\n            "end_time": "09:40:00",\n            "classroom": "A101"\n          },\n          {\n            "id": 3,\n            "course_id": "EE101",\n            "course_name": "电路原理",\n            "instructor": "王教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 1,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "B101"\n          },\n          {\n            "id": 2,\n            "course_id": "CS102",\n            "course_name": "数据结构",\n            "instructor": "李教授",\n            "major": "计算机科学",\n            "semester": "2023-2024-2",\n            "day_of_week": 2,\n            "start_time": "10:00:00",\n            "end_time": "11:40:00",\n            "classroom": "A102"\n          },\n          {\n            "id": 4,\n            "course_id": "EE102",\n            "course_name": "数字电路",\n            "instructor": "刘教授",\n            "major": "电子信息",\n            "semester": "2023-2024-2",\n            "day_of_week": 3,\n            "start_time": "14:00:00",\n            "end_time": "15:40:00",\n            "classroom": "B102"\n          }\n        ]\n      }\n    }\n  },\n  "6": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": [\n        {\n          "city": "临安市",\n          "date": "2024-01-21",\n          "weather": "多云",\n          "temperature": {\n            "min": 6,\n            "max": 14\n          }\n        }\n      ]\n    }\n  },\n  "7": {\n    "status": "success",\n    "api_result": {\n      "status": "success",\n      "data": {\n        "response": "确定一个合适的运动会时间需要考虑以下因素：\\n\\n1. 学生和教师的空闲时间段：选择一个大多数学生和教师都能参加的时间。\\n2. 空闲时间段：确保场地和设施在运动会期间可用。\\n3. 适合户外活动的时间段：避免极端天气和高温时段。\\n\\n以下是一个确定运动会时间的基本步骤：\\n\\n### 第一步：确定学生和教师的空闲时间段\\n- 与学校管理层沟通，了解学生和教师的日程安排。\\n- 确定一个或多个时间段，这些时间段内大多数学生和教师都有空闲。\\n\\n### 第二步：考虑学校的空闲时间段\\n- 检查学校的场地和设施使用情况，确保所选时间段内场地和设施可用。\\n- 考虑到学校其他活动，如考试、家长会等，确保运动会不会与这些活动冲突。\\n\\n### 第三步：分析适合户外活动的时间段\\n- 考虑当地的气候和天气情况，避免在极端天气下进行户外活动。\\n- 选择一天中温度较为适宜、阳光充足的时间段，比如上午9点到下午3点之间。\\n\\n### 第四步：综合以上因素，确定具体时间\\n以下是一个示例流程：\\n\\n1. **学生和教师空闲时间段**：假设学校确定周六下午为大多数学生和教师的空闲时间。\\n2. **学校空闲时间段**：周六下午学校场地和设施可用。\\n3. **适合户外活动的时间段**：周六下午天气预计晴朗，温度适宜。\\n\\n### 结论\\n基于以上信息，周六下午可能是一个开运动会的合适时间。具体时间可以定在下午1点到4点，这样既避开了学生上午的上课时间，又确保了下午时段适合户外活动。\\n\\n当然，这只是一个基本框架，实际操作中还需要考虑更多细节，如学生的具体课程安排、学校的具体要求等。"\n      }\n    }\n  }\n}\n\n在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明\n'}, {'role': 'user', 'content': '请结合学校活动安排信息，课表信息和天气信息确定一个开运动会的合适时间'}, {'role': 'user', 'content': '请结合学校活动安排信息，课表信息和天气信息确定一个开运动会的合适时间'}]
+2025-03-24 07:37:17,218 - chatbot.agent.ResponseGenerator - INFO - ------------------------------

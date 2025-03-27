@@ -6,31 +6,6 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# 创建 logger
-logger = logging.getLogger(__name__)
-# 设置 logger 的日志级别
-logger.setLevel(logging.DEBUG)
-
-# 创建控制台处理器
-console_handler = logging.StreamHandler()
-# 设置控制台处理器的日志级别
-console_handler.setLevel(logging.DEBUG)
-
-# 创建文件处理器
-file_handler = logging.FileHandler('app.log')
-# 设置文件处理器的日志级别
-file_handler.setLevel(logging.DEBUG)
-
-# 创建日志格式
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# 将日志格式应用到控制台处理器
-console_handler.setFormatter(formatter)
-
-# 将控制台处理器添加到 logger
-logger.addHandler(console_handler)
-# 将文件处理器添加到 logger
-logger.addHandler(file_handler)
-
 class CampusToolHub:
     """
     Manages and routes to different specialized tools for campus tasks
@@ -53,7 +28,7 @@ class CampusToolHub:
             "endpoint": "/api/academic/events",
             "required_params": [],
             "optional_params": [],
-            "method": "get"  # 需要提交复杂参数时使用POST
+            "method": "GET"  # 需要提交复杂参数时使用POST
         },
         "library_assistant": {
             "description": "图书馆资源查询API",
@@ -61,7 +36,7 @@ class CampusToolHub:
             "endpoint": "/api/library/resources",
             "required_params": ["query_type"],
             "optional_params": ["title", "author", "subject", "isbn", "resource_type"],
-            "method": "get"
+            "method": "GET"
         },
         "weather_report": {
             "description": "天气查询，查询临安地区接下来一周的天气情况",
@@ -69,7 +44,7 @@ class CampusToolHub:
             "endpoint": "/api/academic/weather",
             "required_params": [],
             "optional_params": [],
-            "method": "get"
+            "method": "GET"
         },
         "general_assistant": {
             "description": "调用连接校园知识库的AI大模型回答一般问题",
@@ -77,7 +52,7 @@ class CampusToolHub:
             "endpoint": "/api/academic/info",
             "required_params": ["message"],
             "optional_params": [],
-            "method": "post"
+            "method": "POST"
         },
         "user_preferences": {
             "description": "用户个人偏好查询API",
@@ -85,7 +60,7 @@ class CampusToolHub:
             "endpoint": "/api/preferences/",
             "required_params": [],
             "optional_params": [],
-            "method": "get"  # 无参数查询使用GET
+            "method": "GET"  # 无参数查询使用GET
         },
         "club_info": {
             "description": "社团基本信息查询API",
@@ -93,7 +68,7 @@ class CampusToolHub:
             "endpoint": "/api/clubs/basic_info/",
             "required_params": [],
             "optional_params": [],
-            "method": "get"
+            "method": "GET"
         },
     }
 
@@ -115,7 +90,6 @@ class CampusToolHub:
                 "capabilities": tool_info["capabilities"],
                 "required_params": tool_info["required_params"],
                 "optional_params": tool_info["optional_params"],
-                "method": tool_info.get("method", "post")
             }
         
         return json.dumps(tool_capabilities, ensure_ascii=False, indent=2)
@@ -123,13 +97,14 @@ class CampusToolHub:
     @classmethod
     def call_api(cls, tool_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """
-        支持GET/POST的通用API调用方法
+        Call the appropriate API endpoint for the selected tool
+        
         Args:
-            tool_name: 工具名称
-            params: 参数字典（自动适配GET查询参数或POST请求体）
-
+            tool_name: Name of the tool to use
+            params: Parameters to pass to the API (optional, defaults to None)
+            
         Returns:
-            API响应数据
+            API response data
         """
         if tool_name not in cls.TOOL_REGISTRY:
             logger.error(f"Unknown tool: {tool_name}")
@@ -137,29 +112,33 @@ class CampusToolHub:
         
         tool_info = cls.TOOL_REGISTRY[tool_name]
         endpoint = tool_info["endpoint"]
-        method = tool_info.get("method", "post")
+        method = tool_info.get("method", "POST").upper()
+
+        if params is None:
+            params = {}
+
+        # 参数校验
+        for required_param in tool_info["required_params"]:
+            if required_param not in params:
+                logger.error(f"Missing required parameter for {tool_name}: {required_param}")
+                return {"error": f"缺少必要参数: {required_param}", "tool": tool_name}
+            
         url = f"{cls.API_BASE_URL}{endpoint}"
         headers = {"Content-Type": "application/json"}
 
-        # 参数校验
-        for param in tool_info["required_params"]:
-            if param not in params:
-                logger.error(f"Missing required param {param} for {tool_name}")
-                return {"error": f"缺少必要参数: {param}", "tool": tool_name}
-
         try:
-            if method.lower() == "get":
+            if method == "GET":
                 # GET请求处理（参数转查询字符串）
                 response = requests.get(
                     url,
                     headers=headers,
-                    params=params
+                    params=params if params else None
                 )
             else:
                 # POST请求处理（参数转JSON）
                 response = requests.post(
                     url,
-                    json=params,
+                    json=params if params else None,
                     headers=headers
                 )
 

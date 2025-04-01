@@ -1,16 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .models import PDFDocument, ChatSession
+from .models import ChatSession, ProcessInfo, ChatMessage
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .PDFdocument.documentProcess import process_pdf_document
-from .PDFdocument.documentEmbedding import add_documents_to_faiss
-from .PDFdocument.documentSearch import search_all_documents
 import os
 import logging
-from django.conf import settings
-from .promptGenerator import PromptGenerator
 from django.http import StreamingHttpResponse
 from .agent.ResponseGenerator import ResponseGenerator
 from django.core.cache import cache
@@ -22,6 +17,11 @@ from .agent.LLMController import get_process_info
 MAX_HISTORY_LENGTH = 10  # 可根据需要调整
 # 配置日志
 logger = logging.getLogger(__name__)
+
+# 创建单独的文件处理器，用于处理特定日志
+chunk_file_handler = logging.FileHandler('chunk.log')
+chunk_file_handler.setLevel(logging.DEBUG)
+logger.addHandler(chunk_file_handler)
 
 @api_view(['POST'])
 def chat(request):
@@ -77,7 +77,30 @@ def chat(request):
         return Response({
             'status': 'error',
             'message': '服务器内部错误'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)            
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+    
+
+
+@api_view(['GET'])
+def get_process_info_view(request, session_id):        
+    try:
+        process_infos = ProcessInfo.objects.filter(session_id=session_id).order_by('-created_at')
+        data = [{
+            'steps': info.steps,
+            'task_plan': info.task_plan,
+            'tool_selections': info.tool_selections,
+            'task_results': info.task_results
+        } for info in process_infos]
+        return Response({
+           'status': 'success',
+           'data': data
+        })
+    except Exception as e:
+        logger.error(f"获取处理过程信息失败: {str(e)}")
+        return Response({
+           'status': 'error',
+           'message': '获取处理过程信息失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
     
 def generate_streaming_response(message, chat_session, chat_history):
     """
@@ -94,23 +117,42 @@ def generate_streaming_response(message, chat_session, chat_history):
             
     def stream_response():
         full_response = ""
+        process_steps = []
+        task_plan = None
+        tool_selections = None
+        task_results = {}
+        ai_message = None
+
         try:
             # Use the improved create_streaming_response function
             process_info_generator = get_process_info(message)
             try:
                 while True:
                     event = next(process_info_generator)
+                    # event为python字典类型
                     yield f"data: {json.dumps(event)}\n\n"
+                    if event["type"] == "step":
+                        process_steps.append(event["content"])
+                    elif event["type"] == "data":
+                        # 处理不同类型的事件
+                        if event["subtype"] == "task_plan":
+                            task_plan = event["content"]
+                        elif event["subtype"] == "task_result":
+                            task_results[event["content"]["task_id"]] = event["content"]["result"]
+                        elif event["subtype"] == "tool_selections":
+                            tool_selections = event["content"]
+                    logger.info(f"yield the chunk: {event}")
             except StopIteration as e:
                 process_info = e.value  # Get the returned process_info
             for chunk in ResponseGenerator.create_streaming_response(message, process_info, chat_history):
                 if chunk:
                     full_response += chunk
                     yield f"data: {json.dumps({'content': chunk})}\n\n"
+                    # logger.info(f"Chunk: {chunk}")
         finally:
             if full_response:
                 # Save response to database
-                chat_session.messages.create(
+                ai_message = chat_session.messages.create(
                     content=full_response,
                     is_user=False
                 )
@@ -126,6 +168,16 @@ def generate_streaming_response(message, chat_session, chat_history):
                     role="assistant",
                     content=full_response,
                     chat_history=chat_history
+                )
+            
+            if ai_message:
+                # 保存ProcessInfo到数据库
+                ProcessInfo.objects.create(
+                    message=ai_message,
+                    steps=process_steps,
+                    task_plan=task_plan,
+                    tool_selection=tool_selections,
+                    task_results=task_results
                 )
 
     response = StreamingHttpResponse(
@@ -273,164 +325,6 @@ class ChatHistoryManager:
         # Update cache
         cache.set(cache_key, chat_history, timeout=3600)
         return chat_history
-    
-
-# # 获取RAG上下文的函数
-# def get_rag_context(query, session_id, max_length=5000):
-#     """
-#     根据查询获取相关RAG上下文
-
-#     Args:
-#         query: 查询文本
-#         session_id: 会话ID
-#         max_length: 上下文最大长度，默认为5000
-
-#     Returns:
-#         str: 上下文文本
-#     """
-#     try:
-#         need_rag, doc_type, optimized_query = TaskClassifier.classify(query)
-
-#         if not need_rag:
-#             return ""
-            
-#         # 根据文档类型获取相关文档
-#         if doc_type == 'both':
-#             # 同时查询招标书和应标书
-#             invitation_docs = search_session_documents(optimized_query, session_id, document_type='invitation')
-#             offer_docs = search_session_documents(optimized_query, session_id, document_type='offer')
-#             relevant_docs = invitation_docs + offer_docs
-#         else:
-#             # 查询指定类型的文档
-#             relevant_docs = search_session_documents(optimized_query, session_id, document_type=doc_type)
-        
-#         context_parts = []
-#         current_length = 0
-
-#         # 合并并裁剪上下文
-#         for doc in relevant_docs:
-#             doc_text = f"[{doc['document_title']}] {doc['content']}\n\n"
-#             doc_length = len(doc_text)
-
-#             if current_length + doc_length <= max_length:
-#                 context_parts.append(doc_text)
-#                 current_length += doc_length
-#             else:
-#                 # If adding whole document exceeds length, add partial document if possible
-#                 remaining_length = max_length - current_length
-#                 if remaining_length > 100:  # Only add if we can include meaningful content
-#                     context_parts.append(f"[{doc['document_title']}] {doc['content'][:remaining_length-50]}...\n\n")
-#                 break
-                
-#         return "".join(context_parts)
-        
-#     except Exception as e:
-#         logger.error(f"获取RAG上下文失败: {str(e)}")
-#         return ""
-    
-# 上传pdf文件
-@api_view(['POST'])
-def upload_pdf(request):
-    # 检查用户是否登录
-    if not request.user.is_authenticated:
-        return Response({
-            'status': 'error',
-            'message': '请先登录'
-        }, status=status.HTTP_401_UNAUTHORIZED)
-    
-    try:
-        if 'file' not in request.FILES:
-            return Response({
-                'status': 'error',
-                'message': '没有文件被上传'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # 获取文档类型
-        document_type = request.data.get('document_type', 'invitation') 
-        if document_type not in ['invitation', 'offer']:
-            return Response({
-                'status': 'error',
-                'message': '无效的文档类型，必须是 invitation(招标书) 或 offer(应标书)'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # 获取会话ID
-        session_id = request.data.get('session_id')
-        if session_id:
-            try:
-                session = ChatSession.objects.get(id=session_id)
-            except ChatSession.DoesNotExist:
-                return Response({
-                    'status': 'error',
-                    'message': '会话不存在'
-                }, status=status.HTTP_404_NOT_FOUND)
-        
-        pdf_file = request.FILES['file']
-        if not pdf_file.name.endswith('.pdf'):
-            return Response({
-                'status': 'error',
-                'message': '只能上传PDF文件'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # 保存PDF文档，添加上传者信息和会话关联
-        document = PDFDocument.objects.create(
-            title=pdf_file.name,
-            file=pdf_file,
-            uploader=request.user,
-            session=session if session_id else None,  # 关联会话
-            document_type=document_type # 文档类型
-        )
-        logger.info(f"PDF文件已保存，ID: {document.id}")
-        
-        try:
-            # 处理PDF文档，分割成文档块
-            docs = process_pdf_document(document.id)
-            logger.info(f"文档分割完成，共 {len(docs)} 个块")
-            
-            # 创建向量存储目录
-            vector_store_dir = os.path.join(settings.MEDIA_ROOT, 'vector_store')
-            os.makedirs(vector_store_dir, exist_ok=True)
-            
-            # 生成唯一的向量存储文件名
-            index_path = os.path.join(vector_store_dir, f'doc_{document.id}.faiss')
-            
-            # 将文档添加到向量存储
-            add_documents_to_faiss(docs, index_path)
-            logger.info(f"向量存储已创建: {index_path}")
-            
-            # 更新文档记录，添加向量存储路径
-            document.vector_index_path = index_path
-            document.is_processed = True
-            document.page_count = len(set(doc.metadata.get('page', 0) for doc in docs))
-            document.chunk_count = len(docs)
-            document.save()
-            
-        except Exception as e:
-            # 如果处理过程中出错，删除已上传的文档
-            document.delete()
-            logger.error(f"处理PDF时出错: {str(e)}")
-            raise Exception(f"处理PDF时出错: {str(e)}")
-        
-        return Response({
-            'status': 'success',
-            'data': {
-                'id': document.id,
-                'title': document.title,
-                'url': request.build_absolute_uri(document.file.url),
-                'is_processed': document.is_processed,
-                'page_count': document.page_count,
-                'chunk_count': document.chunk_count,
-                'document_type': document.document_type,
-                'created_at': document.created_at,
-                'updated_at': document.updated_at
-            }
-        }, status=status.HTTP_201_CREATED)
-        
-    except Exception as e:
-        logger.error(f"上传处理失败: {str(e)}")
-        return Response({
-            'status': 'error',
-            'message': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'POST', 'DELETE'])
 def chat_sessions(request):
@@ -473,14 +367,28 @@ def session_messages(request, session_id):
     if request.method == 'GET':
         try:
             session = ChatSession.objects.get(id=session_id)
-            messages = session.messages.all()
-            return Response({
-                'status': 'success',
-                'data': [{
+            messages = session.messages.all().prefetch_related('process_info')
+            response_data = []
+            for msg in messages:
+                message_data = {
                     'content': msg.content,
                     'is_user': msg.is_user,
-                    'created_at': msg.created_at
-                } for msg in messages]
+                    'created_at': msg.created_at,
+                }
+                if hasattr(msg, 'process_info'):
+                    process_info = msg.process_info
+                    message_data['process_info'] = {
+                        'steps': process_info.steps,
+                        'task_plan': process_info.task_plan,
+                        'tool_selection': process_info.tool_selection,
+                        'task_results': process_info.task_results,
+                        'created_at': process_info.created_at
+                    }
+                response_data.append(message_data)
+
+            return Response({
+                'status': 'success',
+                'data': response_data
             })
         except ChatSession.DoesNotExist:
             return Response({
@@ -500,48 +408,3 @@ def session_messages(request, session_id):
                 'status': 'error',
                 'message': f'删除会话失败: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['GET'])
-def session_documents(request, session_id):
-    """获取指定会话关联的文档"""
-    try:
-        # 检查用户是否登录
-        if not request.user.is_authenticated:
-            return Response({
-                'status': 'error',
-                'message': '请先登录'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-        
-        # 获取会话
-        session = ChatSession.objects.get(id=session_id)
-        
-        # 获取与会话关联的文档
-        documents = PDFDocument.objects.filter(session_id=session_id)
-        
-        return Response({
-            'status': 'success',
-            'data': [{
-                'id': doc.id,
-                'title': doc.title,
-                'url': request.build_absolute_uri(doc.file.url),
-                'is_processed': doc.is_processed,
-                'page_count': doc.page_count,
-                'chunk_count': doc.chunk_count,
-                'document_type': doc.document_type,
-                'created_at': doc.created_at,
-                'updated_at': doc.updated_at
-            } for doc in documents]
-        })
-        
-    except ChatSession.DoesNotExist:
-        return Response({
-            'status': 'error',
-            'message': '会话不存在'
-        }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        logger.error(f"获取会话文档失败: {str(e)}")
-        return Response({
-            'status': 'error',
-            'message': '获取文档失败'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    

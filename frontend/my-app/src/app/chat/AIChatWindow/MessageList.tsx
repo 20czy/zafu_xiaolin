@@ -1,26 +1,33 @@
-// MessageList.tsx
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MessageItem from "./MessageItem";
 import ProcessingInfo from "./ProcessingInfo";
 import { useRef, useEffect } from "react";
 
 interface MessageListProps {
-  messages: Array<{ text: string; isUser: boolean }>;
+  messages: Array<{
+    text: string;
+    isUser: boolean;
+    processInfo?: {
+      steps: string[];
+      taskPlan: any;
+      toolSelections: any;
+      taskResults: any;
+    };
+  }>;
   streamingMessage: string | null;
-  processingSteps: string[]; // 任务的处理的步骤，包括：1. 生成任务计划 2. 选择工具 
-  taskPlan: any[]; // 任务计划详情
-  toolSelections: Record<string, any>; // 工具选择详情
-  taskResults: Record<string, any>; // 任务结果详情
-  isProcessing: boolean; // 是否正在处理
+  currentProcessInfo: {
+    steps: string[];
+    taskPlan: any[];
+    toolSelections: Record<string, any>;
+    taskResults: Record<string, any>;
+  } | null;
+  isProcessing: boolean;
 }
 
 export default function MessageList({
   messages,
   streamingMessage,
-  processingSteps,
-  taskPlan,
-  toolSelections,
-  taskResults,
+  currentProcessInfo,
   isProcessing,
 }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -30,39 +37,50 @@ export default function MessageList({
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, streamingMessage, processingSteps]);
-  
-  const processingInfo = {
-    processingSteps,
-    taskPlan,
-    toolSelections,
-    taskResults,
-    isProcessing
-  };
+  }, [messages, streamingMessage, currentProcessInfo]);
   
   return (
     <ScrollArea className="h-full px-4" ref={scrollRef}>
       <div className="flex flex-col gap-4 py-4">
         {messages.map((message, index) => (
-          <MessageItem 
-            key={index}
-            text={message.text}
-            isUser={message.isUser}
-          />
+          <div key={index} className="flex flex-col gap-2">
+            {message.processInfo && Object.keys(message.processInfo).length > 0 && (
+              <ProcessingInfo 
+                processingSteps={message.processInfo.steps || []}
+                taskPlan={message.processInfo.taskPlan || []}
+                toolSelections={message.processInfo.toolSelections || {}}
+                taskResults={message.processInfo.taskResults || {}}
+                isProcessing={false}
+              />
+            )}
+            <MessageItem 
+              text={message.text}
+              isUser={message.isUser}
+            />
+          </div>
         ))}
         
         {isProcessing && (
-          <>
-            {processingSteps.length > 0 && (
-              <ProcessingInfo {...processingInfo} />
+          <div className="flex flex-col gap-2">
+            {/* Show real-time processing info before showing the streaming message */}
+            {currentProcessInfo && currentProcessInfo.steps.length > 0 && (
+              <ProcessingInfo 
+                processingSteps={currentProcessInfo.steps || []}
+                taskPlan={currentProcessInfo.taskPlan || []}
+                toolSelections={currentProcessInfo.toolSelections || {}}
+                taskResults={currentProcessInfo.taskResults || {}}
+                isProcessing={true}
+              />
             )}
+            
+            {/* Show streaming message if available */}
             {streamingMessage && (
               <MessageItem 
                 text={streamingMessage}
                 isUser={false}
               />
             )}
-          </>
+          </div>
         )}
       </div>
     </ScrollArea>

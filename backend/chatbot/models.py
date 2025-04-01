@@ -92,4 +92,11 @@ class ChatMessage(models.Model):
     class Meta:
         ordering = ['created_at']
     
-    
+class ProcessInfo(models.Model):
+    """处理过程信息模型"""
+    message = models.OneToOneField(ChatMessage, on_delete=models.CASCADE, related_name='process_info')
+    steps = models.JSONField(default=list)
+    task_plan = models.JSONField(null=True, blank=True)
+    tool_selection = models.JSONField(null=True, blank=True)
+    task_results = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

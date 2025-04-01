@@ -31,14 +31,22 @@ export default function ChatWindowShadcn({
 }: ChatWindowProps) {
   // 删除 width 状态
   const [messages, setMessages] = useState<
-    Array<{ text: string; isUser: boolean }>
+    Array<{
+      text: string;
+      isUser: boolean;
+      processInfo?: {
+        steps: string[];
+        taskPlan: any;
+        toolSelections: any;
+        taskResults: any;
+      };
+    }>
   >([]);
   const [input, setInput] = useState("");
   const [sessions, setSessions] = useState<
     Array<{ id: number; title: string; updated_at: string }>
   >([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-
   // 使用 useRef 来标记会话是否已创建
   const isSessionCreating = useRef(false);
 
@@ -88,19 +96,13 @@ export default function ChatWindowShadcn({
               continue;
             }
 
-            const documentsData = await fetchWithCSRF(
-              `http://localhost:8000/api/chat/sessions/${session.id}/documents/`
-            );
-
             const messagesData = await fetchWithCSRF(
               `http://localhost:8000/api/chat/sessions/${session.id}/messages/`
             );
 
             if (
               messagesData.status === "success" &&
-              messagesData.data.length === 0 &&
-              documentsData.status === "success" &&
-              documentsData.data.length === 0
+              messagesData.data.length === 0
             ) {
               await fetchWithCSRF(
                 `http://localhost:8000/api/chat/sessions/${session.id}/messages/`,
@@ -129,10 +131,14 @@ export default function ChatWindowShadcn({
   // 添加状态来跟踪当前正在流式接收的消息
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [processingSteps, setProcessingSteps] = useState<any[]>([]);
-  const [taskPlan, setTaskPlan] = useState([]);
-  const [toolSelections, setToolSelections] = useState({});
-  const [taskResults, setTaskResults] = useState({});
+
+  // 添加状态来跟踪当前正在处理的信息
+  const [currentProcessInfo, setCurrentProcessInfo] = useState<{
+    steps: string[];
+    taskPlan: any[];
+    toolSelections: Record<string, any>;
+    taskResults: Record<string, any>;
+  } | null>(null);
 
   const handleSend = async () => {
     if (!input.trim() || !sessionId) return;
@@ -143,7 +149,21 @@ export default function ChatWindowShadcn({
     setIsStreaming(true);
     setStreamingMessage(""); // 重置流式消息
 
+    // 重置处理信息
+    setCurrentProcessInfo({
+      steps: [],
+      taskPlan: [],
+      toolSelections: {},
+      taskResults: {}
+    });
+
     let accumulatedMessage = "";
+    let processInfo = {
+      steps: [] as string[],
+      taskPlan: null as any,
+      toolSelections: null as any,
+      taskResults: null as any
+    };
 
     try {
       const response = await fetch("http://localhost:8000/api/chat/", {
@@ -179,17 +199,37 @@ export default function ChatWindowShadcn({
               // 根据事件类型处理不同的数据
               if (data.type === "step") {
                 // 更新处理步骤信息
-                setProcessingSteps(prev => [...prev, data.content]);
+                processInfo.steps = [...processInfo.steps, data.content];
+                setCurrentProcessInfo(prevInfo => ({
+                  ...prevInfo!,
+                  steps: [...processInfo.steps]
+                }));
               } else if (data.type === "data") {
                 // 处理数据信息
                 if (data.subtype === "task_plan") {
-                  setTaskPlan(data.content);
+                  processInfo.taskPlan = data.content;
+                  setCurrentProcessInfo(prevInfo => ({
+                    ...prevInfo!,
+                    taskPlan: data.content
+                  }));
                 } else if (data.subtype === "tool_selection") {
-                  setToolSelections(data.content);
+                  processInfo.toolSelections = data.content;
+                  setCurrentProcessInfo(prevInfo => ({
+                    ...prevInfo!,
+                    toolSelections: data.content
+                  }));
                 } else if (data.subtype === "task_result") {
-                  setTaskResults((prev) => ({
-                    ...prev,
+                  processInfo.taskResults = {
+                    ...processInfo.taskResults,
                     [data.content.task_id]: data.content.result,
+                  };
+                  // 实时更新当前处理信息
+                  setCurrentProcessInfo(prevInfo => ({
+                    ...prevInfo!,
+                    taskResults: {
+                      ...prevInfo!.taskResults,
+                      [data.content.task_id]: data.content.result,
+                    }
                   }));
                 }
               } else {
@@ -208,16 +248,11 @@ export default function ChatWindowShadcn({
       // 流式接收完成，更新消息列表
       setMessages((prev) => [
         ...prev,
-        { text: accumulatedMessage, isUser: false },
+        { text: accumulatedMessage, isUser: false, processInfo: processInfo },
       ]);
       setStreamingMessage(""); // 清空流式消息
+      setCurrentProcessInfo(null); // 清空当前处理信息
       setIsStreaming(false);
-
-      // // 重置处理状态
-      // setProcessingSteps([]);
-      // setTaskPlan([]);
-      // setToolSelections({});
-      // setTaskResults({});
 
     } catch (error) {
       console.error("发送消息失败:", error);
@@ -226,10 +261,12 @@ export default function ChatWindowShadcn({
         { text: "网络错误，请检查连接后重试。", isUser: false },
       ]);
       setStreamingMessage("");
+      setCurrentProcessInfo(null);
       setIsStreaming(false);
     }
   };
 
+  // 当 sessionId 改变时，重新获取消息
   useEffect(() => {
     if (sessionId) {
       fetchWithCSRF(
@@ -237,12 +274,18 @@ export default function ChatWindowShadcn({
       )
         .then((data) => {
           if (data.status === "success") {
-            const newMessages = data.data.map(
-              (msg: { content: string; is_user: boolean }) => ({
-                text: msg.content,
-                isUser: msg.is_user,
-              })
-            );
+            const newMessages = data.data.map((msg: any) => ({
+              text: msg.content,
+              isUser: msg.is_user,
+              processInfo: msg.process_info
+                ? {
+                    steps: msg.process_info.steps,
+                    taskPlan: msg.process_info.task_plan,
+                    toolSelection: msg.process_info.tool_selection,
+                    taskResults: msg.process_info.task_results,
+                  }
+                : undefined,
+            }));
             setMessages(newMessages);
           }
         })
@@ -314,14 +357,14 @@ export default function ChatWindowShadcn({
           <Card className="h-full flex flex-col">
             <CardHeader className="p-4 flex flex-row justify-between items-center">
               <div className="flex items-center gap-2">
-                <h2 className="font-extrabold text-lg">农林小林</h2>
                 <Avatar className="pl-0">
                   <AvatarImage
-                    src="https://www.zafu.edu.cn/__local/E/17/4D/EADA754B779AD05D115132A676B_4504F299_11407.jpg"
+                    src="https://i.miji.bid/2025/03/27/b5e12e0800f7490f597879941b6018da.png"
                     alt="@shadcn"
                   />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
+                <h2 className="font-extrabold text-lg">农林小林</h2>
               </div>
 
               <HeaderActions
@@ -346,10 +389,7 @@ export default function ChatWindowShadcn({
               <MessageList
                 messages={messages}
                 streamingMessage={isStreaming ? streamingMessage : null}
-                processingSteps={processingSteps}
-                taskPlan={taskPlan}
-                toolSelections={toolSelections}
-                taskResults={taskResults}
+                currentProcessInfo={currentProcessInfo}
                 isProcessing={isStreaming}
               />
             </CardContent>
@@ -376,6 +416,7 @@ export default function ChatWindowShadcn({
 import { Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { set } from "react-hook-form";
+import { any } from "zod";
 
 const HeaderActions = ({
   onNewSession,
@@ -394,3 +435,4 @@ const HeaderActions = ({
     </Button>
   </div>
 );
+

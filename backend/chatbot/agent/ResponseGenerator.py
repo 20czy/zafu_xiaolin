@@ -3,7 +3,6 @@ import logging
 from typing import Dict, Any
 from ..LLMService import LLMService
 from ..logger_config import setup_logger
-from .LLMController import get_process_info
 
 logger = setup_logger(__name__)
 

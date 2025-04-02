@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <nav className="border-b px-7 py-3 bg-white">
       <div className="w-full flex justify-between items-center">
-        <div className="text-xl font-bold">标书审阅系统</div>
+        <div className="text-xl font-bold"></div>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

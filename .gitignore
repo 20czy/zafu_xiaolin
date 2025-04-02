@@ -1,2 +1,2 @@
-vector_store/
-.log
+**/vector_store/
+*.log

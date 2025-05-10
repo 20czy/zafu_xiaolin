@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/charn/Desktop/zafugpt/backend/logs/.f877a2fe880bc3395d76e1f81c6965b1265a1897-audit.json",
+    "files": [
+        {
+            "date": 1746855063700,
+            "name": "/Users/charn/Desktop/zafugpt/backend/logs/mcp-puppeteer-2025-05-10.log",
+            "hash": "27eed107a4840a8eab99ad45fedc3fd031fe3c37f1cecf820fba993f204ed1a2"
+        }
+    ],
+    "hashType": "sha256"
+}

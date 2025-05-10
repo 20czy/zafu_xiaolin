@@ -1,9 +1,11 @@
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
+
 from ..LLMService import LLMService
 from ..CampusToolHub import CampusToolHub
 from ..logger_config import setup_logger
+from .mcpConfigManager import McpSession, Tool
 
 logger = setup_logger(__name__)
 
@@ -58,12 +60,13 @@ class ToolSelector:
     """
     
     @classmethod
-    def select_tools_for_tasks(cls, task_plan: Dict[str, Any]) -> Dict[str, Any]:
+    async def select_tools_for_tasks(cls, task_plan: Dict[str, Any], mcp_session: McpSession) -> Dict[str, Any]:
         """
         Select appropriate tools for each task in the plan
         
         Args:
             task_plan: The task plan from the TaskPlanner
+            mcp_session: MCP session for accessing server tools
             
         Returns:
             Tool selection dictionary
@@ -73,8 +76,43 @@ class ToolSelector:
         
         try:
             # Get tool capabilities for selection
-            logger.debug("获取工具能力信息")
-            tool_capabilities = CampusToolHub.get_tool_info_for_planner()
+            logger.debug("通过mcp_session获取工具能力信息")
+            all_mcp_tool_formatted: List[str] = []
+            
+            # 从MCP服务器获取工具列表
+            if mcp_session and mcp_session.servers:
+                for server in mcp_session.servers:
+                    try:
+                        # 使用异步方式获取工具列表
+                        tools = await server.list_tools()
+                        
+                        # 格式化工具信息
+                        for tool in tools:
+                            tool_info = f"工具名称: {tool.name}\n"
+                            tool_info += f"描述: {tool.description}\n"
+                            
+                            # 添加参数信息
+                            if hasattr(tool, 'input_schema') and tool.input_schema:
+                                tool_info += "参数:\n"
+                                properties = tool.input_schema.get('properties', {})
+                                for param_name, param_info in properties.items():
+                                    required = "必需" if param_name in tool.input_schema.get('required', []) else "可选"
+                                    param_type = param_info.get('type', '未知')
+                                    param_desc = param_info.get('description', '无描述')
+                                    tool_info += f"  - {param_name} ({param_type}, {required}): {param_desc}\n"
+                            
+                            all_mcp_tool_formatted.append(tool_info)
+                    except Exception as e:
+                        logger.warning(f"从服务器 {server.name} 获取工具列表失败: {str(e)}")
+            
+            # 如果没有MCP工具，使用默认的通用工具
+            if not all_mcp_tool_formatted:
+                all_mcp_tool_formatted = [
+                    "工具名称: general_assistant\n描述: 通用助手，可以回答一般性问题\n参数:\n  - query_type (string, 必需): 查询类型\n  - keywords (string, 必需): 关键词"
+                ]
+            
+            # 合并所有工具信息
+            tool_capabilities = "\n\n".join(all_mcp_tool_formatted)
             
             # Create selection prompt
             logger.debug("生成工具选择提示词")
@@ -124,23 +162,38 @@ class ToolSelector:
         except Exception as e:
             logger.error(f"工具选择过程出错: {str(e)}", exc_info=True)
             return cls._get_default_selections(task_plan)
-
+    
     @classmethod
     def _get_default_selections(cls, task_plan: Dict[str, Any]) -> Dict[str, Any]:
         """
-        生成默认的工具选择方案
+        Generate default tool selections when the normal process fails
+        
+        Args:
+            task_plan: The task plan from the TaskPlanner
+            
+        Returns:
+            Default tool selection dictionary
         """
-        logger.warning("使用默认工具选择方案")
-        default_selections = {
-            "tool_selections": [
-                {
-                    "task_id": task["id"],
-                    "tool": "general_assistant",
-                    "params": {"query_type": "general", "keywords": task["input"]},
-                    "reason": "Default selection due to error"
-                }
-                for task in task_plan.get("tasks", [])
-            ]
-        }
-        logger.debug(f"生成的默认选择方案: {json.dumps(default_selections, ensure_ascii=False)}")
+        logger.info("生成默认工具选择")
+        default_selections = {"tool_selections": []}
+        
+        # Extract tasks from the plan
+        tasks = task_plan.get("tasks", [])
+        
+        # Create a default selection for each task
+        for task in tasks:
+            task_id = task.get("id")
+            task_description = task.get("task", "")
+            
+            default_selections["tool_selections"].append({
+                "task_id": task_id,
+                "tool": "general_assistant",
+                "params": {
+                    "query_type": "general",
+                    "keywords": task_description
+                },
+                "reason": "默认选择通用助手工具，因为工具选择过程失败"
+            })
+        
+        logger.debug(f"默认工具选择: {json.dumps(default_selections, ensure_ascii=False)}")
         return default_selections

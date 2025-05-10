@@ -12,6 +12,8 @@ from django.core.cache import cache
 from .PDFdocument.documentSearch import search_session_documents
 from.LLMService import LLMService
 from .agent.LLMController import get_process_info
+from .agent.mcpConfigManager import ServerConfigration, Server, McpSession
+from asgiref.sync import sync_to_async, async_to_sync
 
 
 MAX_HISTORY_LENGTH = 10  # 可根据需要调整
@@ -25,6 +27,13 @@ logger.addHandler(chunk_file_handler)
 
 @api_view(['POST'])
 def chat(request):
+    """
+    处理用户的聊天请求，加工用户的信息，检索相关的文档，生成回复
+    """
+    # Use async_to_sync to wrap the async function
+    return async_to_sync(async_chat)(request)
+
+async def async_chat(request):
     """
     处理用户的聊天请求，加工用户的信息，检索相关的文档，生成回复
     """
@@ -48,11 +57,21 @@ def chat(request):
         logger.info("-"*30)
         
         try:
-            chat_session = ChatSession.objects.get(id=session_id)
-            chat_history = ChatHistoryManager.get_chat_history(session_id)
+            server_config = ServerConfigration.load_config()
+            servers = [
+                Server(name, srv_config)
+                for name, srv_config in server_config["mcpServers"].items()
+            ]
+            llm = LLMService.get_llm(model_name='deepseek-chat', stream=False)
+            mcp_session = McpSession(servers, llm)
+            await mcp_session.start()
+
+            # 使用异步方式获取会话
+            chat_session = await sync_to_async(ChatSession.objects.get)(id=session_id)
+            chat_history = await ChatHistoryManager.get_chat_history(session_id)
                      
-            # 添加当前用户消息
-            chat_session.messages.create(
+            # 添加当前用户消息 - 使用异步方式
+            await sync_to_async(chat_session.messages.create)(
                 content=message,
                 is_user=True
             )
@@ -61,10 +80,11 @@ def chat(request):
             chat_history.append({"role": "user", "content": message})
             
             try:
-                return generate_streaming_response(message, chat_session, chat_history)
+                # 确保响应生成函数也是异步的
+                return await generate_streaming_response(message, chat_session, chat_history)
             except Exception as e:
                 logger.warning(f"流式响应失败，切换到普通对话模式: {str(e)}")
-                return generate_standard_response(message, chat_session, chat_history)
+                return await generate_standard_response(message, chat_session, chat_history)
 
         except ChatSession.DoesNotExist:
             return Response({
@@ -77,7 +97,7 @@ def chat(request):
         return Response({
             'status': 'error',
             'message': '服务器内部错误'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 
@@ -102,7 +122,7 @@ def get_process_info_view(request, session_id):
            'message': '获取处理过程信息失败'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
     
-def generate_streaming_response(message, chat_session, chat_history):
+async def generate_streaming_response(message, chat_session, chat_history):
     """
     Generate a streaming response and persist it.
     
@@ -115,7 +135,7 @@ def generate_streaming_response(message, chat_session, chat_history):
         StreamingHttpResponse for SSE delivery
     """
             
-    def stream_response():
+    async def stream_response():
         full_response = ""
         process_steps = []
         task_plan = None
@@ -125,10 +145,13 @@ def generate_streaming_response(message, chat_session, chat_history):
 
         try:
             # Use the improved create_streaming_response function
-            process_info_generator = get_process_info(message)
+            # 将同步生成器转为异步
+            process_info_generator = await sync_to_async(get_process_info)(message)
             try:
+                # 迭代生成器需要特殊处理
+                process_info = None
                 while True:
-                    event = next(process_info_generator)
+                    event = await sync_to_async(next)(process_info_generator)
                     # event为python字典类型
                     yield f"data: {json.dumps(event)}\n\n"
                     if event["type"] == "step":
@@ -141,10 +164,23 @@ def generate_streaming_response(message, chat_session, chat_history):
                             task_results[event["content"]["task_id"]] = event["content"]["result"]
                         elif event["subtype"] == "tool_selections":
                             tool_selections = event["content"]
+                    elif event["type"] == "final" and event["subtype"] == "process_info":
+                        # 获取最终的process_info
+                        process_info = event["content"]
                     logger.info(f"yield the chunk: {event}")
             except StopIteration as e:
-                process_info = e.value  # Get the returned process_info
-            for chunk in ResponseGenerator.create_streaming_response(message, process_info, chat_history):
+                # 如果没有获取到process_info，创建一个简单的默认值
+                if process_info is None:
+                    process_info = {
+                        "user_input": message,
+                        "task_planning": {"tasks": []},
+                        "tool_selection": {"tool_selections": []},
+                        "task_execution": {}
+                    }
+            
+            # 转换为异步调用
+            response_generator = await sync_to_async(ResponseGenerator.create_streaming_response)(message, process_info, chat_history)
+            for chunk in response_generator:
                 if chunk:
                     full_response += chunk
                     yield f"data: {json.dumps({'content': chunk})}\n\n"
@@ -152,18 +188,19 @@ def generate_streaming_response(message, chat_session, chat_history):
         finally:
             if full_response:
                 # Save response to database
-                ai_message = chat_session.messages.create(
+                ai_message = await sync_to_async(chat_session.messages.create)(
                     content=full_response,
                     is_user=False
                 )
                 
                 # Set session title if this is the first message
-                if chat_session.messages.count() <= 2:
+                message_count = await sync_to_async(chat_session.messages.count)()
+                if message_count <= 2:
                     chat_session.title = message[:50] + ('...' if len(message) > 50 else '')
-                    chat_session.save()
+                    await sync_to_async(chat_session.save)()
 
                 # Update chat history in cache
-                ChatHistoryManager.update_chat_history(
+                await ChatHistoryManager.update_chat_history(
                     session_id=chat_session.id,
                     role="assistant",
                     content=full_response,
@@ -172,7 +209,7 @@ def generate_streaming_response(message, chat_session, chat_history):
             
             if ai_message:
                 # 保存ProcessInfo到数据库
-                ProcessInfo.objects.create(
+                await sync_to_async(ProcessInfo.objects.create)(
                     message=ai_message,
                     steps=process_steps,
                     task_plan=task_plan,
@@ -180,6 +217,9 @@ def generate_streaming_response(message, chat_session, chat_history):
                     task_results=task_results
                 )
 
+    # 使用async_to_sync包装异步生成器，使其与StreamingHttpResponse兼容
+    sync_stream_generator = async_to_sync(lambda: stream_response())()
+    
     response = StreamingHttpResponse(
         stream_response(),
         content_type='text/event-stream'
@@ -188,7 +228,7 @@ def generate_streaming_response(message, chat_session, chat_history):
     response['X-Accel-Buffering'] = 'no'
     return response
     
-def generate_standard_response(message, chat_session, chat_history):
+async def generate_standard_response(message, chat_session, chat_history):
     """
     Generate a standard (non-streaming) response using the LLM
     
@@ -213,18 +253,18 @@ def generate_standard_response(message, chat_session, chat_history):
         messages = [{"role": "system", "content": system_prompt}]
         messages.extend(chat_history)
         
-        # Get response from LLM
-        response = llm.invoke(messages)
+        # Get response from LLM - 使用异步方式调用
+        response = await sync_to_async(llm.invoke)(messages)
         response_content = getattr(response, 'content', str(response))
         
         # Save to database
-        chat_session.messages.create(
+        await sync_to_async(chat_session.messages.create)(
             content=response_content,
             is_user=False
         )
 
         # Update chat history
-        ChatHistoryManager.update_chat_history(
+        await ChatHistoryManager.update_chat_history(
             session_id=chat_session.id,
             role="assistant",
             content=response_content,
@@ -253,7 +293,7 @@ class ChatHistoryManager:
     MAX_HISTORY_LENGTH = 10
 
     @classmethod
-    def get_chat_history(cls, session_id):
+    async def get_chat_history(cls, session_id):
         """
         Get chat history from cache or rebuild from database
         
@@ -265,22 +305,22 @@ class ChatHistoryManager:
         """
         # Try to get from cache first
         cache_key = f'chat_history_{session_id}'
-        cached_history = cache.get(cache_key)
+        cached_history = await sync_to_async(cache.get)(cache_key)
 
         if cached_history:
             # Trim history if too long
             if len(cached_history) > cls.MAX_HISTORY_LENGTH:
                 cached_history = cached_history[-cls.MAX_HISTORY_LENGTH:]
-                cache.set(cache_key, cached_history, timeout=3600)
+                await sync_to_async(cache.set)(cache_key, cached_history, timeout=3600)
             return cached_history
         
         # Cache miss - rebuild from database
         logger.info("缓存未命中，从数据库重建对话历史")
         try:
-            chat_session = ChatSession.objects.get(id=session_id)
+            chat_session = await sync_to_async(ChatSession.objects.get)(id=session_id)
             
-            # Get latest messages
-            history_messages = chat_session.messages.order_by('created_at')[:cls.MAX_HISTORY_LENGTH]
+            # Get latest messages - 使用异步方式
+            history_messages = await sync_to_async(lambda: list(chat_session.messages.order_by('created_at')[:cls.MAX_HISTORY_LENGTH]))()
             history_messages = sorted(history_messages, key=lambda x: x.created_at)
 
             # Format messages for LLM
@@ -292,7 +332,7 @@ class ChatHistoryManager:
             logger.info(f"从数据库重建对话历史，共 {len(chat_history)} 条消息")
             
             # Store in cache for future use
-            cache.set(cache_key, chat_history, timeout=3600)
+            await sync_to_async(cache.set)(cache_key, chat_history, timeout=3600)
             return chat_history
             
         except (ChatSession.DoesNotExist, Exception) as e:
@@ -300,7 +340,7 @@ class ChatHistoryManager:
             return []
         
     @classmethod
-    def update_chat_history(cls, session_id, role, content, chat_history=None):
+    async def update_chat_history(cls, session_id, role, content, chat_history=None):
         """
         Update chat history in cache
         
@@ -313,7 +353,7 @@ class ChatHistoryManager:
         cache_key = f'chat_history_{session_id}'
         
         if chat_history is None:
-            chat_history = cls.get_chat_history(session_id)
+            chat_history = await cls.get_chat_history(session_id)
         
         # Add new message
         chat_history.append({"role": role, "content": content})
@@ -323,7 +363,7 @@ class ChatHistoryManager:
             chat_history = chat_history[-cls.MAX_HISTORY_LENGTH:]
         
         # Update cache
-        cache.set(cache_key, chat_history, timeout=3600)
+        await sync_to_async(cache.set)(cache_key, chat_history, timeout=3600)
         return chat_history
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -396,15 +436,15 @@ def session_messages(request, session_id):
                 'message': '会话不存在'
             }, status=status.HTTP_404_NOT_FOUND)
     elif request.method == 'DELETE':
-        session = ChatSession.objects.get(id=session_id)
         try:
+            session = ChatSession.objects.get(id=session_id)
             session.delete()
             return Response({
                 'status': 'success',
                 'message': '会话已删除'
-            }, status=status.HTTP_200_OK)
-        except Exception as e:
+            })
+        except ChatSession.DoesNotExist:
             return Response({
                 'status': 'error',
-                'message': f'删除会话失败: {str(e)}'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                'message': '会话不存在'
+            }, status=status.HTTP_404_NOT_FOUND)

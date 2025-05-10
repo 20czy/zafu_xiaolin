@@ -1,25 +1,26 @@
-import logging
-from dotenv import load_dotenv
-from typing import Dict, Any, Optional
 import json
+import asyncio
+from dotenv import load_dotenv
 from .TaskPlanner import TaskPlanner
 from .ToolSelector import ToolSelector
 from .TaskExecutor import TaskExecutor
-from ..logger_config import setup_logger
+from .mcpConfigManager import McpSession
+import logging
 
 # 加载 .env 文件中的环境变量
 load_dotenv()
 
-logger = setup_logger(__name__)
+# 初始化mcp服务器连接的操作
+
+logger = logging.getLogger(__name__)
     
-def get_process_info(message: str):
+async def get_process_info(message: str, mcp_session: McpSession = None):
     """
     获取处理用户请求的过程信息
     
     Args:
         message: User message
-        session_id: User session ID
-        chat_history: Previous conversation history
+        mcp_session: MCP session for accessing server tools
         
     Returns:
         包含处理过程信息的字典
@@ -31,10 +32,10 @@ def get_process_info(message: str):
     yield {"type": "data", "subtype": "task_plan", "content": tasks}
     logger.debug("tasks: %s", tasks)
     
-
-   # Step 2: Selecting tools
+    # Step 2: Selecting tools
     yield {"type": "step", "content": "Selecting tools..."}
-    tool_selections = ToolSelector.select_tools_for_tasks(task_plan)
+    # 使用异步方法选择工具
+    tool_selections = await ToolSelector.select_tools_for_tasks(task_plan, mcp_session)
     # Create a mapping of task_id to selected tool
     task_to_tool_map = {
         selection["task_id"]: selection
@@ -61,7 +62,8 @@ def get_process_info(message: str):
         })
         logger.info(f"Selected tool for task {task_id}: {tool_selection}")
 
-        result = TaskExecutor.execute_task(task, tool_selection, task_results)
+        # 使用异步方法执行任务
+        result = await TaskExecutor.execute_task(task, tool_selection, task_results, mcp_session)
         if isinstance(result, dict) and "error" in result:
             task_results[task_id] = {"status": "error", "error": result["error"]}
             yield {"type": "data", "subtype": "task_result", "content": {"task_id": task['id'], "result": result}}
@@ -79,4 +81,5 @@ def get_process_info(message: str):
     logger.info("处理过程信息已生成")
     logger.debug(f"Process info: {json.dumps(process_info, ensure_ascii=False)}")
     
-    return process_info
+    # 作为最后一个事件发送处理过程信息
+    yield {"type": "final", "subtype": "process_info", "content": process_info}

@@ -1,10 +1,23 @@
 import json
 import logging
+from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from ..services.llm_service import LLMService
 from ..services.campus_tool_hub import CampusToolHub
 
 logger = logging.getLogger(__name__)
+
+# 创建文件处理程序（输出到文件）
+file_handler = RotatingFileHandler(
+    filename='tool_selector.log',  # 日志文件路径
+    maxBytes=10 * 1024 * 1024,   # 文件最大大小（10MB）
+    backupCount=5,               # 保留的备份文件数
+    encoding='utf-8',
+)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+))
+logger.addHandler(file_handler)
 
 class ToolSelector:
     """

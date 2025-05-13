@@ -26,35 +26,35 @@ async def test_tool_selector_real_llm():
     print("工具选择结果:")
     print(json.dumps(tool_selections1, ensure_ascii=False, indent=2))
     
-    # 测试用例2：多步骤任务
-    user_request2 = "帮我查询明天的天气，并提醒我带伞"
-    print("\n\n===== 测试用例2：多步骤任务 =====")
-    print(f"用户请求: {user_request2}")
+    # # 测试用例2：多步骤任务
+    # user_request2 = "帮我查询明天的天气，并提醒我带伞"
+    # print("\n\n===== 测试用例2：多步骤任务 =====")
+    # print(f"用户请求: {user_request2}")
     
-    # 创建任务计划
-    task_plan2 = await TaskPlanner.create_task_plan(user_request2)
-    print("任务计划结果:")
-    print(json.dumps(task_plan2, ensure_ascii=False, indent=2))
+    # # 创建任务计划
+    # task_plan2 = await TaskPlanner.create_task_plan(user_request2)
+    # print("任务计划结果:")
+    # print(json.dumps(task_plan2, ensure_ascii=False, indent=2))
     
-    # 选择工具
-    tool_selections2 = await ToolSelector.select_tools_for_tasks(task_plan2)
-    print("工具选择结果:")
-    print(json.dumps(tool_selections2, ensure_ascii=False, indent=2))
+    # # 选择工具
+    # tool_selections2 = await ToolSelector.select_tools_for_tasks(task_plan2)
+    # print("工具选择结果:")
+    # print(json.dumps(tool_selections2, ensure_ascii=False, indent=2))
     
-    # 测试用例3：复杂任务
-    user_request3 = "我想了解一下浙江农林大学的历史和主要学科，以及如何申请入学"
-    print("\n\n===== 测试用例3：复杂任务 =====")
-    print(f"用户请求: {user_request3}")
+    # # 测试用例3：复杂任务
+    # user_request3 = "我想了解一下浙江农林大学的历史和主要学科，以及如何申请入学"
+    # print("\n\n===== 测试用例3：复杂任务 =====")
+    # print(f"用户请求: {user_request3}")
     
-    # 创建任务计划
-    task_plan3 = await TaskPlanner.create_task_plan(user_request3)
-    print("任务计划结果:")
-    print(json.dumps(task_plan3, ensure_ascii=False, indent=2))
+    # # 创建任务计划
+    # task_plan3 = await TaskPlanner.create_task_plan(user_request3)
+    # print("任务计划结果:")
+    # print(json.dumps(task_plan3, ensure_ascii=False, indent=2))
     
-    # 选择工具
-    tool_selections3 = await ToolSelector.select_tools_for_tasks(task_plan3)
-    print("工具选择结果:")
-    print(json.dumps(tool_selections3, ensure_ascii=False, indent=2))
+    # # 选择工具
+    # tool_selections3 = await ToolSelector.select_tools_for_tasks(task_plan3)
+    # print("工具选择结果:")
+    # print(json.dumps(tool_selections3, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

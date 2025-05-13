@@ -4,6 +4,8 @@ from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from ..services.llm_service import LLMService
 from ..services.campus_tool_hub import CampusToolHub
+from ..services.mcp_server import Server, Tool, Configuration
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -84,14 +86,40 @@ class ToolSelector:
         logger.debug(f"输入的任务计划: {json.dumps(task_plan, ensure_ascii=False)}")
         
         try:
-            # Get tool capabilities for selection
+            # load the configuration
+            config = Configuration()
+            base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+            config_path = os.path.join(base_dir, 'services', 'servers_config.json')
+            servers_config = config.load_config(config_path)
+
+            # start all the server
+            servers = [
+                Server(name, srv_config)
+                for name, srv_config in servers_config["mcpServers"].items()
+            ]
+
+            for server in servers:
+                try:
+                    await server.initialize()
+                except Exception as e:
+                    logging.error(f"Failed to initialize server: {e}")
+                    await server.cleanup_servers()
+                    return
+
             logger.debug("获取工具能力信息")
-            tool_capabilities = await CampusToolHub.get_tool_info_for_planner()
-            
+            # list all the tool
+            all_tools = []
+            for server in servers:
+                tools = await server.list_tools()
+                all_tools.extend(tools)
+
+            logger.debug("生成工具选择提示词")
+            tools_description = "\n".join([tool.format_for_llm() for tool in all_tools])
+                
             # Create selection prompt
             logger.debug("生成工具选择提示词")
             prompt = cls.TOOL_SELECTION_PROMPT.format(
-                tool_capabilities=tool_capabilities,
+                tool_capabilities=tools_description,
                 task_plan=json.dumps(task_plan, ensure_ascii=False, indent=2)
             )
             logger.debug(f"提示词长度: {len(prompt)} 字符")

@@ -78,7 +78,15 @@ async def get_process_info(message: str) -> AsyncGenerator[Dict[str, Any], None]
             task_results[task_id] = {"status": "error", "error": result["error"]}
             yield {"type": "data", "subtype": "task_result", "content": {"task_id": task['id'], "result": result}}
         else:
-            task_results[task_id] = {"status": "success", "api_result": result}
+            # 处理Pydantic对象，将其转换为可JSON序列化的字典
+            if isinstance(result, pydantic.BaseModel):
+                if hasattr(result, 'model_dump'):
+                    api_result = result.model_dump()
+                else:
+                    api_result = result.dict()
+            else:
+                api_result = result
+            task_results[task_id] = {"status": "success", "api_result": api_result}
             yield {"type": "data", "subtype": "task_result", "content": {"task_id": task['id'], "result": result}}
             
     # 4. 返回处理过程信息

@@ -9,6 +9,7 @@ from ..agent.ToolSelector import ToolSelector
 from ..services.server_manager import ServerManager
 from ..services.mcp_server import Server, Configuration
 import os
+import pydantic
 
 # @pytest.mark.asyncio
 # async def test_task_executor_with_dependencies():
@@ -217,7 +218,7 @@ async def test_task_executor_with_real_server():
     print("\n\n===== 测试用例：使用真实服务器执行完整工作流程 =====")
     
     # 测试用户输入
-    user_message = "查询浙江农林大学的信息"
+    user_message = "搜索一下浙江农林大学"
     print(f"用户输入: {user_message}")
     
     # 步骤1: 任务规划 - 将用户请求分解为子任务
@@ -271,7 +272,15 @@ async def test_task_executor_with_real_server():
         if isinstance(result, dict) and "error" in result:
             task_results[task_id] = {"status": "error", "error": result["error"]}
         else:
-            task_results[task_id] = {"status": "success", "api_result": result}
+            # 处理Pydantic对象，将其转换为可JSON序列化的字典
+            if isinstance(result, pydantic.BaseModel):
+                if hasattr(result, 'model_dump'):
+                    api_result = result.model_dump()
+                else:
+                    api_result = result.dict()
+            else:
+                api_result = result
+            task_results[task_id] = {"status": "success", "api_result": api_result}
     
     # 步骤4: 生成处理过程摘要
     print("\n4. 生成处理过程摘要...")
@@ -289,6 +298,8 @@ async def test_task_executor_with_real_server():
         "completed_tasks": sum(1 for task_id, result in task_results.items() if result.get("status") == "success"),
         "failed_tasks": sum(1 for task_id, result in task_results.items() if result.get("status") in ["error", "skipped"])
     }, ensure_ascii=False, indent=2))
+
+    print(f"Process info: {json.dumps(process_info, ensure_ascii=False)}")
     
     # 验证结果
     assert process_info is not None, "处理过程信息不应为None"

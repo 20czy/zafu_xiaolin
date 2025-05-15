@@ -5,6 +5,21 @@ import json
 from .TaskPlanner import TaskPlanner
 from .ToolSelector import ToolSelector
 from .TaskExecutor import TaskExecutor
+from ..services.server_manager import ServerManager
+
+# 在模块级别初始化 ServerManager
+_server_manager_init_task = None
+
+def ensure_server_manager_initialized():
+    global _server_manager_init_task
+    if _server_manager_init_task is None:
+        import asyncio
+        loop = asyncio.get_event_loop()
+        _server_manager_init_task = loop.create_task(ServerManager.get_instance())
+    return _server_manager_init_task
+
+# 确保在导入模块时启动初始化
+ensure_server_manager_initialized()
 
 # 加载 .env 文件中的环境变量
 load_dotenv()

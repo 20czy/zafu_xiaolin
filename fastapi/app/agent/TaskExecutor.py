@@ -2,6 +2,7 @@ import re
 import logging
 from typing import Dict, Any
 from ..services.campus_tool_hub import CampusToolHub
+from ..services.server_manager import ServerManager
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +26,9 @@ class TaskExecutor:
             Task execution result
         """
         task_id = task.get("id")
-        tool = tool_selection.get("tool", "unknown_tool")
+        tool_name = tool_selection.get("tool", "unknown_tool")
         
-        logger.info(f"开始执行任务 ID: {task_id}, 任务描述: {task.get('task')}, 使用工具: {tool}")
+        logger.info(f"开始执行任务 ID: {task_id}, 任务描述: {task.get('task')}, 使用工具: {tool_name}")
         
         try:
             # Get tool and parameters
@@ -46,12 +47,31 @@ class TaskExecutor:
             logger.debug(f"任务 {task_id} 最终参数: {params}")
 
             # Call the API
-            api_result = await CampusToolHub.call_api(tool, params)
-            return api_result  # Always return raw API result
-            
+            for server_name, server in ServerManager._servers.items():
+                try:
+                    # Get the list of tools from the server
+                    tools = await server.list_tools()
+                    
+                    # Check if the requested tool is available
+                    if any(tool.name == tool_name for tool in tools):
+                        try:
+                            tool_result = await server.execute_tool(tool_name, params)
+                            return tool_result
+                        except Exception as e:
+                            error_msg = f"Error executing tool {tool_name} on server {server_name}: {str(e)}"
+                            logging.error(error_msg)
+                            return error_msg
+                except Exception as e:
+                    logging.error(f"Error listing tools from server {server_name}: {str(e)}")
+                    continue
+           
+            # api_result = await CampusToolHub.call_api(tool_name, params)
+            # return api_result  # Always return raw API result
+            return f"No server found with tool: {tool_name}"
+
         except Exception as e:
             logger.error(f"任务 {task_id} 执行错误: {str(e)}", exc_info=True)
-            return {"error": f"执行任务时出错: {str(e)}", "task_id": task_id, "tool": tool}
+            return {"error": f"执行任务时出错: {str(e)}", "task_id": task_id, "tool": tool_name}
             
     @classmethod
     def resolve_placeholder(cls, placeholder: str, task_results: Dict[int, Any]) -> Any:
@@ -61,7 +81,7 @@ class TaskExecutor:
         if not placeholder.startswith("{TASK_") or not placeholder.endswith("}"):
             return placeholder
         try:
-            parts = placeholder[1:-1].split(".")
+            parts = placeholder[1:-1].split(".") # 去掉{}，按照.进行分割
             task_id = int(parts[0].split("_")[1])
             key_path = parts[1:]
             if task_id not in task_results or task_results[task_id].get("status") != "success":

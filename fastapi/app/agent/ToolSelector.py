@@ -91,9 +91,15 @@ class ToolSelector:
             # get the server manager instance
             server_manager = await ServerManager.get_instance()
 
-            # get all tools from all the servers
-            all_tools = await server_manager.list_all_tools()
-
+            # get all tools from all the servers - using the cached tools (not async)
+            all_tools = ServerManager.get_cached_tools()
+            
+            # If cached tools are empty, try to get them directly
+            if not all_tools:
+                logger.warning("缓存的工具列表为空，尝试直接从服务器获取工具列表")
+                all_tools = await server_manager.list_all_tools()
+                
+            logger.debug(f"获取到 {len(all_tools)} 个工具")
             logger.debug("生成工具选择提示词")
             tools_description = "\n".join([tool.format_for_llm() for tool in all_tools])
                 

@@ -12,6 +12,7 @@ class ServerManager:
     _initialized = False
     _servers: Dict[str, Server] = {}
     _lock = asyncio.Lock()
+    _cached_tools = []
     
     # 采用单例模式，确保该类在整个应用中只有一个实例
     @classmethod
@@ -44,6 +45,10 @@ class ServerManager:
                 except Exception as e:
                     logging.error(f"Failed to initialize server {name}: {e}")
             
+            # Cache all available tools at startup
+            self._cached_tools = await self.list_all_tools()
+            logging.info(f"Cached {len(self._cached_tools)} tools from all servers")
+            
             self.__class__._initialized = True
             logging.info("All servers initialized")
         except Exception as e:
@@ -71,6 +76,14 @@ class ServerManager:
                 logging.error(f"Error listing tools from server {server.name}: {e}")
         
         return all_tools
+    
+    @classmethod
+    def get_cached_tools(cls) -> List[Any]:
+        """Get the cached tools that were saved at startup."""
+        if not cls._initialized:
+            logging.warning("Server manager not initialized yet, returning empty tool list")
+            return []
+        return cls._cached_tools
     
     async def execute_tool(self, server_name: str, tool_name: str, arguments: Dict[str, Any]) -> Any:
         """Execute a tool on a specific server."""

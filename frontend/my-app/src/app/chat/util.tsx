@@ -38,6 +38,8 @@ export async function fetchWithCSRF(url: string, options: RequestInit = {}) {
         "X-CSRFToken": csrfToken,
         ...options.headers,
       },
+      // 确保跨域请求正确处理
+      mode: "cors",
     });
 
     // 处理 CSRF 令牌失效的情况
@@ -57,6 +59,7 @@ export async function fetchWithCSRF(url: string, options: RequestInit = {}) {
           "X-CSRFToken": newToken,
           ...options.headers,
         },
+        mode: "cors",
       });
     }
 
@@ -64,6 +67,13 @@ export async function fetchWithCSRF(url: string, options: RequestInit = {}) {
       console.log(response);
       throw new Error(`请求失败，状态码: ${response.status}`);
     }
+    // 检查内容类型，如果是流式响应则直接返回response对象
+    const contentType = response.headers.get("Content-Type") || "";
+    if (contentType.includes("text/event-stream")) {
+      return response;
+    }
+    
+    // 否则解析为JSON
 
     return response.json();
   } catch (error) {

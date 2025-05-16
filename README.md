@@ -19,6 +19,49 @@ https://github.com/user-attachments/assets/89f6fd26-3d2b-4d25-a6b3-afe34c89fa88
 
 <img width="656" alt="截屏2025-03-13 16 59 54" src="https://github.com/user-attachments/assets/f92bcfdc-c4b7-4709-9a77-466c5107609f" />
 
+## 💻运行本项目
+1. 运行redis
+运行本项目前要先保证在本地6379端口运行redis服务，windows用户可以选择使用docker来运行
+
+`docker pull redis`
+
+`docker run -d -p 6379:6379 --name my_redis redis`
+
+2. 启动后端
+在项目的根目录下运行命令
+
+`pip install -r requirements.txt`
+
+安装python的环境依赖
+
+`cd .\backend\`
+
+`python manage.py runserver`
+
+启动后端服务
+
+3. 启动前端服务
+
+安装前端项目环境依赖
+
+`cd .\frontend\`
+
+`npm install package.json`
+
+运行启动命令
+
+`npm run dev`
+
+4. 更改环境变量配置
+
+修改`.\backend\chatbot\.env`文件DEEPSEEK_API_KEY,修改为自己的api-key
+
+5. 在浏览器访问localhost:3000/login登录
+
+默认账号密码为root/123456
+
+6. 访问localhost:3000/chat开启聊天测试
+
 ## 💡 RoadMap
 
 `1` UI界面

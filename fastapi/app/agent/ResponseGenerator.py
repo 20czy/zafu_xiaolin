@@ -5,6 +5,18 @@ from ..services.llm_service import LLMService
 
 logger = logging.getLogger(__name__)
 
+# Custom JSON encoder to handle CallToolResult and other non-serializable types
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'model_dump'):
+            # Handle pydantic models
+            return obj.model_dump()
+        elif hasattr(obj, '__dict__'):
+            # Handle custom classes with __dict__
+            return obj.__dict__
+        # Let the base class handle the rest or raise TypeError
+        return super().default(obj)
+
 class ResponseGenerator:
     """
     生成最终用户响应的类 - FastAPI 异步版本
@@ -29,13 +41,13 @@ class ResponseGenerator:
 用户输入: {process_info['user_input']}
 
 任务规划:
-{json.dumps(process_info['task_planning'], ensure_ascii=False, indent=2)}
+{json.dumps(process_info['task_planning'], ensure_ascii=False, indent=2, cls=CustomJSONEncoder)}
 
 工具选择:
-{json.dumps(process_info['tool_selection'], ensure_ascii=False, indent=2)}
+{json.dumps(process_info['tool_selection'], ensure_ascii=False, indent=2, cls=CustomJSONEncoder)}
 
 任务执行:
-{json.dumps(process_info['task_execution'], ensure_ascii=False, indent=2)}
+{json.dumps(process_info['task_execution'], ensure_ascii=False, indent=2, cls=CustomJSONEncoder)}
 
 在回答过程中可以适当的使用emoji活跃一下气氛，如果遇到工具调用失败则尝试用自己的能力去解答，如果实在缺乏足够的信息回答用户的问题请向用户说明
 """

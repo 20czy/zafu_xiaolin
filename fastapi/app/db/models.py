@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 import uuid
 from typing import List
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -12,9 +13,27 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
+    password = Column(String)
+    first_name = Column(String, nullable=True)
+    last_name = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True)
+    is_staff = Column(Boolean, default=False)
+    is_superuser = Column(Boolean, default=False)
+    
+    # 添加自定义字段
+    phone = Column(String(15), nullable=True)
+    avatar = Column(String, nullable=True)  # 存储头像路径
+    created_at = Column(DateTime, server_default=func.now())
+    last_login = Column(DateTime, nullable=True)
+    last_login_ip = Column(String, nullable=True)
+    interests = Column(Text, nullable=True)
+    bio = Column(Text, nullable=True)
     
     # Relationship
     chat_sessions = relationship("ChatSession", back_populates="user")
+    
+    def __repr__(self):
+        return f"User(id={self.id}, username={self.username}, {'(管理员)' if self.is_staff else ''})"
 
 
 class ChatSession(Base):

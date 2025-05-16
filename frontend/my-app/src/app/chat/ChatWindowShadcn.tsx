@@ -166,14 +166,14 @@ export default function ChatWindowShadcn({
     };
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/", {
+      const response = await fetchWithCSRF("http://localhost:8001/api/v1/chat/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: currentMessage,
-          session_id: sessionId,
+          session_id: String(sessionId),
         }),
       });
 

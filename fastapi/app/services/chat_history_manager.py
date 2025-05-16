@@ -1,7 +1,8 @@
 import logging
 from typing import List, Dict, Any, Optional
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..db.session import get_db
 from ..db import models
 from ..schemas import chat as schemas
@@ -16,9 +17,9 @@ class ChatHistoryManager:
     MAX_HISTORY_LENGTH = 10  # 可根据需要调整
     
     @classmethod
-    async def get_chat_history(cls, session_id: str, db: Session) -> List[Dict[str, str]]:
+    async def get_chat_history(cls, session_id: str, db: AsyncSession) -> List[Dict[str, str]]:
         """
-        从数据库获取聊天历史
+        根据session_id从数据库获取聊天历史
         
         Args:
             session_id: 会话ID
@@ -30,19 +31,26 @@ class ChatHistoryManager:
         try:
             logger.info(f"获取会话 {session_id} 的聊天历史")
             
-            # 从数据库获取消息
-            messages = db.query(models.ChatMessage).filter(
-                models.ChatMessage.session_id == session_id
-            ).order_by(models.ChatMessage.created_at).all()
+            # 查询会话消息
+            result = await db.execute(
+                select(models.ChatMessage)
+                .where(models.ChatMessage.session_id == session_id)
+                .order_by(models.ChatMessage.created_at)
+            )
+            messages = result.scalars().all()
             
-            # 转换为LLM所需的格式
-            chat_history = []
-            for msg in messages[-cls.MAX_HISTORY_LENGTH:]:  # 只保留最近的N条消息
+            # 转换为聊天历史格式
+            history = []
+            for msg in messages:
                 role = "user" if msg.is_user else "assistant"
-                chat_history.append({"role": role, "content": msg.content})
+                history.append({"role": role, "content": msg.content})
             
-            logger.debug(f"获取到 {len(chat_history)} 条历史消息")
-            return chat_history
+            # 限制历史长度
+            if len(history) > cls.MAX_HISTORY_LENGTH * 2:
+                history = history[-cls.MAX_HISTORY_LENGTH * 2:]
+                
+            logger.debug(f"获取到 {len(history)} 条历史消息")
+            return history
             
         except Exception as e:
             logger.error(f"获取聊天历史出错: {str(e)}", exc_info=True)
@@ -53,7 +61,7 @@ class ChatHistoryManager:
                      session_id: str, 
                      content: str, 
                      is_user: bool, 
-                     db: Session) -> models.ChatMessage:
+                     db: AsyncSession) -> models.ChatMessage:
         """
         保存消息到数据库
         
@@ -68,16 +76,19 @@ class ChatHistoryManager:
         """
         try:
             # 检查会话是否存在
-            session = db.query(models.ChatSession).filter(
-                models.ChatSession.id == session_id
-            ).first()
+            result = await db.execute(
+                select(models.ChatSession).where(
+                    models.ChatSession.id == session_id
+                )
+            )
+            session = result.scalars().first()
             
             if not session:
                 logger.warning(f"会话 {session_id} 不存在，创建新会话")
                 session = models.ChatSession(id=session_id)
                 db.add(session)
-                db.commit()
-                db.refresh(session)
+                await db.commit()
+                await db.refresh(session)
             
             # 创建新消息
             message = models.ChatMessage(
@@ -87,29 +98,29 @@ class ChatHistoryManager:
             )
             
             db.add(message)
-            db.commit()
-            db.refresh(message)
+            await db.commit()
+            await db.refresh(message)
             
             # 如果这是第一条消息，设置会话标题
             if is_user and session.title is None:
                 title = content[:50] + ('...' if len(content) > 50 else '')
                 session.title = title
-                db.commit()
+                await db.commit()
             
             logger.info(f"已保存{'用户' if is_user else 'AI'}消息到会话 {session_id}")
             return message
             
         except Exception as e:
-            db.rollback()
+            await db.rollback()
             logger.error(f"保存消息出错: {str(e)}", exc_info=True)
-            raise
+            return None
     
     @classmethod
     async def save_process_info(cls,
                           message_id: int,
                           session_id: str,
                           process_info: Dict[str, Any],
-                          db: Session) -> models.ProcessInfo:
+                          db: AsyncSession):
         """
         保存处理过程信息到数据库
         
@@ -123,30 +134,24 @@ class ChatHistoryManager:
             保存的处理过程信息对象
         """
         try:
-            # 从process_info中提取需要的数据
-            steps = process_info.get("steps", [])
-            task_plan = process_info.get("task_planning", {})
-            tool_selections = process_info.get("tool_selection", {})
-            task_results = process_info.get("task_execution", {})
-            
-            # 创建ProcessInfo对象
-            process_info_obj = models.ProcessInfo(
-                steps=steps,
-                task_plan=task_plan,
-                tool_selections=tool_selections,
-                task_results=task_results,
+            # 创建处理过程信息对象
+            info = models.ProcessInfo(
                 message_id=message_id,
-                session_id=session_id
+                session_id=session_id,
+                steps=process_info.get("steps", []),
+                task_plan=process_info.get("task_planning", {}),
+                tool_selections=process_info.get("tool_selection", {}),
+                task_results=process_info.get("task_execution", {})
             )
             
-            db.add(process_info_obj)
-            db.commit()
-            db.refresh(process_info_obj)
+            db.add(info)
+            await db.commit()
+            await db.refresh(info)
             
-            logger.info(f"已保存处理过程信息，消息ID: {message_id}, 会话ID: {session_id}")
-            return process_info_obj
+            logger.info(f"已保存处理过程信息到消息 {message_id}")
+            return info
             
         except Exception as e:
-            db.rollback()
+            await db.rollback()
             logger.error(f"保存处理过程信息出错: {str(e)}", exc_info=True)
-            raise
+            return None

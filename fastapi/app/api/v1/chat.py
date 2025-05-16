@@ -1,6 +1,7 @@
+from sqlalchemy.engine import result
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from fastapi.responses import StreamingResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Dict, Any, Optional
 import json
 import logging
@@ -11,6 +12,19 @@ from ...schemas import chat as schemas
 from ...agent.LLMController import get_process_info
 from ...agent.ResponseGenerator import ResponseGenerator
 from ...services.chat_history_manager import ChatHistoryManager
+import pydantic
+
+# Custom JSON encoder to handle CallToolResult and other non-serializable types
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'model_dump'):
+            # Handle pydantic models
+            return obj.model_dump()
+        elif hasattr(obj, '__dict__'):
+            # Handle custom classes with __dict__
+            return obj.__dict__
+        # Let the base class handle the rest or raise TypeError
+        return super().default(obj)
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -18,7 +32,7 @@ logger = logging.getLogger(__name__)
 @router.post("/", response_model=schemas.ChatResponse)
 async def chat(
     request: schemas.ChatRequest, 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     """
     处理用户的聊天请求，加工用户的信息，检索相关的文档，生成回复
@@ -72,14 +86,17 @@ async def chat(
         )
 
 @router.get("/sessions", response_model=List[schemas.ChatSession])
-async def get_chat_sessions(db: Session = Depends(get_db)):
+async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
     """
     获取所有聊天会话
     """
     try:
-        sessions = db.query(models.ChatSession).order_by(
-            models.ChatSession.updated_at.desc()
-        ).all()
+        result = await db.execute(
+            select(models.ChatSession).order_by(
+                models.ChatSession.updated_at.desc()
+            )
+        )
+        sessions = result.scalars().all()
         
         return sessions
     except Exception as e:
@@ -87,14 +104,17 @@ async def get_chat_sessions(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="获取聊天会话失败")
 
 @router.get("/sessions/{session_id}/messages", response_model=List[schemas.ChatMessage])
-async def get_session_messages(session_id: str, db: Session = Depends(get_db)):
+async def get_session_messages(session_id: str, db: AsyncSession = Depends(get_db)):
     """
     获取指定会话的所有消息
     """
     try:
-        messages = db.query(models.ChatMessage).filter(
-            models.ChatMessage.session_id == session_id
-        ).order_by(models.ChatMessage.created_at).all()
+        result = await db.execute(
+            select(models.ChatMessage)
+            .where(models.ChatMessage.session_id == session_id)
+            .order_by(models.ChatMessage.created_at)
+        )
+        messages = result.scalars().all()
         
         if not messages:
             raise HTTPException(status_code=404, detail="会话不存在或没有消息")
@@ -107,21 +127,24 @@ async def get_session_messages(session_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="获取会话消息失败")
 
 @router.get("/process-info/{session_id}", response_model=List[schemas.ProcessInfo])
-async def get_process_info(session_id: str, db: Session = Depends(get_db)):
+async def aget_process_info(session_id: str, db: AsyncSession = Depends(get_db)):
     """
     获取指定会话的处理过程信息
     """
     try:
-        process_infos = db.query(models.ProcessInfo).filter(
-            models.ProcessInfo.session_id == session_id
-        ).order_by(models.ProcessInfo.created_at.desc()).all()
+        result = await db.execute(
+            select(models.ProcessInfo)
+            .where(models.ProcessInfo.session_id == session_id)
+            .order_by(models.ProcessInfo.created_at.desc())
+        )
+        process_infos = result.scalars().all()
         
         return process_infos
     except Exception as e:
         logger.error(f"获取处理过程信息失败: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="获取处理过程信息失败")
 
-async def generate_streaming_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: Session):
+async def generate_streaming_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession):
     """
     生成流式响应并持久化
     
@@ -141,21 +164,27 @@ async def generate_streaming_response(message: str, session_id: str, chat_histor
     try:
         # 使用异步生成器获取处理过程信息
         async for event in get_process_info(message):
-            # 转换为JSON字符串并发送
-            yield f"data: {json.dumps(event)}\n\n"
+            # 处理事件数据
+            if isinstance(event, pydantic.BaseModel):
+                result = event.model_dump()
+            else:
+                result = event  # 如果不是pydantic模型，直接使用原始事件
+                
+            # 使用自定义编码器转换为JSON字符串并发送
+            yield f"data: {json.dumps(result, cls=CustomJSONEncoder)}\n\n"
             
-            # 记录事件数据
-            if event["type"] == "step":
-                process_steps.append(event["content"])
-            elif event["type"] == "data":
-                if event["subtype"] == "task_plan":
-                    task_plan = event["content"]
-                elif event["subtype"] == "task_result":
-                    task_results[event["content"]["task_id"]] = event["content"]["result"]
-                elif event["subtype"] == "tool_selections":
-                    tool_selections = event["content"]
+            # 记录事件数据 - 使用result而不是event
+            if result.get("type") == "step":
+                process_steps.append(result.get("content"))
+            elif result.get("type") == "data":
+                if result.get("subtype") == "task_plan":
+                    task_plan = result.get("content")
+                elif result.get("subtype") == "task_result":
+                    task_results[result.get("content", {}).get("task_id")] = result.get("content", {}).get("result")
+                elif result.get("subtype") == "tool_selections":
+                    tool_selections = result.get("content")
             
-            logger.info(f"发送事件: {event}")
+            logger.info(f"发送事件: {result}")
         
         # 获取处理过程信息
         process_info = {
@@ -190,7 +219,7 @@ async def generate_streaming_response(message: str, session_id: str, chat_histor
                     db=db
                 )
 
-async def generate_standard_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: Session):
+async def generate_standard_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession):
     """
     生成标准（非流式）响应
     

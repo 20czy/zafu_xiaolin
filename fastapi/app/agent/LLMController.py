@@ -6,6 +6,7 @@ from .TaskPlanner import TaskPlanner
 from .ToolSelector import ToolSelector
 from .TaskExecutor import TaskExecutor
 from ..services.server_manager import ServerManager
+import pydantic
 
 # 在模块级别初始化 ServerManager
 _server_manager_init_task = None

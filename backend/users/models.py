@@ -17,6 +17,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = '用户'
         verbose_name_plural = '用户'
+        db_table = 'users_user'  
         
     def __str__(self):
         return f"{self.username} {'(管理员)' if self.is_staff else ''}"

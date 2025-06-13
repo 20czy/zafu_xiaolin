@@ -8,7 +8,7 @@ from datetime import datetime
 Base = declarative_base()
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "users_user"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
@@ -43,7 +43,7 @@ class ChatSession(Base):
     title = Column(String, index=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users_user.id"))
     
     # Relationships
     user = relationship("User", back_populates="chat_sessions")
@@ -62,7 +62,7 @@ class ChatMessage(Base):
     
     # Relationship
     session = relationship("ChatSession", back_populates="messages")
-    process_info = relationship("ProcessInfo", back_populates="message", uselist=False)
+    process_infos = relationship("ProcessInfo", back_populates="message", uselist=False)
 
 
 class ProcessInfo(Base):
@@ -78,5 +78,6 @@ class ProcessInfo(Base):
     session_id = Column(String, ForeignKey("chat_sessions.id"))
     
     # Relationships
-    message = relationship("ChatMessage", back_populates="process_info")
+    message = relationship("ChatMessage", back_populates="process_infos")
     session = relationship("ChatSession", back_populates="process_infos")
+    

@@ -1,1 +1,4 @@
-
+利用logger优化llm执行信息显示
+完成django docker化改造
+docker compose改造
+前端窗口最小化限制

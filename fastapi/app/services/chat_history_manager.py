@@ -1,4 +1,5 @@
 import logging
+import json
 from typing import List, Dict, Any, Optional
 from fastapi import Depends
 from sqlalchemy import select
@@ -6,6 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..db.session import get_db
 from ..db import models
 from ..schemas import chat as schemas
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'model_dump'):
+            # Handle pydantic models
+            return obj.model_dump()
+        elif hasattr(obj, '__dict__'):
+            # Handle custom classes with __dict__
+            return obj.__dict__
+        # Let the base class handle the rest or raise TypeError
+        return super().default(obj)
 
 logger = logging.getLogger(__name__)
 
@@ -134,14 +146,20 @@ class ChatHistoryManager:
             保存的处理过程信息对象
         """
         try:
+            # 使用 CustomJSONEncoder 序列化处理过程信息
+            serialized_steps = json.dumps(process_info.get("steps", []), cls=CustomJSONEncoder)
+            serialized_task_plan = json.dumps(process_info.get("task_planning", {}), cls=CustomJSONEncoder)
+            serialized_tool_selections = json.dumps(process_info.get("tool_selection", {}), cls=CustomJSONEncoder)
+            serialized_task_results = json.dumps(process_info.get("task_execution", {}), cls=CustomJSONEncoder)
+            
             # 创建处理过程信息对象
             info = models.ProcessInfo(
                 message_id=message_id,
                 session_id=session_id,
-                steps=process_info.get("steps", []),
-                task_plan=process_info.get("task_planning", {}),
-                tool_selections=process_info.get("tool_selection", {}),
-                task_results=process_info.get("task_execution", {})
+                steps=json.loads(serialized_steps),
+                task_plan=json.loads(serialized_task_plan),
+                tool_selections=json.loads(serialized_tool_selections),
+                task_results=json.loads(serialized_task_results)
             )
             
             db.add(info)

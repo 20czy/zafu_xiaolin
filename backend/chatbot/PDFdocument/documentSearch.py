@@ -2,7 +2,6 @@ from typing import List, Dict
 import os
 from langchain_community.vectorstores import FAISS
 from .documentEmbedding import ZhipuAIEmbeddings, load_faiss_index
-from ..models import PDFDocument
 import logging
 from ..models import ChatSession
 

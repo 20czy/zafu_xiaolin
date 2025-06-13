@@ -1,3 +1,4 @@
 **/vector_store/
 *.log
 *.env
+*.README.md

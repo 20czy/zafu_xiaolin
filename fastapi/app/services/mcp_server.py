@@ -8,7 +8,9 @@ from typing import Any
 from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.client.sse import sse_client
 from langchain_openai import ChatOpenAI
+import httpx
 
 class Configuration:
     """Manages configuration and environment variables for the MCP client."""
@@ -75,31 +77,63 @@ class Server:
 
     async def initialize(self) -> None:
         """Initialize the server connection."""
-        command = (
-            shutil.which("npx")
-            if self.config["command"] == "npx"
-            else self.config["command"]
-        )
-        if command is None:
-            raise ValueError("The command must be a valid string and cannot be None.")
-
-        server_params = StdioServerParameters(
-            command=command,
-            args=self.config["args"],
-            env={**os.environ, **self.config["env"]}
-            if self.config.get("env")
-            else None,
-        )
         try:
-            stdio_transport = await self.exit_stack.enter_async_context(
-                stdio_client(server_params)
-            )
-            read, write = stdio_transport
-            session = await self.exit_stack.enter_async_context(
-                ClientSession(read, write)
-            )
-            await session.initialize()
-            self.session = session
+            # Check if this is a URL-based connection (HTTP SSE)
+            if "url" in self.config:
+                # Use SSE client for HTTP connections
+                url = self.config["url"]
+                headers = self.config.get("headers", {})
+                logging.info(f"Connecting to MCP server via HTTP SSE: {url}")
+                
+                # Connect using SSE transport with optional headers
+                if headers:
+                    sse_transport = await self.exit_stack.enter_async_context(
+                        sse_client(url, headers=headers)
+                    )
+                else:
+                    sse_transport = await self.exit_stack.enter_async_context(
+                        sse_client(url)
+                    )
+                read, write = sse_transport
+                session = await self.exit_stack.enter_async_context(
+                    ClientSession(read, write)
+                )
+                await session.initialize()
+                self.session = session
+                logging.info(f"Successfully connected to HTTP SSE server: {self.name}")
+                
+            else:
+                # Use stdio client for command-based connections
+                if "command" not in self.config:
+                    raise ValueError("Configuration must contain either 'url' or 'command' field")
+                    
+                command = (
+                    shutil.which("npx")
+                    if self.config["command"] == "npx"
+                    else self.config["command"]
+                )
+                if command is None:
+                    raise ValueError("The command must be a valid string and cannot be None.")
+
+                server_params = StdioServerParameters(
+                    command=command,
+                    args=self.config["args"],
+                    env={**os.environ, **self.config["env"]}
+                    if self.config.get("env")
+                    else None,
+                )
+                
+                stdio_transport = await self.exit_stack.enter_async_context(
+                    stdio_client(server_params)
+                )
+                read, write = stdio_transport
+                session = await self.exit_stack.enter_async_context(
+                    ClientSession(read, write)
+                )
+                await session.initialize()
+                self.session = session
+                logging.info(f"Successfully connected to stdio server: {self.name}")
+                
         except Exception as e:
             logging.error(f"Error initializing server {self.name}: {e}")
             await self.cleanup()

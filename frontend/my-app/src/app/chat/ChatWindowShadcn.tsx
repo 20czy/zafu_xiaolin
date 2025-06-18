@@ -353,7 +353,7 @@ export default function ChatWindowShadcn({
         direction="horizontal"
         className="min-h-[200px] w-full"
       >
-        <ResizablePanel defaultSize={20} minSize={15} maxSize={80}>
+        <ResizablePanel defaultSize={25} minSize={25} maxSize={80}>
           <Card className="h-full flex flex-col">
             <CardHeader className="p-4 flex flex-row justify-between items-center">
               <div className="flex items-center gap-2">
@@ -404,7 +404,7 @@ export default function ChatWindowShadcn({
           </Card>
         </ResizablePanel>
         <ResizableHandle className="bg-transparent border-none" />
-        <ResizablePanel defaultSize={80}>
+        <ResizablePanel defaultSize={50} minSize={40}>
           <div className="h-full p-6">{/* 这里可以放置其他内容 */}</div>
         </ResizablePanel>
       </ResizablePanelGroup>

@@ -3,6 +3,29 @@
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "amap-maps": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@amap/amap-maps-mcp-server"
+            ],
+            "env": {
+                "AMAP_MAPS_API_KEY": "9a8df14d8aef9f3f8db7db6a161a39cb"
+            }
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time",
+        "--local-timezone=America/New_York"
+      ]
+    },
+    "zhipu-web-search-sse": {
+      "url": "https://open.bigmodel.cn/api/mcp/web_search/sse",
+      "headers": {
+        "Authorization": "Bearer e8dc62a959064b1f8ad2223ab6f5f101.94J1FHIu9zlzwNnZ"
+      }
     }
   }
 }

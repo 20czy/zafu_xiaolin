@@ -1,0 +1,59 @@
+# 🐍 Python 缓存文件
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# 📦 本地数据库文件（如使用 PostgreSQL 等可以删掉 db.sqlite3）
+db.sqlite3
+
+# 🧪 测试缓存、临时数据
+*.log
+*.bak
+*.tmp
+*.swp
+*.swo
+*.orig
+*.coverage
+*.pyc
+*.pkl
+*.db
+
+# 🧾 本地备份数据（可选）
+backup.json
+users_backup.json
+backenddir.txt
+chunk.log
+debug.log
+campus_bot.log
+
+# 📁 运行时日志目录
+logs/
+
+# 📸 媒体与向量存储文件（部署时不建议包含）
+media/
+
+# 🔒 本地环境变量文件（防止敏感信息进入镜像）
+.env
+
+# 🐳 Docker 构建自身文件
+Dockerfile
+docker-compose.yml
+
+# 🧠 编辑器 & IDE 文件
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 📂 虚拟环境（如果有）
+env/
+venv/
+
+# 📂 git 仓库元数据
+.git/
+.gitignore
+
+# 📂 MacOS & Windows 临时系统文件
+.DS_Store
+Thumbs.db

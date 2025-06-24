@@ -1,0 +1,17 @@
+asgiref==3.8.1
+backend==0.2.4.1
+Django==5.2.3
+djangorestframework==3.16.0
+httpx==0.28.1
+langchain==0.3.26
+langchain_community==0.3.26
+langchain_core==0.3.66
+langchain_openai==0.3.24
+mcp==1.9.4
+numpy==2.3.1
+python-dotenv==1.1.0
+Requests==2.32.4
+zhipuai==2.1.5.20250611
+psycopg2-binary==2.9.9
+django-redis==5.4.0
+django-cors-headers==4.6.0

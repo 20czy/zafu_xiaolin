@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, JSON
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 import uuid
@@ -80,6 +80,49 @@ class ProcessInfo(Base):
     # Relationships
     message = relationship("ChatMessage", back_populates="process_infos")
     session = relationship("ChatSession", back_populates="process_infos")
+
+
+# class Workspace(Base):
+#     """工作台模型"""
+#     __tablename__ = "workspaces"
+    
+#     id = Column(String(36), primary_key=True)
+#     title = Column(String(255), nullable=False)
+#     description = Column(Text, nullable=True)
+#     session_id = Column(String(36), nullable=False, index=True)
+#     created_at = Column(DateTime, default=datetime.utcnow)
+#     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+#     # 关系
+#     blocks = relationship("WorkspaceBlock", back_populates="workspace", cascade="all, delete-orphan")
+
+
+# class WorkspaceBlock(Base):
+#     """工作台块模型"""
+#     __tablename__ = "workspace_blocks"
+    
+#     id = Column(String(36), primary_key=True)
+#     workspace_id = Column(String(36), ForeignKey("workspaces.id"), nullable=False)
+#     type = Column(String(50), nullable=False)  # table, form, image, code, text, chart, tool_result
+#     title = Column(String(255), nullable=True)
+#     order = Column(Integer, default=0)
+#     data = Column(JSON, nullable=False)  # 存储块的具体数据
+#     created_at = Column(DateTime, default=datetime.utcnow)
+#     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+#     # 关系
+#     workspace = relationship("Workspace", back_populates="blocks")
+
+
+# class FormSubmission(Base):
+#     """表单提交记录"""
+#     __tablename__ = "form_submissions"
+    
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     block_id = Column(String(36), ForeignKey("workspace_blocks.id"), nullable=False)
+#     form_data = Column(JSON, nullable=False)
+#     submitted_at = Column(DateTime, default=datetime.utcnow)
+#     session_id = Column(String(36), nullable=False)
 
 
     

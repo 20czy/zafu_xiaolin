@@ -9,16 +9,10 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import "react-resizable/css/styles.css";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
 import { fetchWithCSRF, useCSRFToken } from "./util";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 
 interface ChatWindowProps {
   sessionId: number | null;
@@ -348,66 +342,55 @@ export default function ChatWindowShadcn({
   };
 
   return (
-    <div className="h-screen w-full flex p-4">
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="min-h-[200px] w-full"
-      >
-        <ResizablePanel defaultSize={25} minSize={25} maxSize={80}>
-          <Card className="h-full flex flex-col">
-            <CardHeader className="p-4 flex flex-row justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Avatar className="pl-0">
-                  <AvatarImage
-                    src="https://i.miji.bid/2025/03/27/b5e12e0800f7490f597879941b6018da.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <h2 className="font-extrabold text-lg">农林小林</h2>
-              </div>
-
-              <HeaderActions
-                onNewSession={handleNewSession}
-                onOpenHistory={() => {
-                  fetchSessions();
-                  setIsHistoryOpen(true);
-                }}
+    <div className="h-full w-full p-4 pr-1">
+      <Card className="h-full flex flex-col">
+        <CardHeader className="p-4 flex flex-row justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Avatar className="pl-0">
+              <AvatarImage
+                src="https://i.miji.bid/2025/03/27/b5e12e0800f7490f597879941b6018da.png"
+                alt="@shadcn"
               />
-            </CardHeader>
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <h2 className="font-extrabold text-lg">农林小林</h2>
+          </div>
 
-            <SessionHistory
-              sessions={sessions}
-              currentSessionId={sessionId}
-              onSessionChange={onSessionChange}
-              onDeleteSession={handleDeleteSession}
-              open={isHistoryOpen}
-              onOpenChange={setIsHistoryOpen}
-            />
+          <HeaderActions
+            onNewSession={handleNewSession}
+            onOpenHistory={() => {
+              fetchSessions();
+              setIsHistoryOpen(true);
+            }}
+          />
+        </CardHeader>
 
-            <CardContent className="p-0 flex-1 overflow-hidden">
-              <MessageList
-                messages={messages}
-                streamingMessage={isStreaming ? streamingMessage : null}
-                currentProcessInfo={currentProcessInfo}
-                isProcessing={isStreaming}
-              />
-            </CardContent>
+        <SessionHistory
+          sessions={sessions}
+          currentSessionId={sessionId}
+          onSessionChange={onSessionChange}
+          onDeleteSession={handleDeleteSession}
+          open={isHistoryOpen}
+          onOpenChange={setIsHistoryOpen}
+        />
 
-            <CardFooter className="pl-2 pr-2 pb-3">
-              <ChatInput
-                input={input}
-                setInput={setInput}
-                handleSend={handleSend}
-              />
-            </CardFooter>
-          </Card>
-        </ResizablePanel>
-        <ResizableHandle className="bg-transparent border-none" />
-        <ResizablePanel defaultSize={50} minSize={40}>
-          <div className="h-full p-6">{/* 这里可以放置其他内容 */}</div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        <CardContent className="p-0 flex-1 overflow-hidden">
+          <MessageList
+            messages={messages}
+            streamingMessage={isStreaming ? streamingMessage : null}
+            currentProcessInfo={currentProcessInfo}
+            isProcessing={isStreaming}
+          />
+        </CardContent>
+
+        <CardFooter className="pl-2 pr-2 pb-3">
+          <ChatInput
+            input={input}
+            setInput={setInput}
+            handleSend={handleSend}
+          />
+        </CardFooter>
+      </Card>
     </div>
   );
 }

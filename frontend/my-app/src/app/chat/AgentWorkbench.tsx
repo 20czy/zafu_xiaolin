@@ -202,7 +202,7 @@ export default function AgentWorkbench({ data = [], onDataReceived }: AgentWorkb
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="pl-20 pr-20">
         <ScrollArea className="h-[calc(100vh-120px)]">
           <div className="p-4 space-y-4">
             {workbenchData.length === 0 ? (

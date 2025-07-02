@@ -37,8 +37,8 @@ export default function ChatPage() {
   const dragStartWidth = useRef(0);
 
   useEffect(() => {
-    addAllSampleData()
-  }, [])
+    addAllSampleData();
+  }, []);
 
   // 处理鼠标按下事件
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -81,10 +81,26 @@ export default function ChatPage() {
     setAgentData((prev) => [...prev, data]);
   };
 
+  // 通用的JSON数据解析函数
+  const parseAndAddData = (jsonString: string) => {
+    try {
+      const parsedData = JSON.parse(jsonString);
+      const agentData: AgentData = {
+        id: parsedData.id || Date.now().toString(),
+        type: parsedData.type,
+        title: parsedData.title,
+        content: parsedData.content,
+        timestamp: parsedData.timestamp || new Date().toISOString(),
+      };
+      handleAgentDataReceived(agentData);
+    } catch (error) {
+      console.error('JSON解析失败:', error);
+    }
+  };
+
   // 添加表格数据示例
   const addTableData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "table",
       title: "用户数据表",
       content: {
@@ -96,15 +112,13 @@ export default function ChatPage() {
           ["赵六", "32", "后端工程师", "杭州", "16000"],
         ],
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加表单数据示例
   const addFormData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "form",
       title: "用户信息表单",
       content: {
@@ -116,15 +130,13 @@ export default function ChatPage() {
           { label: "注册时间", value: "2024-01-15 10:30:00" },
         ],
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加代码数据示例
   const addCodeData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "code",
       title: "React组件代码",
       content: {
@@ -146,15 +158,13 @@ export default function ChatPage() {
   );
 }`,
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加文本数据示例
   const addTextData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "text",
       title: "分析报告",
       content: {
@@ -172,30 +182,26 @@ export default function ChatPage() {
 - 在用户活跃时段增加推送频率
 - 优化页面加载速度以提升用户体验`,
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加图片数据示例
   const addImageData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "image",
       title: "生成的图表",
       content: {
-        url: "https://via.placeholder.com/400x300/4F46E5/FFFFFF?text=Sample+Chart",
+        url: "https://www.zafu.edu.cn/__local/B/7A/CD/14F9B34BFBC2F92E51A93D05408_BF2CDB39_11C36.jpg",
         alt: "示例图表",
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加图表数据示例
   const addChartData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "chart",
       title: "销售数据图表",
       content: {
@@ -206,15 +212,13 @@ export default function ChatPage() {
           title: "月度销售额（万元）",
         },
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加文件数据示例
   const addFileData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "file",
       title: "生成的报告文件",
       content: {
@@ -223,15 +227,13 @@ export default function ChatPage() {
         size: "2.3 MB",
         url: "#",
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加Markdown数据示例
   const addMarkdownData = () => {
-    const sampleData: AgentData = {
-      id: Date.now().toString(),
+    const jsonData = JSON.stringify({
       type: "markdown",
       title: "项目文档",
       content: {
@@ -260,9 +262,8 @@ npm run dev
 
 > **注意**: 请确保Node.js版本 >= 18.0.0`,
       },
-      timestamp: new Date().toISOString(),
-    };
-    handleAgentDataReceived(sampleData);
+    });
+    parseAndAddData(jsonData);
   };
 
   // 添加所有类型的示例数据
@@ -319,10 +320,10 @@ npm run dev
         </div>
 
         <div className="flex-1 min-w-0 p-4 pl-1">
-          <AgentWorkbench
-            data={agentData}
-            onDataReceived={handleAgentDataReceived}
-          />
+            <AgentWorkbench
+              data={agentData}
+              onDataReceived={handleAgentDataReceived}
+            />
         </div>
       </main>
     </div>

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.v1 import chat, users
+from app.api.v1 import chat, users, agent_data
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
@@ -49,3 +49,4 @@ app.add_middleware(
 
 app.include_router(chat.router, prefix="/api/v1/chat")
 app.include_router(users.router, prefix="/api/v1")
+app.include_router(agent_data.router, prefix="/api/v1/agent-data")

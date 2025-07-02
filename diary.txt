@@ -1,4 +1,9 @@
 利用logger优化llm执行信息显示
 完成django docker化改造
-docker compose改造
-前端窗口最小化限制
+docker compose改造 
+前端窗口最小化限制 ☑️
+
+解决历史遗留问题，拆分Django和fastapi使用的数据库，使用消息队列进行通信。
+
+解决code smell的问题，将fastapi改为存粹的消费者
+

@@ -49,6 +49,7 @@ class ChatSession(Base):
     user = relationship("User", back_populates="chat_sessions")
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
     process_infos = relationship("ProcessInfo", back_populates="session", cascade="all, delete-orphan")
+    agent_data = relationship("AgentData", back_populates="session", cascade="all, delete-orphan")
 
 
 class ChatMessage(Base):
@@ -63,6 +64,7 @@ class ChatMessage(Base):
     # Relationship
     session = relationship("ChatSession", back_populates="messages")
     process_infos = relationship("ProcessInfo", back_populates="message", uselist=False)
+    agent_data = relationship("AgentData", back_populates="message", cascade="all, delete-orphan")
 
 
 class ProcessInfo(Base):
@@ -82,47 +84,31 @@ class ProcessInfo(Base):
     session = relationship("ChatSession", back_populates="process_infos")
 
 
-# class Workspace(Base):
-#     """工作台模型"""
-#     __tablename__ = "workspaces"
+class AgentData(Base):
+    __tablename__ = "agent_data"
     
-#     id = Column(String(36), primary_key=True)
-#     title = Column(String(255), nullable=False)
-#     description = Column(Text, nullable=True)
-#     session_id = Column(String(36), nullable=False, index=True)
-#     created_at = Column(DateTime, default=datetime.utcnow)
-#     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    type = Column(String, index=True)  # table, form, image, code, text, chart, file, markdown
+    title = Column(String, nullable=True)
+    content = Column(JSON)  # 存储各种类型的内容数据
+    meta_data = Column(JSON, nullable=True)
+    timestamp = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
-#     # 关系
-#     blocks = relationship("WorkspaceBlock", back_populates="workspace", cascade="all, delete-orphan")
-
-
-# class WorkspaceBlock(Base):
-#     """工作台块模型"""
-#     __tablename__ = "workspace_blocks"
+    # 关联到聊天会话
+    session_id = Column(String, ForeignKey("chat_sessions.id"), nullable=True)
+    message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=True)
     
-#     id = Column(String(36), primary_key=True)
-#     workspace_id = Column(String(36), ForeignKey("workspaces.id"), nullable=False)
-#     type = Column(String(50), nullable=False)  # table, form, image, code, text, chart, tool_result
-#     title = Column(String(255), nullable=True)
-#     order = Column(Integer, default=0)
-#     data = Column(JSON, nullable=False)  # 存储块的具体数据
-#     created_at = Column(DateTime, default=datetime.utcnow)
-#     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # 关联到用户
+    user_id = Column(Integer, ForeignKey("users_user.id"))
     
-#     # 关系
-#     workspace = relationship("Workspace", back_populates="blocks")
-
-
-# class FormSubmission(Base):
-#     """表单提交记录"""
-#     __tablename__ = "form_submissions"
+    # Relationships
+    user = relationship("User")
+    session = relationship("ChatSession")
+    message = relationship("ChatMessage")
     
-#     id = Column(Integer, primary_key=True, autoincrement=True)
-#     block_id = Column(String(36), ForeignKey("workspace_blocks.id"), nullable=False)
-#     form_data = Column(JSON, nullable=False)
-#     submitted_at = Column(DateTime, default=datetime.utcnow)
-#     session_id = Column(String(36), nullable=False)
-
+    def __repr__(self):
+        return f"AgentData(id={self.id}, type={self.type}, title={self.title})"
 
     

@@ -6,7 +6,7 @@
 
 ## 📝 项目简介
 
-农林小林是面向校园和教育场景的全栈智能助手解决方案框架，专为浙江农林大学开发。灵感来源于论文: [HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in HuggingFace](http://arxiv.org/abs/2303.17580)。
+农林小林是面向校园和教育场景的全栈智能体解决方案。灵感来源于论文: [HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in HuggingFace](http://arxiv.org/abs/2303.17580)。
 
 项目使用自然语言作为大语言模型(LLM)沟通的媒介，集成了任务规划✍️和工具调用🔧为一体，专注于对接现有校园系统，高效解决校园范围内的复杂问题🤔。本项目实现了 Model Context Protocol (MCP) 客户端，使 AI 助手能够无缝连接并利用校园内的各种数据源和工具。
 

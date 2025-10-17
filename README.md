@@ -74,10 +74,30 @@ Model Context Protocol (简称 MCP，中文称为模型上下文协议) 是由 A
 
 - Python 3.8+
 - Node.js 和 npm
-- Redis 服务
+- Docker 和 Docker Compose (推荐使用 Docker Compose 方式部署)
 - MCP 服务器 (用于连接校园数据系统)
 
-### 1. 运行 Redis
+### 方法一：使用 Docker Compose 部署（推荐）
+
+项目提供了完整的 Docker Compose 配置，可以一键部署所有服务：
+
+```bash
+# 在项目根目录执行
+docker-compose up --build
+```
+
+该命令会启动以下服务：
+- **backend**: Django 后端服务 (端口 8000)
+- **frontend**: Next.js 前端服务 (端口 3000)
+- **fastapi**: FastAPI 服务 (端口 8001)
+- **db**: PostgreSQL 数据库 (端口 5432)
+- **redis**: Redis 缓存服务 (端口 6379)
+
+> 注意：首次启动时，Docker Compose 会自动构建镜像并初始化数据库。
+
+### 方法二：本地开发环境部署
+
+#### 1. 运行 Redis
 
 确保 Redis 服务在本地 6379 端口运行:
 
@@ -87,7 +107,7 @@ docker pull redis
 docker run -d -p 6379:6379 --name my_redis redis
 ```
 
-### 2. 启动后端服务
+#### 2. 启动后端服务
 
 在项目根目录下执行:
 
@@ -100,7 +120,7 @@ cd backend/
 python manage.py runserver
 ```
 
-### 3. 启动前端服务
+#### 3. 启动前端服务
 
 ```bash
 # 安装前端依赖
@@ -111,7 +131,7 @@ npm install
 npm run dev
 ```
 
-### 4. 环境变量配置
+### 环境变量配置
 
 修改 `backend/chatbot/.env` 文件，设置以下变量:
 
@@ -130,21 +150,19 @@ MCP_SERVER_URL=http://localhost:8080
 MCP_API_KEY=your_mcp_api_key
 ```
 
-### 5. 访问应用
+### 访问应用
 
 - 登录页面: http://localhost:3000/login (默认账号/密码: root/123456)
 - 聊天页面: http://localhost:3000/chat
 
 ## 🔄 FastAPI 版本说明
 
-项目提供了基于 FastAPI 的替代后端实现，具有以下特点:
+项目提供了基于 FastAPI 的替代后端agent逻辑实现，具有以下特点:
 
 1. **异步支持**: 原生支持异步编程，适合处理 MCP 请求
 2. **依赖注入**: 使用 FastAPI 的依赖注入系统管理数据库会话和 MCP 客户端
-3. **类型提示**: 使用 Pydantic 模型进行请求和响应验证
-4. **流式响应**: 实现流式聊天响应
-5. **数据库集成**: 使用 SQLAlchemy ORM
-6. **MCP 客户端实现**: 集成标准化的 MCP 客户端接口
+3. **流式响应**: 实现流式聊天响应
+4. **MCP 客户端实现**: 集成标准化的 MCP 客户端接口
 
 ### FastAPI 版本运行
 
@@ -156,8 +174,8 @@ pip install -r requirements.txt
 alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 
-# 启动服务
-uvicorn app.main:app --reload
+# 启动服务 fastapi服务运行在8001端口
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
 API 文档将在以下地址可用:
@@ -166,23 +184,15 @@ API 文档将在以下地址可用:
 
 ## 💡 未来规划 (RoadMap)
 
-### UI界面
-- [ ] 手机应用界面
-- [ ] 多模态交互
-- [ ] 表单输入
+### 优化
+- [ ] 优化任务并行执行的算法
+- [ ] 探索更多agent范式
 
-### 后端
-- [ ] DFS工作流拓扑
-- [ ] RAG系统集成
-- [ ] MCP协议扩展支持
-- [ ] 多校园系统集成
+### 添加
+- [ ] 添加mcp服务器接入sdk
+- [ ] 添加api工具接入sdk
 
-### MCP 相关
-- [ ] 校园定制 MCP 服务器开发
-- [ ] 多源数据融合与处理
-- [ ] 实时数据推送机制
-- [ ] 权限与安全控制模块
 
 ## 📞 联系方式
 
-如果您对该项目感兴趣或有任何疑问，可以通过[邮箱](mailto:3092492683@qq.com)联系我。
+如果您对该项目感兴趣或有任何疑问，可以通过[邮箱](mailto:3092492683@qq.com)或是QQ：3092492683联系我。

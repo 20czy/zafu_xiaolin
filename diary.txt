@@ -7,3 +7,5 @@ docker compose改造
 
 解决code smell的问题，将fastapi改为存粹的消费者
 
+agent按钮控制普通聊天和agent功能
+

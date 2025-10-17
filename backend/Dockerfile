@@ -1,34 +1,32 @@
 # Dockerfile.django
-FROM python:3.12-slim
+FROM python:3.12-slim as base
 
-WORKDIR /
+WORKDIR /app
 
-# 安装系统依赖
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources && \
+# Install system dependencies using Aliyun mirror
+RUN echo "deb http://mirrors.aliyun.com/debian bookworm main" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y gcc && \
+    apt-get install -y gcc netcat-openbsd curl && \
     rm -rf /var/lib/apt/lists/*
 
+# Copy requirements file
 COPY requirements.txt .
 
-# 安装Python依赖
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn && \
-    pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制源代码
+# Copy source code
 COPY . .
 
-# 创建日志目录
+# Create directories
 RUN mkdir -p /logs
-
-# 创建media目录权限
 RUN mkdir -p /media && chmod 755 /media
 
-# 暴露端口
+# Expose port
 EXPOSE 8000
 
-# 启动脚本
+# Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

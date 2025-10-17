@@ -1,18 +1,26 @@
 #!/bin/bash
 set -e
 
-# 等待数据库启动
-echo "等待数据库启动..."
-while ! nc -z $DB_HOST $DB_PORT; do
+# Wait for database to start
+echo "Waiting for database to start..."
+
+# Use Python to check database connectivity instead of nc
+until python -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('$DB_HOST', int($DB_PORT))); s.close()" 2>/dev/null
+do
+  echo "Database is unavailable - sleeping"
   sleep 1
 done
-echo "数据库已启动"
 
-# 运行迁移
+echo "Database is up - continuing"
+
+# Change to the correct directory
+cd /app
+
+# Run migrations
 python manage.py migrate
 
-# 收集静态文件
+# Collect static files
 python manage.py collectstatic --noinput
 
-# 启动Django
+# Start Django
 python manage.py runserver 0.0.0.0:8000

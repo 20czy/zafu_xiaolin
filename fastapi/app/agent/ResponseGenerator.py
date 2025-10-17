@@ -18,9 +18,7 @@ class CustomJSONEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class ResponseGenerator:
-    """
-    生成最终用户响应的类 - FastAPI 异步版本
-    """
+    """生成最终用户响应的类 - FastAPI 异步版本"""
 
     @classmethod
     def _create_response_prompt(cls, process_info: Dict[str, Any]) -> str:
@@ -88,6 +86,44 @@ class ResponseGenerator:
                     yield chunk.content
         except Exception as e:
             logger.error(f"Error during reply: {str(e)}")
+            yield "抱歉，生成回复时出现错误。"
+
+    @classmethod
+    async def create_simple_streaming_response(cls, message: str, chat_history=None) -> AsyncGenerator[str, None]:
+        """
+        生成简单流式响应（不需要process_info）- 异步版本
+        
+        Args:
+            message: 用户输入的消息
+            chat_history: 聊天历史
+            
+        Yields:
+            生成器，用于流式输出响应
+        """
+        try:
+            # Create LLM with streaming enabled
+            llm = await LLMService.get_llm(model_name='deepseek-chat', stream=True)
+
+            # 简单的系统提示词，不包含复杂的处理过程信息
+            system_prompt = """你是浙江农林大学智能校园助手「农林小林」，请用活泼可爱的语气回答用户的问题。
+你可以适当使用emoji来活跃气氛，尽力帮助用户解答问题。如果遇到不确定的信息，请诚实说明。"""
+
+            # 构建聊天上下文
+            messages = [{"role": "system", "content": system_prompt}]
+            
+            if chat_history:
+                messages.extend(chat_history)
+            messages.append({"role": "user", "content": message})
+
+            logger.info(f"sending simple messages: {messages}")
+            logger.info("-"*30)
+
+            # 使用流式方式生成回复
+            async for chunk in llm.astream(messages):
+                if chunk.content:
+                    yield chunk.content
+        except Exception as e:
+            logger.error(f"Error during simple reply: {str(e)}")
             yield "抱歉，生成回复时出现错误。"
 
     @classmethod

@@ -293,7 +293,7 @@ class ChatHistoryManager:
     MAX_HISTORY_LENGTH = 10
 
     @classmethod
-    async def get_chat_history(cls, session_id):
+    def get_chat_history(cls, session_id):
         """
         Get chat history from cache or rebuild from database
         
@@ -305,22 +305,22 @@ class ChatHistoryManager:
         """
         # Try to get from cache first
         cache_key = f'chat_history_{session_id}'
-        cached_history = await sync_to_async(cache.get)(cache_key)
+        cached_history = cache.get(cache_key)
 
         if cached_history:
             # Trim history if too long
             if len(cached_history) > cls.MAX_HISTORY_LENGTH:
                 cached_history = cached_history[-cls.MAX_HISTORY_LENGTH:]
-                await sync_to_async(cache.set)(cache_key, cached_history, timeout=3600)
+                cache.set(cache_key, cached_history, timeout=3600)
             return cached_history
         
         # Cache miss - rebuild from database
         logger.info("缓存未命中，从数据库重建对话历史")
         try:
-            chat_session = await sync_to_async(ChatSession.objects.get)(id=session_id)
+            chat_session = ChatSession.objects.get(id=session_id)
             
-            # Get latest messages - 使用异步方式
-            history_messages = await sync_to_async(lambda: list(chat_session.messages.order_by('created_at')[:cls.MAX_HISTORY_LENGTH]))()
+            # Get latest messages
+            history_messages = list(chat_session.messages.order_by('created_at')[:cls.MAX_HISTORY_LENGTH])
             history_messages = sorted(history_messages, key=lambda x: x.created_at)
 
             # Format messages for LLM
@@ -332,7 +332,7 @@ class ChatHistoryManager:
             logger.info(f"从数据库重建对话历史，共 {len(chat_history)} 条消息")
             
             # Store in cache for future use
-            await sync_to_async(cache.set)(cache_key, chat_history, timeout=3600)
+            cache.set(cache_key, chat_history, timeout=3600)
             return chat_history
             
         except (ChatSession.DoesNotExist, Exception) as e:
@@ -340,20 +340,25 @@ class ChatHistoryManager:
             return []
         
     @classmethod
-    async def update_chat_history(cls, session_id, role, content, chat_history=None):
+    def update_chat_history(cls, session_id, role, content, chat_history=None):
         """
-        Update chat history in cache
+        Update chat history in cache and database (同步版本)
         
         Args:
             session_id: Session ID
             role: Message role ("user" or "assistant")
             content: Message content
             chat_history: Optional existing chat history to update
+            
+        Returns:
+            tuple: (updated_chat_history, message_id)
         """
+        from .models import ChatMessage, ChatSession
+        
         cache_key = f'chat_history_{session_id}'
         
         if chat_history is None:
-            chat_history = await cls.get_chat_history(session_id)
+            chat_history = cls.get_chat_history(session_id)
         
         # Add new message
         chat_history.append({"role": role, "content": content})
@@ -363,8 +368,36 @@ class ChatHistoryManager:
             chat_history = chat_history[-cls.MAX_HISTORY_LENGTH:]
         
         # Update cache
-        await sync_to_async(cache.set)(cache_key, chat_history, timeout=3600)
-        return chat_history
+        cache.set(cache_key, chat_history, timeout=3600)
+        
+        # 保存到数据库并获取消息ID
+        try:
+            session = ChatSession.objects.get(id=session_id)
+            is_user = (role == "user")
+            message = ChatMessage.objects.create(
+                session=session,
+                content=content,
+                is_user=is_user
+            )
+            message_id = message.id
+            logger.info(f"已保存{'用户' if is_user else 'AI'}消息到数据库，消息ID: {message_id}")
+        except Exception as e:
+            logger.error(f"保存消息到数据库失败: {str(e)}")
+            message_id = None
+        
+        return chat_history, message_id
+    
+    @classmethod
+    def clear_chat_history(cls, session_id):
+        """
+        Clear chat history from cache
+        
+        Args:
+            session_id: Session ID to clear history for
+        """
+        cache_key = f'chat_history_{session_id}'
+        cache.delete(cache_key)
+        logger.info(f"已清除会话 {session_id} 的缓存历史")
 
 @api_view(['GET', 'POST', 'DELETE'])
 def chat_sessions(request):
@@ -401,7 +434,119 @@ def chat_sessions(request):
             }
         }, status=status.HTTP_201_CREATED)
 
-# 根据session_id获取会话消息
+@api_view(['GET'])
+def get_chat_history(request, session_id):
+    """
+    获取指定会话的聊天历史
+    """
+    try:
+        # 验证会话是否存在
+        chat_session = ChatSession.objects.get(id=session_id)
+        
+        # 获取聊天历史
+        chat_history = ChatHistoryManager.get_chat_history(session_id)
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'session_id': session_id,
+                'history': chat_history,
+                'count': len(chat_history)
+            }
+        })
+    except ChatSession.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': '会话不存在'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"获取聊天历史失败: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '获取聊天历史失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def update_chat_history(request, session_id):
+    """
+    更新指定会话的聊天历史
+    """
+    try:
+        # 验证会话是否存在
+        chat_session = ChatSession.objects.get(id=session_id)
+        # 获取请求数据
+        role = request.data.get('role')
+        content = request.data.get('content')
+        
+        # 验证必需参数
+        if not role or not content:
+            return Response({
+                'status': 'error',
+                'message': 'role和content参数不能为空'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if role not in ['user', 'assistant']:
+            return Response({
+                'status': 'error',
+                'message': 'role必须是user或assistant'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 更新聊天历史并获取消息ID
+        updated_history, message_id = ChatHistoryManager.update_chat_history(
+            session_id=session_id,
+            role=role,
+            content=content
+        )
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'session_id': session_id,
+                'message_id': message_id,
+                'history': updated_history,
+                'count': len(updated_history)
+            }
+        })
+    except ChatSession.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': '会话不存在'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"更新聊天历史失败: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '更新聊天历史失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+def clear_chat_history(request, session_id):
+    """
+    清除指定会话的聊天历史缓存
+    """
+    try:
+        # 验证会话是否存在
+        chat_session = ChatSession.objects.get(id=session_id)
+        
+        # 清除聊天历史缓存
+        ChatHistoryManager.clear_chat_history(session_id)
+        
+        return Response({
+            'status': 'success',
+            'message': '聊天历史缓存已清除'
+        })
+    except ChatSession.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': '会话不存在'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"清除聊天历史失败: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '清除聊天历史失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['GET', 'DELETE'])
 def session_messages(request, session_id):
     if request.method == 'GET':
@@ -448,3 +593,129 @@ def session_messages(request, session_id):
                 'status': 'error',
                 'message': '会话不存在'
             }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def create_process_info(request):
+    """
+    创建ProcessInfo记录 - 适配FastAPI调用
+    """
+    try:
+        # 获取请求数据
+        message_id = request.data.get('message_id')
+        session_id = request.data.get('session_id')  # 新增session_id支持
+        process_info_data = request.data.get('process_info', {})
+        
+        # 从process_info中提取数据，适配FastAPI的数据结构
+        steps = process_info_data.get('steps', [])
+        task_plan = process_info_data.get('task_planning', {})
+        tool_selections = process_info_data.get('tool_selection', {})
+        task_results = process_info_data.get('task_execution', {})
+        
+        # 验证必需参数
+        if not message_id:
+            return Response({
+                'status': 'error',
+                'message': 'message_id参数不能为空'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 验证消息是否存在
+        try:
+            message = ChatMessage.objects.get(id=message_id)
+        except ChatMessage.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '指定的消息不存在'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 检查是否已存在ProcessInfo
+        if hasattr(message, 'process_info'):
+            # 如果已存在，更新而不是创建新的
+            process_info = message.process_info
+            process_info.steps = steps
+            process_info.task_plan = task_plan
+            process_info.tool_selections = tool_selections
+            process_info.task_results = task_results
+            process_info.save()
+            
+            logger.info(f"已更新ProcessInfo记录，ID: {process_info.id}，关联消息ID: {message_id}")
+        else:
+            # 创建新的ProcessInfo记录
+            process_info = ProcessInfo.objects.create(
+                message=message,
+                steps=steps,
+                task_plan=task_plan,
+                tool_selections=tool_selections,
+                task_results=task_results
+            )
+            
+            logger.info(f"已创建ProcessInfo记录，ID: {process_info.id}，关联消息ID: {message_id}")
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'id': process_info.id,
+                'message_id': message_id,
+                'session_id': session_id,
+                'steps': process_info.steps,
+                'task_plan': process_info.task_plan,
+                'tool_selections': process_info.tool_selections,
+                'task_results': process_info.task_results,
+                'created_at': process_info.created_at
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        logger.error(f"创建/更新ProcessInfo失败: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': '创建处理信息失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+def update_process_info(request, process_info_id):
+    """
+    更新ProcessInfo记录
+    """
+    try:
+        # 获取ProcessInfo记录
+        try:
+            process_info = ProcessInfo.objects.get(id=process_info_id)
+        except ProcessInfo.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '处理信息不存在'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 获取请求数据并更新
+        if 'steps' in request.data:
+            process_info.steps = request.data['steps']
+        if 'task_plan' in request.data:
+            process_info.task_plan = request.data['task_plan']
+        if 'tool_selections' in request.data:
+            process_info.tool_selections = request.data['tool_selections']
+        if 'task_results' in request.data:
+            process_info.task_results = request.data['task_results']
+        
+        process_info.save()
+        
+        logger.info(f"已更新ProcessInfo记录，ID: {process_info_id}")
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'id': process_info.id,
+                'message_id': process_info.message.id,
+                'steps': process_info.steps,
+                'task_plan': process_info.task_plan,
+                'tool_selections': process_info.tool_selections,
+                'task_results': process_info.task_results,
+                'created_at': process_info.created_at
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"更新ProcessInfo失败: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': '更新处理信息失败'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

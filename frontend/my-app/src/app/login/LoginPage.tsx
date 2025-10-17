@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -22,9 +22,10 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/features/authSlice';
-import { useCSRFToken, fetchWithCSRF } from "../components/util";
+import { RootState } from "@/redux/store";
+import { fetchWithCSRF } from "@/app/components/util";
 
 // 定义表单验证架构
 const formSchema = z.object({
@@ -39,9 +40,17 @@ const formSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 初始化表单
+  // Redirect to chat if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/chat");
+    }
+  }, [isLoggedIn, router]);
+
+  // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,7 +59,7 @@ export default function LoginPage() {
     },
   });
 
-  // 处理表单提交
+  // Handle form submission
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
@@ -64,7 +73,8 @@ export default function LoginPage() {
           username: data.data.username,
           id: data.data.id
         }));
-        router.push("/");
+        // Redirect to chat page
+        router.push("/chat");
       } else {
         form.setError("root", {
           message: "登录失败：" + data.message,

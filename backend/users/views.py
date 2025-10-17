@@ -71,8 +71,8 @@ class RegisterView(APIView):
         
         # 创建新用户
         try:
+            # create_user automatically saves the user, no need to call save() again
             user = User.objects.create_user(username=username, password=password)
-            user.save()
             
             # 自动登录新用户
             login(request, user)
@@ -90,6 +90,10 @@ class RegisterView(APIView):
             return response
             
         except Exception as e:
+            # Log the actual exception for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Registration failed: {str(e)}")
             return Response({
                 'status': 'error',
                 'message': '注册失败'

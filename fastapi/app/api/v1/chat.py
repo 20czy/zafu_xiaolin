@@ -12,7 +12,9 @@ from ...schemas import chat as schemas
 from ...agent.LLMController import get_process_info
 from ...agent.ResponseGenerator import ResponseGenerator
 from ...services.chat_history_manager import ChatHistoryManager
+from ...core.config import DJANGO_API_BASE_URL
 import pydantic
+import requests
 
 # Custom JSON encoder to handle CallToolResult and other non-serializable types
 class CustomJSONEncoder(json.JSONEncoder):
@@ -41,6 +43,7 @@ async def chat(
         # 获取请求体中的数据
         message = request.message.strip()
         session_id = request.session_id
+        is_agent = request.is_agent
         
         # 验证消息和会话ID不为空
         if not message or not session_id:
@@ -55,22 +58,39 @@ async def chat(
         logger.info(f"用户输入: {message}")
         logger.info(f"会话ID: {session_id}")
         logger.info("-"*30)
+
+        try:
+            # 将刚刚输入的用户信息保存到指定的session数据库
+            django_response = requests.post(
+                f"{DJANGO_API_BASE_URL}/{session_id}/history/update/",
+                json={"role": "user", "content": message},
+                timeout=10
+            )
+            if django_response.status_code != 200:
+                logger.error(f"更新聊天历史失败: {django_response.status_code}")
+                raise HTTPException(status_code=500, detail="更新聊天历史失败")
+        except requests.RequestException as e:
+            logger.error(f"更新聊天历史请求失败: {str(e)}")
+            raise HTTPException(status_code=500, detail="更新聊天历史请求失败")
         
-        # 保存用户消息
-        await ChatHistoryManager.save_message(
-            session_id=session_id,
-            content=message,
-            is_user=True,
-            db=db
-        )
-        
-        # 获取聊天历史
-        chat_history = await ChatHistoryManager.get_chat_history(session_id, db)
+        try:
+            chat_history_response = requests.get(
+                f"{DJANGO_API_BASE_URL}/{session_id}/history/",
+                timeout=10  # 添加超时设置
+            )
+            if chat_history_response.status_code != 200:
+                logger.error(f"获取聊天历史失败: {chat_history_response.status_code}")
+                raise HTTPException(status_code=500, detail="获取聊天历史失败")
+            chat_history_response = json.loads(chat_history_response.text)
+            chat_history = chat_history_response['data']['history']
+        except Exception as e:
+            logger.error(f"获取聊天历史失败: {str(e)}")
+            raise HTTPException(status_code=500, detail="获取聊天历史失败")
         
         try:
             # 使用流式响应
             return StreamingResponse(
-                generate_streaming_response(message, session_id, chat_history, db),
+                generate_streaming_response(message, session_id, chat_history, db, is_agent),
                 media_type="text/event-stream"
             )
         except Exception as e:
@@ -144,7 +164,7 @@ async def aget_process_info(session_id: str, db: AsyncSession = Depends(get_db))
         logger.error(f"获取处理过程信息失败: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="获取处理过程信息失败")
 
-async def generate_streaming_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession):
+async def generate_streaming_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession, is_agent: bool):
     """
     生成流式响应并持久化
     
@@ -153,71 +173,99 @@ async def generate_streaming_response(message: str, session_id: str, chat_histor
         session_id: 会话ID
         chat_history: 聊天历史
         db: 数据库会话
+        is_agent: 是否使用智能代理模式
     """
     full_response = ""
-    process_steps = []
-    task_plan = None
-    tool_selections = None
-    task_results = {}
     ai_message = None
+    process_info = None
 
     try:
-        # 使用异步生成器获取处理过程信息
-        async for event in get_process_info(message):
-            # 处理事件数据
-            if isinstance(event, pydantic.BaseModel):
-                result = event.model_dump()
-            else:
-                result = event  # 如果不是pydantic模型，直接使用原始事件
+        if is_agent:
+            # 智能代理模式：使用完整的处理流程
+            process_steps = []
+            task_plan = None
+            tool_selections = None
+            task_results = {}
+
+            # 使用异步生成器获取处理过程信息
+            async for event in get_process_info(message):
+                # 处理事件数据
+                if isinstance(event, pydantic.BaseModel):
+                    result = event.model_dump()
+                else:
+                    result = event  # 如果不是pydantic模型，直接使用原始事件
+                    
+                # 使用自定义编码器转换为JSON字符串并发送
+                yield f"data: {json.dumps(result, cls=CustomJSONEncoder)}\n\n"
                 
-            # 使用自定义编码器转换为JSON字符串并发送
-            yield f"data: {json.dumps(result, cls=CustomJSONEncoder)}\n\n"
+                # 记录事件数据 - 使用result而不是event
+                if result.get("type") == "step":
+                    process_steps.append(result.get("content"))
+                elif result.get("type") == "data":
+                    if result.get("subtype") == "task_plan":
+                        task_plan = result.get("content")
+                    elif result.get("subtype") == "task_result":
+                        task_results[result.get("content", {}).get("task_id")] = result.get("content", {}).get("result")
+                    elif result.get("subtype") == "tool_selections":
+                        tool_selections = result.get("content")
+                
+                logger.info(f"发送事件: {result}")
             
-            # 记录事件数据 - 使用result而不是event
-            if result.get("type") == "step":
-                process_steps.append(result.get("content"))
-            elif result.get("type") == "data":
-                if result.get("subtype") == "task_plan":
-                    task_plan = result.get("content")
-                elif result.get("subtype") == "task_result":
-                    task_results[result.get("content", {}).get("task_id")] = result.get("content", {}).get("result")
-                elif result.get("subtype") == "tool_selections":
-                    tool_selections = result.get("content")
+            # 获取处理过程信息
+            process_info = {
+                "user_input": message,
+                "steps": process_steps,
+                "task_planning": {"tasks": task_plan} if task_plan else {},
+                "tool_selection": {"tool_selections": tool_selections} if tool_selections else {},
+                "task_execution": task_results
+            }
             
-            logger.info(f"发送事件: {result}")
-        
-        # 获取处理过程信息
-        process_info = {
-            "user_input": message,
-            "steps": process_steps,
-            "task_planning": {"tasks": task_plan} if task_plan else {},
-            "tool_selection": {"tool_selections": tool_selections} if tool_selections else {},
-            "task_execution": task_results
-        }
-        
-        # 生成最终响应
-        async for chunk in ResponseGenerator.create_streaming_response(message, process_info, chat_history):
-            if chunk:
-                full_response += chunk
-                yield f"data: {json.dumps({'content': chunk})}\n\n"
+            # 生成最终响应
+            async for chunk in ResponseGenerator.create_streaming_response(message, process_info, chat_history):
+                if chunk:
+                    full_response += chunk
+                    yield f"data: {json.dumps({'content': chunk})}\n\n"
+        else:
+            # 普通模式：直接生成简单回复
+            async for chunk in ResponseGenerator.create_simple_streaming_response(message, chat_history):
+                if chunk:
+                    full_response += chunk
+                    yield f"data: {json.dumps({'content': chunk})}\n\n"
     finally:
         if full_response:
-            # 保存AI响应到数据库
-            ai_message = await ChatHistoryManager.save_message(
-                session_id=session_id,
-                content=full_response,
-                is_user=False,
-                db=db
-            )
-            
-            # 保存处理过程信息
-            if ai_message:
-                await ChatHistoryManager.save_process_info(
-                    message_id=ai_message.id,
-                    session_id=session_id,
-                    process_info=process_info,
-                    db=db
+            try:
+                ai_message_response = requests.post(
+                    f"{DJANGO_API_BASE_URL}/{session_id}/history/update/",
+                    json={"role": "assistant", "content": full_response},
+                    timeout=10
                 )
+                if ai_message_response.status_code != 200:
+                    logger.error(f"保存ai聊天历史失败: {ai_message_response.status_code}")
+                    raise HTTPException(status_code=500, detail="更新ai聊天历史失败")
+                
+                # 解析响应获取message_id
+                ai_message_data = ai_message_response.json()
+                ai_message_id = ai_message_data.get('message_id')
+                
+            except requests.RequestException as e:
+                logger.error(f"更新ai聊天历史请求失败: {str(e)}")
+                raise HTTPException(status_code=500, detail="更新ai聊天历史请求失败")
+            
+            # 只有在智能代理模式下才保存处理过程信息
+            if is_agent and process_info and ai_message_id:
+                try:
+                    save_processInfo_response = requests.post(
+                        f"{DJANGO_API_BASE_URL.replace('/chat/sessions', '')}/process_info/create/",
+                        json={
+                            "message_id": ai_message_id,
+                            "session_id": session_id,
+                            "process_info": process_info
+                        },
+                        timeout=10
+                    )
+                except requests.RequestException as e:
+                    logger.error(f"保存处理过程信息请求失败: {str(e)}")
+                    raise HTTPException(status_code=500, detail="保存处理过程信息请求失败")
 
 async def generate_standard_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession):
     """

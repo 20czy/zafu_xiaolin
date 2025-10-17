@@ -10,6 +10,7 @@ interface ChatInputProps {
   onFileUpload?: (file: File) => void;
   onAgentChange?: () => void;
   currentAgent?: string;
+  isAgentActive?: boolean; // 添加可选的isAgentActive属性
 }
 
 const ChatInput = ({ 
@@ -18,11 +19,12 @@ const ChatInput = ({
   handleSend, 
   onFileUpload, 
   onAgentChange,
-  currentAgent = "🤖 agent" 
+  currentAgent = "🤖 agent",
+  isAgentActive = false // 添加默认值
 }: ChatInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isAgentButtonActive, setIsAgentButtonActive] = useState(false);
+  const [isAgentButtonActive, setIsAgentButtonActive] = useState(isAgentActive);
 
   // 处理文件上传按钮点击
   const handleFileButtonClick = () => {
@@ -53,7 +55,6 @@ const ChatInput = ({
     if (onAgentChange) {
       onAgentChange();
     }
-    
   };
 
   // 自动调整文本区域高度
@@ -98,6 +99,7 @@ const ChatInput = ({
         {/* 模式切换按钮 */}
         <Button 
           variant="outline" 
+          title="点击切换模式"
           className={`rounded-full h-10 px-4 mb-1 font-bold ${
             isAgentButtonActive ? "bg-green-500 hover:bg-green-500 text-white hover:text-white" : ""
           }`}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronRight } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -47,6 +46,9 @@ export default function ChatWindowShadcn({
   // 添加初始化会话的useEffect
   // 添加一个 ref 来追踪最近创建的会话
   const recentlyCreatedSessionId = useRef<number | null>(null);
+
+  // 添加isAgent状态
+  const [isAgent, setIsAgent] = useState(false);
 
   // 修改创建初始会话的 useEffect
   useEffect(() => {
@@ -134,132 +136,179 @@ export default function ChatWindowShadcn({
     taskResults: Record<string, any>;
   } | null>(null);
 
-  const handleSend = async () => {
-    if (!input.trim() || !sessionId) return;
-
-    const currentMessage = input;
+  // 1. 初始化状态重置
+  const resetChatState = (currentMessage: string) => {
     setInput("");
     setMessages((prev) => [...prev, { text: currentMessage, isUser: true }]);
     setIsStreaming(true);
-    setStreamingMessage(""); // 重置流式消息
+    setStreamingMessage("");
 
-    // 重置处理信息
     setCurrentProcessInfo({
       steps: [],
       taskPlan: [],
       toolSelections: {},
-      taskResults: {}
+      taskResults: {},
     });
+  };
 
-    let accumulatedMessage = "";
+  // 2. 处理SSE数据行
+  const processSSELine = (
+    line: string,
+    accumulatedMessage: { current: string },
+    processInfo: {
+      steps: string[];
+      taskPlan: any;
+      toolSelections: any;
+      taskResults: any;
+    }
+  ) => {
+    if (line.startsWith("data: ")) {
+      try {
+        const data = JSON.parse(line.slice(5));
+
+        if (data.type === "step") {
+          processInfo.steps = [...processInfo.steps, data.content];
+          setCurrentProcessInfo((prevInfo) => ({
+            ...prevInfo!,
+            steps: [...processInfo.steps],
+          }));
+        } else if (data.type === "data") {
+          if (data.subtype === "task_plan") {
+            processInfo.taskPlan = data.content;
+            setCurrentProcessInfo((prevInfo) => ({
+              ...prevInfo!,
+              taskPlan: data.content,
+            }));
+          } else if (data.subtype === "tool_selection") {
+            processInfo.toolSelections = data.content;
+            setCurrentProcessInfo((prevInfo) => ({
+              ...prevInfo!,
+              toolSelections: data.content,
+            }));
+          } else if (data.subtype === "task_result") {
+            processInfo.taskResults = {
+              ...processInfo.taskResults,
+              [data.content.task_id]: data.content.result,
+            };
+            setCurrentProcessInfo((prevInfo) => ({
+              ...prevInfo!,
+              taskResults: {
+                ...prevInfo!.taskResults,
+                [data.content.task_id]: data.content.result,
+              },
+            }));
+          }
+        } else {
+          accumulatedMessage.current += data.content || "";
+          setStreamingMessage(accumulatedMessage.current);
+        }
+      } catch (e) {
+        console.error("解析SSE数据失败:", e);
+      }
+    }
+  };
+
+  // 3. 处理流式响应
+  const handleStreamResponse = async (
+    reader: ReadableStreamDefaultReader<Uint8Array>
+  ) => {
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let accumulatedMessage = { current: "" };
     let processInfo = {
       steps: [] as string[],
       taskPlan: null as any,
       toolSelections: null as any,
-      taskResults: null as any
+      taskResults: null as any,
     };
 
-    try {
-      const response = await fetchWithCSRF("http://localhost:8001/api/v1/chat/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: currentMessage,
-          session_id: String(sessionId),
-        }),
-      });
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("无法获取响应流");
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
 
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            try {
-              const data = JSON.parse(line.slice(5));
-
-              // 根据事件类型处理不同的数据
-              if (data.type === "step") {
-                // 更新处理步骤信息
-                processInfo.steps = [...processInfo.steps, data.content];
-                setCurrentProcessInfo(prevInfo => ({
-                  ...prevInfo!,
-                  steps: [...processInfo.steps]
-                }));
-              } else if (data.type === "data") {
-                // 处理数据信息
-                if (data.subtype === "task_plan") {
-                  processInfo.taskPlan = data.content;
-                  setCurrentProcessInfo(prevInfo => ({
-                    ...prevInfo!,
-                    taskPlan: data.content
-                  }));
-                } else if (data.subtype === "tool_selection") {
-                  processInfo.toolSelections = data.content;
-                  setCurrentProcessInfo(prevInfo => ({
-                    ...prevInfo!,
-                    toolSelections: data.content
-                  }));
-                } else if (data.subtype === "task_result") {
-                  processInfo.taskResults = {
-                    ...processInfo.taskResults,
-                    [data.content.task_id]: data.content.result,
-                  };
-                  // 实时更新当前处理信息
-                  setCurrentProcessInfo(prevInfo => ({
-                    ...prevInfo!,
-                    taskResults: {
-                      ...prevInfo!.taskResults,
-                      [data.content.task_id]: data.content.result,
-                    }
-                  }));
-                }
-              } else {
-                // 处理常规的内容响应
-                accumulatedMessage += data.content || "";
-                // 更新流式消息状态以实现打字机效果
-                setStreamingMessage(accumulatedMessage);
-              }
-            } catch (e) {
-              console.error("解析SSE数据失败:", e);
-            }
-          }
-        }
+      for (const line of lines) {
+        processSSELine(line, accumulatedMessage, processInfo);
       }
-
-      // 流式接收完成，更新消息列表
-      setMessages((prev) => [
-        ...prev,
-        { text: accumulatedMessage, isUser: false, processInfo: processInfo },
-      ]);
-      setStreamingMessage(""); // 清空流式消息
-      setCurrentProcessInfo(null); // 清空当前处理信息
-      setIsStreaming(false);
-
-    } catch (error) {
-      console.error("发送消息失败:", error);
-      setMessages((prev) => [
-        ...prev,
-        { text: "网络错误，请检查连接后重试。", isUser: false },
-      ]);
-      setStreamingMessage("");
-      setCurrentProcessInfo(null);
-      setIsStreaming(false);
     }
+
+    return {
+      message: accumulatedMessage.current,
+      processInfo,
+    };
   };
 
+  // 4. 发送网络请求
+  const sendChatRequest = async (message: string, sessionId: number, isAgent: boolean) => {
+    const response = await fetchWithCSRF("http://localhost:8001/api/v1/chat/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+        session_id: String(sessionId),
+        is_agent: isAgent,
+      }),
+    });
+
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error("无法获取响应流");
+
+    return reader;
+  };
+
+  // 5. 处理错误情况
+  const handleChatError = (error: unknown) => {
+    console.error("发送消息失败:", error);
+    setMessages((prev) => [
+      ...prev,
+      { text: "网络错误，请检查连接后重试。", isUser: false },
+    ]);
+  };
+
+  // 6. 清理状态
+  const cleanupChatState = () => {
+    setStreamingMessage("");
+    setCurrentProcessInfo(null);
+    setIsStreaming(false);
+  };
+
+  // 7. 主函数（保持原有逻辑）
+  const handleSend = async () => {
+    if (!input.trim() || !sessionId) return;
+
+    const currentMessage = input;
+
+    // 重置状态
+    resetChatState(currentMessage);
+
+    try {
+      // 发送请求
+      const reader = await sendChatRequest(currentMessage, sessionId, isAgent);
+
+      // 处理流式响应
+      const result = await handleStreamResponse(reader);
+
+      // 更新最终消息
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: result.message,
+          isUser: false,
+          processInfo: result.processInfo,
+        },
+      ]);
+
+      cleanupChatState();
+    } catch (error) {
+      handleChatError(error);
+      cleanupChatState();
+    }
+  };
   // 当 sessionId 改变时，重新获取消息
   useEffect(() => {
     if (sessionId) {
@@ -341,6 +390,10 @@ export default function ChatWindowShadcn({
     }
   };
 
+  const handleAgentChange = () => {
+    setIsAgent(!isAgent);
+  };
+
   return (
     <div className="h-full w-full p-4 pr-1">
       <Card className="h-full flex flex-col">
@@ -388,6 +441,7 @@ export default function ChatWindowShadcn({
             input={input}
             setInput={setInput}
             handleSend={handleSend}
+            onAgentChange={handleAgentChange}
           />
         </CardFooter>
       </Card>
@@ -398,8 +452,6 @@ export default function ChatWindowShadcn({
 // HeaderActions.tsx
 import { Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { set } from "react-hook-form";
-import { any } from "zod";
 
 const HeaderActions = ({
   onNewSession,
@@ -418,4 +470,3 @@ const HeaderActions = ({
     </Button>
   </div>
 );
-

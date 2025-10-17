@@ -2,11 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import ChatWindowShadcn from "./ChatWindowShadcn";
-import AgentWorkbench from "./AgentWorkbench";
 // 移除 ResizableBox 导入
 // import { ResizableBox } from "react-resizable";
 // import "react-resizable/css/styles.css";
 import { Infinity } from "lucide-react";
+import ProtectedLayout from "../../components/ProtectedLayout";
 
 // 定义Agent数据类型
 interface AgentData {
@@ -284,48 +284,36 @@ npm run dev
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1 flex relative">
-        {/* 左侧聊天窗口 */}
-        <div className="relative" style={{ width: leftWidth, height: "100vh" }}>
-          <div className="h-full">
-            <ChatWindowShadcn
-              sessionId={activeSessionId}
-              onSessionChange={setActiveSessionId}
+    <ProtectedLayout>
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 flex relative">
+          {/* 左侧聊天窗口 */}
+          <div className="relative" style={{ width: leftWidth, height: "100vh" }}>
+            <div className="h-full">
+              <ChatWindowShadcn
+                sessionId={activeSessionId}
+                onSessionChange={setActiveSessionId}
+              />
+            </div>
+
+            {/* 拖拽区域 */}
+            <div
+              className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize transition-all duration-200 ${
+                isHovering || isDragging ? "bg-blue-400" : "bg-transparent"
+              }`}
+              style={{
+                height: "calc(100% - 35px)", // 上下各留4px
+                top: "50%",
+                transform: "translateY(-50%)", // 减去上下 4px
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+              title="拖拽调整窗口大小"
             />
           </div>
-
-          {/* 拖拽区域 */}
-          <div
-            className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize transition-all duration-200 ${
-              isHovering || isDragging ? "bg-blue-400" : "bg-transparent"
-            }`}
-            style={{
-              height: "calc(100% - 35px)", // 上下各留4px
-              top: "50%",
-              transform: "translateY(-50%)", // 减去上下 4px
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            title="拖拽调整窗口大小"
-          />
-
-          {/* 悬停提示 */}
-          {isHovering && !isDragging && (
-            <div className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10">
-              拖拽调整大小
-            </div>
-          )}
-        </div>
-
-        <div className="flex-1 min-w-0 p-4 pl-1">
-            <AgentWorkbench
-              data={agentData}
-              onDataReceived={handleAgentDataReceived}
-            />
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </ProtectedLayout>
   );
 }

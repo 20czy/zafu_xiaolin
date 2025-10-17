@@ -62,6 +62,7 @@ class ChatSession(ChatSessionBase):
 class ChatRequest(BaseModel):
     message: str
     session_id: str
+    is_agent: bool = False  # 添加 is_agent 字段，默认为 False
 
 
 class ChatResponse(BaseModel):

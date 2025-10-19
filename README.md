@@ -1,4 +1,4 @@
-# 农林小林 (XiaoLin) - 基于 MCP 的全栈校园 AI 助手
+# 农林小林 (XiaoLin) - 基于 MCP 的全栈校园 AI 助手框架
 
 <p align="center">
     <img alt="xiaolin" width="200" style="border-radius: 10px;" src="https://github.com/user-attachments/assets/2cb3cc13-fce5-4312-909c-fa93129685ca">
@@ -6,7 +6,7 @@
 
 ## 📝 项目简介
 
-农林小林是面向校园和教育场景的全栈智能体解决方案。灵感来源于论文: [HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in HuggingFace](http://arxiv.org/abs/2303.17580)。
+农林小林是面向校园和教育场景的全栈智能体框架，用户可以轻松的将自己的系统接入到框架中去。灵感来源于论文: [HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in HuggingFace](http://arxiv.org/abs/2303.17580)。
 
 项目使用自然语言作为大语言模型(LLM)沟通的媒介，集成了任务规划✍️和工具调用🔧为一体，专注于对接现有校园系统，高效解决校园范围内的复杂问题🤔。本项目实现了 Model Context Protocol (MCP) 客户端，使 AI 助手能够无缝连接并利用校园内的各种数据源和工具。
 

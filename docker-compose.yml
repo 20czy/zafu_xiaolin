@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/backend:v1
     ports:
       - "8000:8000"
     volumes:
@@ -26,9 +24,7 @@ services:
       - app-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/frontend:v1
     ports:
       - "3000:3000"
     volumes:
@@ -38,9 +34,7 @@ services:
       - app-network
 
   fastapi:
-    build:
-      context: ./fastapi
-      dockerfile: Dockerfile
+    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/fastapi:v1
     ports:
       - "8001:8001"
     environment:

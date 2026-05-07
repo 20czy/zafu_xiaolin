@@ -1,9 +1,16 @@
 import { useState } from "react";
 
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8001";
+
+export function apiUrl(path: string) {
+  return `${API_BASE_URL}${path}`;
+}
+
 // 创建一个独立的获取 CSRF 令牌的函数
 export async function getCSRFToken() {
   try {
-    const response = await fetch("http://localhost:8000/api/csrf/", {
+    const response = await fetch(apiUrl("/api/csrf/"), {
       method: "GET",
       credentials: "include",
     });

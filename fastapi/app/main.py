@@ -1,5 +1,10 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from app.api.v1 import chat, users, agent_data
+from app.api import demo
+from app.db.models import Base
+from app.db.session import engine
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
@@ -28,15 +33,21 @@ console_handler.setLevel(logging.INFO)
 # 获取主 logger，并添加处理器
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
 
 # 避免重复添加处理器（例如在热重载中）
 if not logger.hasHandlers():
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-app = FastAPI(title="AI Chat Backend")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+
+app = FastAPI(title="XiaoLin Demo Backend", lifespan=lifespan)
 
 # 配置CORS
 app.add_middleware(
@@ -50,3 +61,4 @@ app.add_middleware(
 app.include_router(chat.router, prefix="/api/v1/chat")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(agent_data.router, prefix="/api/v1/agent-data")
+app.include_router(demo.router, prefix="/api")

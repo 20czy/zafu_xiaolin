@@ -26,7 +26,7 @@ interface AgentData {
 }
 
 export default function ChatPage() {
-  const [activeSessionId, setActiveSessionId] = useState<number | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [leftWidth, setLeftWidth] = useState(600);
   const [agentData, setAgentData] = useState<AgentData[]>([]);
 

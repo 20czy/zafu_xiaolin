@@ -17,13 +17,13 @@ import "react-resizable/css/styles.css";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
-import { fetchWithCSRF, useCSRFToken } from "./util";
+import { apiUrl, fetchWithCSRF } from "./util";
 
 interface ChatWindowProps {
   isExpanded: boolean;
   onToggle: () => void;
-  sessionId: number | null;
-  onSessionChange: (sessionId: number | null) => void;
+  sessionId: string | null;
+  onSessionChange: (sessionId: string | null) => void;
 }
 
 export default function ChatWindowShadcn({
@@ -35,7 +35,7 @@ export default function ChatWindowShadcn({
   const [width, setWidth] = useState(400);
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [input, setInput] = useState("");
-  const [sessions, setSessions] = useState<Array<{ id: number; title: string; updated_at: string }>>([]);
+  const [sessions, setSessions] = useState<Array<{ id: string; title: string; updated_at: string }>>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // 使用 useRef 来标记会话是否已创建
@@ -43,7 +43,7 @@ export default function ChatWindowShadcn({
 
   // 添加初始化会话的useEffect
   // 添加一个 ref 来追踪最近创建的会话
-  const recentlyCreatedSessionId = useRef<number | null>(null);
+  const recentlyCreatedSessionId = useRef<string | null>(null);
 
   // 修改创建初始会话的 useEffect
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function ChatWindowShadcn({
       if (!sessionId && !isSessionCreating.current) {
         try {
           isSessionCreating.current = true;
-          const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/", {
+          const data = await fetchWithCSRF(apiUrl("/api/chat/sessions/"), {
             method: "POST",
           });
           
@@ -74,7 +74,7 @@ export default function ChatWindowShadcn({
   useEffect(() => {
     const cleanEmptySessions = async () => {
       try {
-        const sessionsData = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/");
+        const sessionsData = await fetchWithCSRF(apiUrl("/api/chat/sessions/"));
         if (sessionsData.status === "success") {
           for (const session of sessionsData.data) {
             // 跳过最近创建的会话
@@ -83,15 +83,15 @@ export default function ChatWindowShadcn({
             }
 
             const documentsData = await fetchWithCSRF(
-              `http://localhost:8000/api/chat/sessions/${session.id}/documents/`
+              apiUrl(`/api/chat/sessions/${session.id}/documents/`)
             )
 
             const messagesData = await fetchWithCSRF(
-              `http://localhost:8000/api/chat/sessions/${session.id}/messages/`
+              apiUrl(`/api/chat/sessions/${session.id}/messages/`)
             );
             
             if (messagesData.status === "success" && messagesData.data.length === 0 && documentsData.status === "success" && documentsData.data.length === 0) {
-              await fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${session.id}/messages/`, {
+              await fetchWithCSRF(apiUrl(`/api/chat/sessions/${session.id}/messages/`), {
                 method: "DELETE",
               });
               
@@ -128,14 +128,14 @@ export default function ChatWindowShadcn({
     let accumulatedMessage = "";
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/", {
+      const response = await fetchWithCSRF(apiUrl("/api/v1/chat/"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: currentMessage,
-          session_id: sessionId,
+          session_id: String(sessionId),
         }),
       });
 
@@ -182,7 +182,7 @@ export default function ChatWindowShadcn({
 
   useEffect(() => {
     if (sessionId) {
-      fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`)
+      fetchWithCSRF(apiUrl(`/api/chat/sessions/${sessionId}/messages/`))
         .then(data => {
           if (data.status === "success") {
             const newMessages = data.data.map(
@@ -204,7 +204,7 @@ export default function ChatWindowShadcn({
 
   const fetchSessions = async () => {
     try {
-      const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/");
+      const data = await fetchWithCSRF(apiUrl("/api/chat/sessions/"));
       if (data.status === "success") {
         setSessions(data.data);
       }
@@ -215,7 +215,7 @@ export default function ChatWindowShadcn({
 
   const handleNewSession = async () => {
     try {
-      const data = await fetchWithCSRF("http://localhost:8000/api/chat/sessions/", {
+      const data = await fetchWithCSRF(apiUrl("/api/chat/sessions/"), {
         method: "POST",
       });
       
@@ -229,16 +229,14 @@ export default function ChatWindowShadcn({
     }
   };
 
-  const handleDeleteSession = async (sessionId: number) => {
+  const handleDeleteSession = async (sessionId: string) => {
     try {
-      await fetchWithCSRF(`http://localhost:8000/api/chat/sessions/${sessionId}/messages/`, {
+      await fetchWithCSRF(apiUrl(`/api/chat/sessions/${sessionId}/messages/`), {
         method: "DELETE",
       });
       
       fetchSessions();
-      if (sessionId === sessionId) {
-        onSessionChange(null);
-      }
+      onSessionChange(null);
     } catch (error) {
       console.error("删除会话失败:", error);
     }

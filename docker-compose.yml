@@ -1,74 +1,24 @@
-version: '3.8'
-
 services:
-  backend:
-    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/backend:v1
+  api:
+    build:
+      context: ./fastapi
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
-      - ./backend:/app
-      - ./logs:/logs
-      - ./media:/media
+      - ./fastapi:/app
+      - ./logs:/app/logs
     environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=agent
-      - DB_USER=charn
-      - DB_PASSWORD=123456
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - db
-      - redis
-    networks:
-      - app-network
+      - DATABASE_URL=sqlite+aiosqlite:///./demo.db
 
   frontend:
-    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/frontend:v1
+    build:
+      context: ./frontend
     ports:
       - "3000:3000"
     volumes:
       - ./frontend/my-app:/my-app
       - /my-app/node_modules
-    networks:
-      - app-network
-
-  fastapi:
-    image: registry.cn-hangzhou.aliyuncs.com/zafugpt/fastapi:v1
-    ports:
-      - "8001:8001"
     environment:
-      - DJANGO_API_BASE_URL=http://backend:8000/api/chat/sessions
-    volumes:
-      - ./fastapi:/app
-    networks:
-      - app-network
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8001
     depends_on:
-      - backend
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: agent
-      POSTGRES_USER: charn
-      POSTGRES_PASSWORD: 123456
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  postgres_data:
+      - api

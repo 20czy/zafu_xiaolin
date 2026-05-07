@@ -7,7 +7,7 @@ import ProtectedLayout from "@/components/ProtectedLayout";
 
 export default function Home() {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [activeSessionId, setActiveSessionId] = useState<number | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   
   return (
     <ProtectedLayout>

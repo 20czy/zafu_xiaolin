@@ -1,6 +1,6 @@
-from sqlalchemy.engine import result
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from fastapi.responses import StreamingResponse
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Dict, Any, Optional
 import json
@@ -12,9 +12,7 @@ from ...schemas import chat as schemas
 from ...agent.LLMController import get_process_info
 from ...agent.ResponseGenerator import ResponseGenerator
 from ...services.chat_history_manager import ChatHistoryManager
-from ...core.config import DJANGO_API_BASE_URL
 import pydantic
-import requests
 
 # Custom JSON encoder to handle CallToolResult and other non-serializable types
 class CustomJSONEncoder(json.JSONEncoder):
@@ -59,33 +57,16 @@ async def chat(
         logger.info(f"会话ID: {session_id}")
         logger.info("-"*30)
 
-        try:
-            # 将刚刚输入的用户信息保存到指定的session数据库
-            django_response = requests.post(
-                f"{DJANGO_API_BASE_URL}/{session_id}/history/update/",
-                json={"role": "user", "content": message},
-                timeout=10
-            )
-            if django_response.status_code != 200:
-                logger.error(f"更新聊天历史失败: {django_response.status_code}")
-                raise HTTPException(status_code=500, detail="更新聊天历史失败")
-        except requests.RequestException as e:
-            logger.error(f"更新聊天历史请求失败: {str(e)}")
+        user_message = await ChatHistoryManager.save_message(
+            session_id=session_id,
+            content=message,
+            is_user=True,
+            db=db,
+        )
+        if not user_message:
             raise HTTPException(status_code=500, detail="更新聊天历史请求失败")
-        
-        try:
-            chat_history_response = requests.get(
-                f"{DJANGO_API_BASE_URL}/{session_id}/history/",
-                timeout=10  # 添加超时设置
-            )
-            if chat_history_response.status_code != 200:
-                logger.error(f"获取聊天历史失败: {chat_history_response.status_code}")
-                raise HTTPException(status_code=500, detail="获取聊天历史失败")
-            chat_history_response = json.loads(chat_history_response.text)
-            chat_history = chat_history_response['data']['history']
-        except Exception as e:
-            logger.error(f"获取聊天历史失败: {str(e)}")
-            raise HTTPException(status_code=500, detail="获取聊天历史失败")
+
+        chat_history = await ChatHistoryManager.get_chat_history(session_id, db)
         
         try:
             # 使用流式响应
@@ -234,37 +215,28 @@ async def generate_streaming_response(message: str, session_id: str, chat_histor
     finally:
         if full_response:
             try:
-                ai_message_response = requests.post(
-                    f"{DJANGO_API_BASE_URL}/{session_id}/history/update/",
-                    json={"role": "assistant", "content": full_response},
-                    timeout=10
+                ai_message = await ChatHistoryManager.save_message(
+                    session_id=session_id,
+                    content=full_response,
+                    is_user=False,
+                    db=db,
                 )
-                if ai_message_response.status_code != 200:
-                    logger.error(f"保存ai聊天历史失败: {ai_message_response.status_code}")
-                    raise HTTPException(status_code=500, detail="更新ai聊天历史失败")
-                
-                # 解析响应获取message_id
-                ai_message_data = ai_message_response.json()
-                ai_message_id = ai_message_data.get('message_id')
-                
-            except requests.RequestException as e:
-                logger.error(f"更新ai聊天历史请求失败: {str(e)}")
+                ai_message_id = ai_message.id if ai_message else None
+            except Exception as e:
+                logger.error(f"更新ai聊天历史失败: {str(e)}")
                 raise HTTPException(status_code=500, detail="更新ai聊天历史请求失败")
             
             # 只有在智能代理模式下才保存处理过程信息
             if is_agent and process_info and ai_message_id:
                 try:
-                    save_processInfo_response = requests.post(
-                        f"{DJANGO_API_BASE_URL.replace('/chat/sessions', '')}/process_info/create/",
-                        json={
-                            "message_id": ai_message_id,
-                            "session_id": session_id,
-                            "process_info": process_info
-                        },
-                        timeout=10
+                    await ChatHistoryManager.save_process_info(
+                        message_id=ai_message_id,
+                        session_id=session_id,
+                        process_info=process_info,
+                        db=db,
                     )
-                except requests.RequestException as e:
-                    logger.error(f"保存处理过程信息请求失败: {str(e)}")
+                except Exception as e:
+                    logger.error(f"保存处理过程信息失败: {str(e)}")
                     raise HTTPException(status_code=500, detail="保存处理过程信息请求失败")
 
 async def generate_standard_response(message: str, session_id: str, chat_history: List[Dict[str, str]], db: AsyncSession):

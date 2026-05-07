@@ -39,7 +39,7 @@ class AgentData(AgentDataBase):
     user_id: int = Field(..., description="关联的用户ID")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }

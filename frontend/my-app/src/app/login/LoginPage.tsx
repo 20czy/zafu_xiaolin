@@ -25,7 +25,7 @@ import * as z from "zod";
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/features/authSlice';
 import { RootState } from "@/redux/store";
-import { fetchWithCSRF } from "@/app/components/util";
+import { apiUrl, fetchWithCSRF } from "@/app/components/util";
 
 // 定义表单验证架构
 const formSchema = z.object({
@@ -63,7 +63,7 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const data = await fetchWithCSRF("http://localhost:8000/api/login/", {
+      const data = await fetchWithCSRF(apiUrl("/api/login/"), {
         method: "POST",
         body: JSON.stringify(values),
       });
@@ -94,20 +94,12 @@ export default function LoginPage() {
     <div className="flex h-screen items-center justify-center bg-gray-50">
       <Card className="w-[350px]">
         <CardHeader>
-          <div className="flex justify-between items-center">
             <div>
               <CardTitle>登录</CardTitle>
               <CardDescription>
                 请输入您的账号和密码进行登录
               </CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              onClick={() => router.push("/register")}
-            >
-              注册
-            </Button>
-          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>

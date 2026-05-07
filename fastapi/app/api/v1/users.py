@@ -18,7 +18,7 @@ class UserResponse(BaseModel):
     email: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/users/", response_model=UserResponse)
 async def create_user(

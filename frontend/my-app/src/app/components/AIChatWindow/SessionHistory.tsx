@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/sheet";
 
 interface SessionHistoryProps {
-  sessions: Array<{ id: number; title: string; updated_at: string }>;
-  currentSessionId: number | null;
-  onSessionChange: (id: number) => void;
-  onDeleteSession: (id: number) => void;
+  sessions: Array<{ id: string; title: string; updated_at: string }>;
+  currentSessionId: string | null;
+  onSessionChange: (id: string) => void;
+  onDeleteSession: (id: string) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

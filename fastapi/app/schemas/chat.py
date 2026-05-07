@@ -19,7 +19,7 @@ class ChatMessage(ChatMessageBase):
     session_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProcessInfoBase(BaseModel):
@@ -36,7 +36,7 @@ class ProcessInfo(ProcessInfoBase):
     session_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ChatSessionBase(BaseModel):
@@ -56,7 +56,7 @@ class ChatSession(ChatSessionBase):
     messages: List[ChatMessage] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ChatRequest(BaseModel):

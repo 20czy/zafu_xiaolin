@@ -1,4 +1,4 @@
-# 农林小林 (XiaoLin) - 基于 MCP 的全栈校园 AI 助手框架
+# 农林小林 (XiaoLin) - 校园大脑 AI 助手 Demo
 
 <p align="center">
     <img alt="xiaolin" width="200" style="border-radius: 10px;" src="https://github.com/user-attachments/assets/2cb3cc13-fce5-4312-909c-fa93129685ca">
@@ -6,66 +6,84 @@
 
 ## 📝 项目简介
 
-农林小林是面向校园和教育场景的全栈智能体框架，用户可以轻松的将自己的系统接入到框架中去。灵感来源于论文: [HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in HuggingFace](http://arxiv.org/abs/2303.17580)。
+农林小林是一个面向高校场景的“校园大脑”AI 助手 Demo，目标是把分散在教务、学工、后勤、图书馆、通知公告等系统里的信息，统一成一个可以自然语言交互的校园入口。
 
-项目使用自然语言作为大语言模型(LLM)沟通的媒介，集成了任务规划✍️和工具调用🔧为一体，专注于对接现有校园系统，高效解决校园范围内的复杂问题🤔。本项目实现了 Model Context Protocol (MCP) 客户端，使 AI 助手能够无缝连接并利用校园内的各种数据源和工具。
+用户不需要记住系统入口、菜单路径和复杂流程，只需要像聊天一样提出问题或需求，例如“明天有哪些课”“帮我总结这条通知”“哪里有空教室”“宿舍网络坏了怎么报修”。系统会结合对话、任务规划和工具调用，返回可执行、可追踪的结果。
 
 ### 🦾 项目演示
 
 [查看演示视频](https://github.com/user-attachments/assets/89f6fd26-3d2b-4d25-a6b3-afe34c89fa88)
 
-## 💡 MCP 集成
+## 🎯 应用场景
 
-农林小林实现了 Model Context Protocol (MCP) 客户端，为项目提供了强大的外部数据访问能力。
+### 学生服务
 
-### 什么是 MCP?
+- **校园问答**：查询校历、考试安排、规章制度、办事流程、通知公告。
+- **学习助手**：查询课表、成绩、培养方案，生成学习建议和复习计划。
+- **生活服务**：查询空教室、图书馆座位、校车、食堂、校园地点。
+- **事务办理**：请假、报修、活动报名、证明申请、材料清单检查。
 
-Model Context Protocol (简称 MCP，中文称为模型上下文协议) 是由 Anthropic 推动的开放标准协议，旨在为大型语言模型 (LLMs) 提供一个标准化接口，使其能够连接并交互外部数据源和工具，克服 LLMs 仅依赖训练数据的局限性。
+### 教师与辅导员
 
-### MCP 核心优势
+- **班级画像**：汇总学生考勤、成绩、预警、活动参与等信息。
+- **教学辅助**：生成课程通知、课堂总结、作业反馈和教学周报。
+- **学生预警**：识别学业风险、缺勤异常、心理关注线索，辅助跟进。
+- **材料处理**：总结政策文件、整理申报材料、生成沟通草稿。
 
-* **连接外部数据和工具**：允许 LLMs 动态获取所需的上下文信息，如数据库记录、文件内容、API 数据等
-* **标准化通信协议**：定义统一的通信格式，使 AI 应用能够以一致的方式与各种外部系统交互
-* **安全性和隐私保护**：在本地运行服务器，避免敏感数据上传至第三方
-* **灵活性和可扩展性**：支持多种数据源和工具的集成，便于构建复杂的 AI 工作流
+### 学校管理
 
-### 在农林小林中的应用
+- **运行看板**：汇总报修、能耗、门禁、网络、舆情、服务工单等数据。
+- **智能检索**：自然语言查询跨部门数据和历史文档。
+- **流程协同**：把用户诉求自动分派到对应部门，并跟踪处理进展。
+- **决策辅助**：对校园运行问题进行归因、趋势分析和风险提醒。
 
-作为 MCP 客户端，农林小林能够：
+## ✨ 核心能力
 
-1. **校园数据集成**：无缝连接学校的各种数据系统，如教务系统、图书馆系统、学生信息系统等
-2. **实时信息获取**：获取最新的校园通知、课程信息、活动安排等
-3. **个性化服务**：根据学生的个人数据提供定制化的学习建议和校园生活指导
-4. **安全数据处理**：确保敏感学生数据在本地处理，保护隐私和安全
+- **自然语言交互**：把校园系统能力封装成对话式入口。
+- **任务规划**：对复杂问题进行拆解，逐步完成查询、分析和回复。
+- **工具调用**：按需调用课程、通知、工单、地图、知识库等外部能力。
+- **过程可视化**：展示智能体的处理步骤、工具选择和中间结果。
+- **会话记忆**：保存聊天历史和上下文，支持连续追问。
+- **轻量部署**：Demo 默认使用 FastAPI + SQLite + Next.js，方便演示和二次开发。
 
-### MCP 架构集成
+## 🧩 扩展思路
 
-农林小林项目采用 MCP 的客户端-服务器架构：
+项目可以通过两类方式接入校园能力：
 
-* **MCP 客户端**：嵌入在农林小林应用中，负责与 MCP 服务器建立通信会话
-* **MCP 服务器**：连接校园各系统，按照 MCP 协议规范暴露标准化功能接口
-* **宿主应用**：农林小林 AI 助手，集成 MCP 客户端，使模型能够调用校园数据和工具
+- **工程化 API 接入**：适合登录鉴权、审批、缴费、选课、报修等强权限、强审计、强稳定性的生产系统。
+- **工具化能力接入**：适合课表查询、通知检索、地点查询、知识库问答等可插拔能力，便于快速扩展和演示。
 
-通过 MCP 集成，农林小林实现了一个真正的"知校园、懂校园"的 AI 助手，能够提供更加精准、实时的校园服务。
+推荐做法是将“校园大脑 API”作为统一入口，对内封装不同系统的接口、权限、日志和限流，对外提供稳定的对话和工具调用能力。
 
 ## 💻 项目架构
 
 ```
 项目根目录/
-├── backend/          # Django 后端
-│   └── chatbot/      # 核心聊天机器人应用
-├── fastapi/          # FastAPI 后端实现
+├── fastapi/          # Demo 后端：FastAPI + SQLite
 │   ├── app/
 │   │   ├── agent/    # 代理系统组件
 │   │   ├── api/      # API路由
 │   │   ├── core/     # 核心配置
 │   │   ├── db/       # 数据库相关
 │   │   ├── schemas/  # Pydantic模型
-│   │   ├── services/ # 服务层
-│   │   └── mcp/      # MCP 客户端实现
-│   ├── alembic/      # 数据库迁移
-│   └── main.py       # 应用入口
-└── frontend/         # 前端应用
+│   │   └── services/ # 服务层
+│   └── app/main.py   # 应用入口
+├── frontend/my-app/  # Next.js 前端
+└── backend/          # 历史 Django 实现，demo 默认不启动
+```
+
+### Demo 架构
+
+```text
+用户
+  ↓
+Next.js 前端
+  ↓
+FastAPI 校园大脑 API
+  ↓
+智能体编排层
+  ↓
+本地 SQLite / 校园系统 API / 可插拔工具
 ```
 
 ## 🚀 运行项目
@@ -74,80 +92,45 @@ Model Context Protocol (简称 MCP，中文称为模型上下文协议) 是由 A
 
 - Python 3.8+
 - Node.js 和 npm
-- Docker 和 Docker Compose (推荐使用 Docker Compose 方式部署)
-- MCP 服务器 (用于连接校园数据系统)
+- Docker 和 Docker Compose（可选）
 
-### 方法一：使用 Docker Compose 部署（推荐）
+### 方法一：本地快速启动（推荐）
 
-项目提供了完整的 Docker Compose 配置，可以一键部署所有服务：
+demo 默认只启动两个服务：前端和 FastAPI。数据保存在 `fastapi/demo.db`，首次启动会自动建表。
 
 ```bash
 # 在项目根目录执行
+npm install
+npm --prefix frontend/my-app install
+pip install -r fastapi/requirements.txt
+npm run dev
+```
+
+服务地址：
+
+- 前端：http://localhost:3000
+- API：http://localhost:8001
+- API 文档：http://localhost:8001/docs
+
+### 方法二：Docker Compose
+
+```bash
 docker-compose up --build
 ```
 
-该命令会启动以下服务：
-- **backend**: Django 后端服务 (端口 8000)
-- **frontend**: Next.js 前端服务 (端口 3000)
-- **fastapi**: FastAPI 服务 (端口 8001)
-- **db**: PostgreSQL 数据库 (端口 5432)
-- **redis**: Redis 缓存服务 (端口 6379)
-
-> 注意：首次启动时，Docker Compose 会自动构建镜像并初始化数据库。
-
-### 方法二：本地开发环境部署
-
-#### 1. 运行 Redis
-
-确保 Redis 服务在本地 6379 端口运行:
+也可以使用脚本：
 
 ```bash
-# Windows用户可使用Docker
-docker pull redis
-docker run -d -p 6379:6379 --name my_redis redis
-```
-
-#### 2. 启动后端服务
-
-在项目根目录下执行:
-
-```bash
-# 安装Python依赖
-pip install -r requirements.txt
-
-# 启动后端服务
-cd backend/
-python manage.py runserver
-```
-
-#### 3. 启动前端服务
-
-```bash
-# 安装前端依赖
-cd frontend/
-npm install
-
-# 启动前端开发服务器
-npm run dev
+./quick-start.sh
 ```
 
 ### 环境变量配置
 
-修改 `backend/chatbot/.env` 文件，设置以下变量:
+如果需要连接真实模型或外部系统，可以创建 `fastapi/.env`：
 
 ```
 DEEPSEEK_API_KEY=your_deepseek_api_key
-MCP_SERVER_URL=http://localhost:8080  # MCP 服务器地址
-MCP_API_KEY=your_mcp_api_key  # 如果需要
-```
-
-或者，如果使用FastAPI版本，创建 `fastapi/.env` 文件:
-
-```
-DEEPSEEK_API_KEY=your_deepseek_api_key
-DATABASE_URL=sqlite:///./app.db
-MCP_SERVER_URL=http://localhost:8080
-MCP_API_KEY=your_mcp_api_key
+DATABASE_URL=sqlite+aiosqlite:///./demo.db
 ```
 
 ### 访问应用
@@ -155,42 +138,31 @@ MCP_API_KEY=your_mcp_api_key
 - 登录页面: http://localhost:3000/login (默认账号/密码: root/123456)
 - 聊天页面: http://localhost:3000/chat
 
-## 🔄 FastAPI 版本说明
+## 🔄 Demo 简化说明
 
-项目提供了基于 FastAPI 的替代后端agent逻辑实现，具有以下特点:
+为了降低部署成本，demo 默认去掉了运行时对 Django、PostgreSQL、Redis 和 Alembic 迁移的依赖：
 
-1. **异步支持**: 原生支持异步编程，适合处理 MCP 请求
-2. **依赖注入**: 使用 FastAPI 的依赖注入系统管理数据库会话和 MCP 客户端
-3. **流式响应**: 实现流式聊天响应
-4. **MCP 客户端实现**: 集成标准化的 MCP 客户端接口
-
-### FastAPI 版本运行
-
-```bash
-cd fastapi/
-pip install -r requirements.txt
-
-# 初始化数据库
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
-
-# 启动服务 fastapi服务运行在8001端口
-uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-```
-
-API 文档将在以下地址可用:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- FastAPI 启动时自动创建 SQLite 表
+- 前端所有请求统一走 `NEXT_PUBLIC_API_BASE_URL`，默认 `http://localhost:8001`
+- `backend/` 保留为历史实现，后续如果要做生产版再接回独立数据库和鉴权
 
 ## 💡 未来规划 (RoadMap)
 
-### 优化
-- [ ] 优化任务并行执行的算法
-- [ ] 探索更多agent范式
+### 应用能力
+- [ ] 校园通知总结与待办提取
+- [ ] 课表、考试、成绩查询
+- [ ] 空教室、图书馆座位、校园地点查询
+- [ ] 报修工单创建与进度查询
+- [ ] 学业风险预警与个性化建议
+- [ ] 面向教师/辅导员的班级画像和周报
 
-### 添加
-- [ ] 添加mcp服务器接入sdk
-- [ ] 添加api工具接入sdk
+### 工程能力
+- [ ] 统一身份认证与角色权限
+- [ ] 工具调用审计日志
+- [ ] 外部系统 API 适配层
+- [ ] 校园知识库检索
+- [ ] 智能体任务执行状态追踪
+- [ ] 生产环境数据库与缓存支持
 
 
 ## 📞 联系方式

@@ -1,4 +1,11 @@
 {
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n frontend,api \"npm:dev:frontend\" \"npm:dev:api\"",
+    "dev:frontend": "npm --prefix frontend/my-app run dev",
+    "dev:api": "python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001 --app-dir fastapi",
+    "lint:frontend": "npm --prefix frontend/my-app run lint"
+  },
   "dependencies": {
     "@react-pdf/renderer": "^4.1.6",
     "@types/react-resizable": "^3.0.8",
@@ -6,5 +13,8 @@
     "lucide-react": "^0.471.1",
     "react-pdf": "^9.2.1",
     "react-resizable": "^3.0.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
   }
 }

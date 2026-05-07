@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./demo.db")
 
-engine = create_async_engine(DATABASE_URL, echo=True)  # echo=True 会打印 SQL 日志
+engine = create_async_engine(DATABASE_URL, echo=False)
 async_session = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
 )
@@ -15,5 +15,3 @@ async_session = sessionmaker(
 async def get_db():
     async with async_session() as session:
         yield session
-
-print(DATABASE_URL)

@@ -8,6 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AlertCircle } from "lucide-react";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
@@ -39,6 +40,11 @@ export default function ChatWindowShadcn({
   const [sessions, setSessions] = useState<
     Array<{ id: string; title: string; updated_at: string }>
   >([]);
+  const [llmConfigStatus, setLlmConfigStatus] = useState<{
+    configured: boolean;
+    providers: Array<{ name: string; env: string; configured: boolean; model: string }>;
+    env_file: string;
+  } | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   // 使用 useRef 来标记会话是否已创建
   const isSessionCreating = useRef(false);
@@ -49,6 +55,18 @@ export default function ChatWindowShadcn({
 
   // 添加isAgent状态
   const [isAgent, setIsAgent] = useState(false);
+
+  useEffect(() => {
+    fetchWithCSRF(apiUrl("/api/llm/config-status/"))
+      .then((data) => {
+        if (data.status === "success") {
+          setLlmConfigStatus(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error("获取 LLM 配置状态失败:", error);
+      });
+  }, []);
 
   // 修改创建初始会话的 useEffect
   useEffect(() => {
@@ -424,6 +442,19 @@ export default function ChatWindowShadcn({
           open={isHistoryOpen}
           onOpenChange={setIsHistoryOpen}
         />
+
+        {llmConfigStatus && !llmConfigStatus.configured && (
+          <div className="mx-4 mb-3 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">请先配置 LLM</p>
+              <p>
+                在 <span className="font-mono">{llmConfigStatus.env_file}</span> 中设置{" "}
+                <span className="font-mono">DEEPSEEK_API_KEY</span>，然后重启 API 服务。
+              </p>
+            </div>
+          </div>
+        )}
 
         <CardContent className="p-0 flex-1 overflow-hidden">
           <MessageList

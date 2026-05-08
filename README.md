@@ -126,17 +126,20 @@ docker-compose up --build
 
 ### 环境变量配置
 
-如果需要连接真实模型或外部系统，可以创建 `fastapi/.env`：
+首次部署后请先配置 LLM。创建 `fastapi/.env`，至少填写一个可用的模型密钥：
 
 ```
 DEEPSEEK_API_KEY=your_deepseek_api_key
+# 可选：GLM_API_KEY=your_glm_api_key
 DATABASE_URL=sqlite+aiosqlite:///./demo.db
 ```
 
 ### 访问应用
 
-- 登录页面: http://localhost:3000/login (默认账号/密码: root/123456)
+- 应用入口: http://localhost:3000
 - 聊天页面: http://localhost:3000/chat
+
+Demo 已移除登录拦截，部署完成后打开应用会直接进入聊天。如果未检测到 LLM 密钥，聊天界面会提示需要在 `fastapi/.env` 中配置 `DEEPSEEK_API_KEY` 并重启 API 服务。
 
 ## 🔄 Demo 简化说明
 

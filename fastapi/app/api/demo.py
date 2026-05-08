@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -57,6 +58,31 @@ def serialize_message(message: models.ChatMessage) -> dict[str, Any]:
 @router.get("/csrf/")
 async def csrf():
     return {"csrfToken": "demo-token"}
+
+
+@router.get("/llm/config-status/")
+async def llm_config_status():
+    providers = [
+        {
+            "name": "DeepSeek",
+            "env": "DEEPSEEK_API_KEY",
+            "configured": bool(os.getenv("DEEPSEEK_API_KEY")),
+            "model": "deepseek-chat",
+        },
+        {
+            "name": "智谱 GLM",
+            "env": "GLM_API_KEY",
+            "configured": bool(os.getenv("GLM_API_KEY")),
+            "model": "glm-4-flash",
+        },
+    ]
+    return ok(
+        {
+            "configured": any(provider["configured"] for provider in providers),
+            "providers": providers,
+            "env_file": "fastapi/.env",
+        }
+    )
 
 
 @router.post("/login/")

@@ -2,11 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import ChatWindowShadcn from "./ChatWindowShadcn";
-// 移除 ResizableBox 导入
-// import { ResizableBox } from "react-resizable";
-// import "react-resizable/css/styles.css";
-import { Infinity } from "lucide-react";
-import ProtectedLayout from "../../components/ProtectedLayout";
 
 // 定义Agent数据类型
 interface AgentData {
@@ -284,7 +279,6 @@ npm run dev
   };
 
   return (
-    <ProtectedLayout>
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 flex relative">
           {/* 左侧聊天窗口 */}
@@ -314,6 +308,5 @@ npm run dev
           </div>
         </main>
       </div>
-    </ProtectedLayout>
   );
 }

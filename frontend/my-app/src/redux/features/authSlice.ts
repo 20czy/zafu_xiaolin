@@ -9,10 +9,11 @@ interface AuthState {
   } | null;
 }
 
-// Get initial state from cookies, but we'll validate it in ProtectedRoute
+const demoUser = { username: 'Demo', id: 0 };
+
 const initialState: AuthState = {
-  isLoggedIn: !!Cookies.get('auth'),
-  user: Cookies.get('auth') ? JSON.parse(Cookies.get('auth') || '{}') : null,
+  isLoggedIn: true,
+  user: Cookies.get('auth') ? JSON.parse(Cookies.get('auth') || '{}') : demoUser,
 };
 
 const authSlice = createSlice({
@@ -26,9 +27,8 @@ const authSlice = createSlice({
       Cookies.set('auth', JSON.stringify(action.payload), { expires: 7 });
     },
     logout: (state) => {
-      state.isLoggedIn = false;
-      state.user = null;
-      // Remove cookie
+      state.isLoggedIn = true;
+      state.user = demoUser;
       Cookies.remove('auth');
     },
   },

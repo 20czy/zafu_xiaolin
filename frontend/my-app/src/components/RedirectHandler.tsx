@@ -1,29 +1,17 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import Cookies from 'js-cookie';
+import { usePathname, useRouter } from 'next/navigation';
 
 const RedirectHandler = () => {
   const router = useRouter();
-  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Check if user is authenticated via cookies (for initial load)
-    const authCookie = Cookies.get('auth');
-    const isAuthenticated = !!authCookie;
-
-    // If user is authenticated and on login page, redirect to chat
-    if (isAuthenticated && window.location.pathname === '/login') {
-      router.push('/chat');
+    if (pathname === '/login' || pathname === '/register') {
+      router.replace('/chat');
     }
-    // If user is not authenticated and not on login or register page, redirect to login
-    else if (!isAuthenticated && !['/login', '/register'].includes(window.location.pathname)) {
-      router.push('/login');
-    }
-  }, [isLoggedIn, router]);
+  }, [pathname, router]);
 
   return null;
 };

@@ -1,5 +1,5 @@
-import RegisterPage from "./RegisterPage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <RegisterPage />;
+  redirect("/chat");
 }

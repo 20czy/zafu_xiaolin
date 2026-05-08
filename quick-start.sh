@@ -7,6 +7,11 @@ echo "🚀 快速启动 demo..."
 echo "📁 创建目录..."
 mkdir -p logs media
 
+if [ ! -f fastapi/.env ]; then
+  echo "⚙️  未检测到 fastapi/.env"
+  echo "   请在 fastapi/.env 中配置 DEEPSEEK_API_KEY 后重启 API 服务，以启用真实模型回复。"
+fi
+
 # 启动服务
 echo "🔨 构建并启动服务..."
 docker-compose up --build -d

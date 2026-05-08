@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '@/redux/features/authSlice';
+import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import {
   DropdownMenu,
@@ -16,14 +15,8 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const router = useRouter();
-  const dispatch = useDispatch();
   // 从redux store中读取 auth 的 state ，将值赋给 isLoggedIn 和 user
   const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    router.push('/login');
-  };
 
   return (
     <nav className="border-b px-7 py-3 bg-white">
@@ -47,8 +40,8 @@ export default function Navbar() {
                   {user?.username}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  退出登录
+                <DropdownMenuItem onClick={() => router.push('/chat')}>
+                  进入聊天
                 </DropdownMenuItem>
               </>
             ) : (

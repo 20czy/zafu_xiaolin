@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 import os
-from dotenv import load_dotenv
+from app.core.env import load_app_env
 
-load_dotenv()
+load_app_env()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./demo.db")
 

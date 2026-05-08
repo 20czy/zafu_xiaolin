@@ -25,7 +25,7 @@ async def get_process_info(message: str, mcp_session: McpSession = None):
     Returns:
         包含处理过程信息的字典
     """
-    yield {"type": "step", "content": "Planning tasks..."}
+    yield {"type": "step", "content": "任务规划中..."}
     # 1. Task Planning: Decompose user request into subtasks
     task_plan = TaskPlanner.create_task_plan(message)
     tasks = task_plan.get("tasks", [])
@@ -33,7 +33,7 @@ async def get_process_info(message: str, mcp_session: McpSession = None):
     logger.debug("tasks: %s", tasks)
     
     # Step 2: Selecting tools
-    yield {"type": "step", "content": "Selecting tools..."}
+    yield {"type": "step", "content": "工具选择中..."}
     # 使用异步方法选择工具
     tool_selections = await ToolSelector.select_tools_for_tasks(task_plan, mcp_session)
     # Create a mapping of task_id to selected tool
@@ -48,7 +48,7 @@ async def get_process_info(message: str, mcp_session: McpSession = None):
     # 3. Task Execution: Execute each task with selected tool
     task_results = {}
     for task in tasks:
-        yield {"type": "step", "content": f"Executing task: {task['task']}..."}
+        yield {"type": "step", "content": f"执行任务: {task['task']}..."}
         task_id = task.get("id")
         deps = task.get("depends_on", [])
         deps_met = all(dep_id in task_results and task_results[dep_id].get("status") == "success" for dep_id in deps)

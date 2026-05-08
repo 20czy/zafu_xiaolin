@@ -2,6 +2,8 @@ services:
   api:
     build:
       context: ./fastapi
+    env_file:
+      - ./fastapi/.env
     ports:
       - "8001:8001"
     volumes:

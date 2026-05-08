@@ -1,9 +1,9 @@
 from langchain_openai import ChatOpenAI
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 import os
-from dotenv import load_dotenv
+from ..core.env import load_app_env
 
-load_dotenv()
+load_app_env()
 
 class LLMService:
     """
@@ -41,13 +41,15 @@ class LLMService:
             stream: 是否启用流式输出
             temperature: 控制输出随机性的温度参数 (0.0-2.0)
         """
+        load_app_env()
+
         api_key = None
         url = None
         
         # Configure based on model type
         if model_name == 'deepseek-chat':
             api_key = os.getenv("DEEPSEEK_API_KEY")
-            url = 'https://api.deepseek.com'
+            url = 'https://api.deepseek.com/v1'
         elif model_name == 'chatglm':
             model_name = 'glm-4-flash'
             url = 'https://open.bigmodel.cn/api/paas/v4/'
@@ -77,8 +79,9 @@ def create_llm(model_name='deepseek-chat', stream=False):
         model_name: 模型名称，默认为 'deepseek-chat'
         stream: 是否启用流式输出，默认为 False
     """
+    load_app_env()
     api_key = os.getenv("DEEPSEEK_API_KEY")
-    url = 'https://api.deepseek.com'
+    url = 'https://api.deepseek.com/v1'
     
     if not api_key:
         raise ValueError("未找到 API_KEY 环境变量。请在 .env 文件中设置。")

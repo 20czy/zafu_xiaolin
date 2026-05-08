@@ -10,9 +10,11 @@ from sqlalchemy.orm import selectinload
 
 from app.db import models
 from app.db.session import get_db
+from app.core.env import load_app_env
 from app.services.chat_history_manager import ChatHistoryManager
 
 router = APIRouter()
+load_app_env()
 
 
 class LoginRequest(BaseModel):
@@ -62,6 +64,8 @@ async def csrf():
 
 @router.get("/llm/config-status/")
 async def llm_config_status():
+    load_app_env()
+
     providers = [
         {
             "name": "DeepSeek",

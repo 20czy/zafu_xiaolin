@@ -12,7 +12,5 @@ numpy==2.3.1
 python-dotenv==1.1.0
 Requests==2.32.4
 zhipuai==2.1.5.20250611
-psycopg2-binary==2.9.9
-django-redis==5.4.0
 django-cors-headers==4.6.0
 Pillow==11.0.0

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from app.api.v1 import chat, users, agent_data
+from app.api.v1 import agent_data, chat, course_schedule, users
 from app.api import demo
 from app.db.models import Base
 from app.db.session import engine
@@ -61,4 +61,5 @@ app.add_middleware(
 app.include_router(chat.router, prefix="/api/v1/chat")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(agent_data.router, prefix="/api/v1/agent-data")
+app.include_router(course_schedule.router, prefix="/api/v1/course-schedule")
 app.include_router(demo.router, prefix="/api")

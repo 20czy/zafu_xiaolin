@@ -7,6 +7,7 @@ from ..services.llm_service import LLMService
 from ..services.campus_tool_hub import CampusToolHub
 from ..services.mcp_server import Server, Tool, Configuration
 from ..services.server_manager import ServerManager
+from ..skills import SkillRegistry
 import os
 
 logger = logging.getLogger(__name__)
@@ -88,18 +89,24 @@ class ToolSelector:
         logger.debug(f"输入的任务计划: {json.dumps(task_plan, ensure_ascii=False)}")
         
         try:
-            # get the server manager instance
-            server_manager = await ServerManager.get_instance()
+            all_tools = []
+            try:
+                # get the server manager instance
+                server_manager = await ServerManager.get_instance()
 
-            # get all tools from all the servers - using the cached tools (not async)
-            all_tools = ServerManager.get_cached_tools()
-            
-            # If cached tools are empty, try to get them directly
-            if not all_tools:
-                logger.warning("缓存的工具列表为空，尝试直接从服务器获取工具列表")
-                all_tools = await server_manager.list_all_tools()
+                # get all tools from all the servers - using the cached tools (not async)
+                all_tools = ServerManager.get_cached_tools()
                 
-            logger.debug(f"获取到 {len(all_tools)} 个工具")
+                # If cached tools are empty, try to get them directly
+                if not all_tools:
+                    logger.warning("缓存的工具列表为空，尝试直接从服务器获取工具列表")
+                    all_tools = await server_manager.list_all_tools()
+            except Exception as server_error:
+                logger.warning(f"MCP工具初始化失败，仅使用本地skill: {str(server_error)}")
+                
+            skill_tools = SkillRegistry.list_tools()
+            all_tools = [*all_tools, *skill_tools]
+            logger.debug(f"获取到 {len(all_tools)} 个工具，其中本地 skill {len(skill_tools)} 个")
             logger.debug("生成工具选择提示词")
             tools_description = "\n".join([tool.format_for_llm() for tool in all_tools])
                 

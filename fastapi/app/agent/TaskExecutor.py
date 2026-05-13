@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any
 from ..services.campus_tool_hub import CampusToolHub
 from ..services.server_manager import ServerManager
+from ..skills import SkillRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class TaskExecutor:
         
         try:
             # Get tool and parameters
-            params = tool_selection["params"].copy()
+            params = tool_selection.get("params", {}).copy()
             logger.debug(f"任务 {task_id} 初始参数: {params}")
             
             # 解决任务的参数依赖问题，即当前执行的任务依赖前面执行任务作为参数
@@ -45,6 +46,10 @@ class TaskExecutor:
                         resolved = cls.resolve_placeholder(ph, task_results)
                         params[param_key] = param_value.replace(ph, str(resolved))
             logger.debug(f"任务 {task_id} 最终参数: {params}")
+
+            if SkillRegistry.has_tool(tool_name):
+                logger.info(f"使用本地 skill 执行工具: {tool_name}")
+                return await SkillRegistry.execute_tool(tool_name, params)
 
             # Call the API
             for server_name, server in ServerManager._servers.items():

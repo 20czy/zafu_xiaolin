@@ -8,7 +8,16 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, History, Plus, Wrench } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import CapabilitiesPanel from "@/app/tools/CapabilitiesPanel";
 import SessionHistory from "./AIChatWindow/SessionHistory";
 import MessageList from "./AIChatWindow/MessageList";
 import ChatInput from "./AIChatWindow/ChatInput";
@@ -46,6 +55,7 @@ export default function ChatWindowShadcn({
     env_file: string;
   } | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isCapabilitiesOpen, setIsCapabilitiesOpen] = useState(false);
   // 使用 useRef 来标记会话是否已创建
   const isSessionCreating = useRef(false);
 
@@ -427,6 +437,7 @@ export default function ChatWindowShadcn({
 
           <HeaderActions
             onNewSession={handleNewSession}
+            onOpenCapabilities={() => setIsCapabilitiesOpen(true)}
             onOpenHistory={() => {
               fetchSessions();
               setIsHistoryOpen(true);
@@ -442,6 +453,16 @@ export default function ChatWindowShadcn({
           open={isHistoryOpen}
           onOpenChange={setIsHistoryOpen}
         />
+
+        <Sheet open={isCapabilitiesOpen} onOpenChange={setIsCapabilitiesOpen}>
+          <SheetContent className="w-[92vw] overflow-y-auto bg-slate-50 p-5 sm:max-w-3xl lg:max-w-5xl">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Tool 与 Skill</SheetTitle>
+              <SheetDescription>查看当前聊天助手接入的工具和本地技能。</SheetDescription>
+            </SheetHeader>
+            <CapabilitiesPanel compact />
+          </SheetContent>
+        </Sheet>
 
         {llmConfigStatus && !llmConfigStatus.configured && (
           <div className="mx-4 mb-3 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
@@ -478,18 +499,26 @@ export default function ChatWindowShadcn({
   );
 }
 
-// HeaderActions.tsx
-import { Plus, History } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
 const HeaderActions = ({
   onNewSession,
+  onOpenCapabilities,
   onOpenHistory,
 }: {
   onNewSession: () => void;
+  onOpenCapabilities: () => void;
   onOpenHistory: () => void;
 }) => (
   <div className="flex gap-2">
+    <Button
+      variant="outline"
+      size="icon"
+      title="查看 Tool 与 Skill"
+      aria-label="查看 Tool 与 Skill"
+      onClick={onOpenCapabilities}
+    >
+      <Wrench className="h-4 w-4" />
+    </Button>
+
     <Button variant="outline" size="icon" onClick={onNewSession}>
       <Plus className="h-4 w-4" />
     </Button>

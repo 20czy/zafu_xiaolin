@@ -10,6 +10,7 @@ try:
 except ModuleNotFoundError:
     yaml = None
 
+from .notice import query_campus_notice
 from .schedule import query_course_schedule
 
 
@@ -54,9 +55,14 @@ class SkillRegistry:
         "course_scheduler": "course-schedule",
         "schedule_query": "course-schedule",
         "课表查询": "course-schedule",
+        "campus_notice": "campus-notice",
+        "campus_notices": "campus-notice",
+        "notice_query": "campus-notice",
+        "校园通知": "campus-notice",
     }
     _handlers: Dict[str, SkillHandler] = {
         "course-schedule": query_course_schedule,
+        "campus-notice": query_campus_notice,
     }
     _initialized = False
 

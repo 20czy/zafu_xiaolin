@@ -71,6 +71,8 @@ class ServerManager:
         for server in self._servers.values():
             try:
                 tools = await server.list_tools()
+                for tool in tools:
+                    setattr(tool, "server_name", server.name)
                 all_tools.extend(tools)
             except Exception as e:
                 logging.error(f"Error listing tools from server {server.name}: {e}")

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from app.api.v1 import agent_data, chat, course_schedule, users
+from app.api.v1 import agent_data, campus_notice, capabilities, chat, course_schedule, users
 from app.api import demo
 from app.db.models import Base
 from app.db.session import engine
@@ -62,4 +62,6 @@ app.include_router(chat.router, prefix="/api/v1/chat")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(agent_data.router, prefix="/api/v1/agent-data")
 app.include_router(course_schedule.router, prefix="/api/v1/course-schedule")
+app.include_router(campus_notice.router, prefix="/api/v1/campus-notices")
+app.include_router(capabilities.router, prefix="/api/v1/capabilities")
 app.include_router(demo.router, prefix="/api")

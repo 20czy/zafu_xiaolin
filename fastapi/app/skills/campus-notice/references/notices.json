@@ -1,0 +1,72 @@
+[
+  {
+    "id": "notice-2026-001",
+    "title": "关于开展2026年本科生奖学金申请工作的通知",
+    "category": "奖学金",
+    "publish_date": "2026-05-16",
+    "deadline": "2026-05-30",
+    "audience": ["本科生", "辅导员"],
+    "department": "学生处",
+    "summary": "符合条件的本科生可在规定时间内提交奖学金申请材料，逾期不再受理。",
+    "content_file": "notice-2026-001.md",
+    "url": "https://example.edu/notices/notice-2026-001",
+    "priority": "high",
+    "tags": ["奖学金", "申请", "本科生"]
+  },
+  {
+    "id": "notice-2026-002",
+    "title": "2026年春季学期开学注意事项",
+    "category": "教务",
+    "publish_date": "2026-05-14",
+    "deadline": null,
+    "audience": ["全体学生", "教师"],
+    "department": "教务处",
+    "summary": "请同学们按时返校注册，关注课程调整、教材领取和教学楼开放安排。",
+    "content_file": "notice-2026-002.md",
+    "url": "https://example.edu/notices/notice-2026-002",
+    "priority": "medium",
+    "tags": ["开学", "注册", "课程调整"]
+  },
+  {
+    "id": "notice-2026-003",
+    "title": "关于举办第42届校运动会的通知",
+    "category": "活动",
+    "publish_date": "2026-05-12",
+    "deadline": "2026-05-24",
+    "audience": ["全体学生", "教职工"],
+    "department": "体育部",
+    "summary": "校运动会拟于5月下旬举行，各学院需完成报名、训练和志愿服务安排。",
+    "content_file": "notice-2026-003.md",
+    "url": "https://example.edu/notices/notice-2026-003",
+    "priority": "medium",
+    "tags": ["运动会", "报名", "活动"]
+  },
+  {
+    "id": "notice-2026-004",
+    "title": "图书馆端午假期开放时间安排",
+    "category": "服务",
+    "publish_date": "2026-05-10",
+    "deadline": null,
+    "audience": ["全体师生"],
+    "department": "图书馆",
+    "summary": "端午假期期间图书馆开放时间有所调整，请读者提前安排借阅和自习计划。",
+    "content_file": "notice-2026-004.md",
+    "url": "https://example.edu/notices/notice-2026-004",
+    "priority": "low",
+    "tags": ["图书馆", "开放时间", "假期"]
+  },
+  {
+    "id": "notice-2026-005",
+    "title": "关于加强实验室安全检查的通知",
+    "category": "安全",
+    "publish_date": "2026-05-08",
+    "deadline": "2026-05-20",
+    "audience": ["研究生", "实验室负责人", "教师"],
+    "department": "实验室与设备管理处",
+    "summary": "各实验室需完成安全自查，重点检查危化品、用电安全和实验记录。",
+    "content_file": "notice-2026-005.md",
+    "url": "https://example.edu/notices/notice-2026-005",
+    "priority": "high",
+    "tags": ["实验室", "安全", "检查"]
+  }
+]

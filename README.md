@@ -55,6 +55,56 @@
 
 推荐做法是将“校园大脑 API”作为统一入口，对内封装不同系统的接口、权限、日志和限流，对外提供稳定的对话和工具调用能力。
 
+## 🛠️ Skill 接入说明
+
+Demo 后端支持通过本地 Skill 扩展校园能力。Skill 是一个可被智能体发现、选择和执行的能力描述包，通常包含：
+
+- `SKILL.md`：描述 Skill 的名称、适用场景、输入参数、输出格式和执行方式。
+- `references/`：可选的本地参考数据，例如通知索引、公告正文、示例数据。
+- 本地执行函数：在 `fastapi/app/skills/registry.py` 中绑定到具体 Python handler。
+
+当用户发起请求后，系统会先进行任务规划，再在 MCP Tool 和本地 Skill 中选择合适能力。若命中本地 Skill，`TaskExecutor` 会优先调用本地 handler，避免不必要的远程工具调用。
+
+### 当前已接入 Skill
+
+| Skill | 场景 | 数据来源 | 入口 |
+| --- | --- | --- | --- |
+| `course-schedule` | 查询课表、课程时间、教室、任课教师、专业、学期等 | 本地课程表 API mock 数据 | `GET /api/v1/course-schedule/` |
+| `campus-notice` | 查询最新校园通知、奖学金、开学事项、运动会、教务、安全、图书馆服务等通知 | Skill 自带 `references/notices.json` 与 `notice-*.md` mock 数据 | `GET /api/v1/campus-notices/` |
+
+### Skill 目录结构
+
+```text
+fastapi/app/skills/
+├── registry.py                # Skill 注册、发现、别名和执行入口
+├── schedule.py                # course-schedule 执行函数
+├── notice.py                  # campus-notice 执行函数
+├── course-schedule/
+│   └── SKILL.md
+└── campus-notice/
+    ├── SKILL.md
+    └── references/
+        ├── notices.json
+        └── notice-2026-*.md
+```
+
+### 新增 Skill 的基本步骤
+
+1. 在 `fastapi/app/skills/` 下创建一个以 Skill 名称命名的目录，例如 `library-seat/`。
+2. 在目录中添加 `SKILL.md`，声明 `name`、`description`、输入参数、输出格式和执行方式。
+3. 如需本地 mock 数据，可在该 Skill 目录下添加 `references/`。
+4. 在 `fastapi/app/skills/` 下添加对应执行函数文件，并在 `registry.py` 的 `_handlers` 中绑定。
+5. 如有别名需求，在 `registry.py` 的 `_aliases` 中添加中文或历史名称映射。
+6. 添加测试，确保 Skill 能被 `SkillRegistry.list_tools()` 发现，并能通过 `SkillRegistry.execute_tool()` 执行。
+
+### 能力查看
+
+聊天页右上角的工具按钮可以直接打开当前接入能力面板，查看已接入的 MCP Tool 和本地 Skill。后端也提供能力清单接口：
+
+```text
+GET /api/v1/capabilities/
+```
+
 ## 💻 项目架构
 
 ```
@@ -66,6 +116,7 @@
 │   │   ├── core/     # 核心配置
 │   │   ├── db/       # 数据库相关
 │   │   ├── schemas/  # Pydantic模型
+│   │   ├── skills/   # 本地 Skill 能力包
 │   │   └── services/ # 服务层
 │   └── app/main.py   # 应用入口
 ├── frontend/my-app/  # Next.js 前端

@@ -3,6 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from ..services.llm_service import LLMService
+from ..services.student_profile_service import format_student_profile_for_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,9 @@ class TaskPlanner:
 3. 复杂请求应分解为多个子任务
 4. 简单请求可以是单个任务
 
+当前用户画像：
+{student_profile}
+
 用户请求："{user_request}"
     """
     @classmethod
@@ -70,7 +74,8 @@ class TaskPlanner:
         try:
             # Create planning prompt
             prompt = cls.PLANNING_PROMPT.format(
-                user_request=user_request
+                user_request=user_request,
+                student_profile=format_student_profile_for_prompt(),
             )
             logger.debug("已生成规划提示词")
 

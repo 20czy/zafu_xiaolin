@@ -2,6 +2,7 @@ import pytest
 
 from ..agent.TaskExecutor import TaskExecutor
 from ..api.v1.capabilities import list_capabilities
+from ..services.course_schedule_service import query_mock_course_schedule
 from ..services.server_manager import ServerManager
 from ..skills import schedule
 from ..skills import SkillRegistry
@@ -38,6 +39,57 @@ async def test_course_schedule_skill_filters_by_major_and_day(monkeypatch):
     assert result["courses"][0]["day_label"] == "周二"
     assert result["activation"]["name"] == "course-schedule"
     assert "<skill_content name=\"course-schedule\">" in result["activation"]["content"]
+
+
+@pytest.mark.asyncio
+async def test_course_schedule_skill_uses_student_profile_defaults(monkeypatch):
+    async def fake_fetch(query_params):
+        assert query_params == {
+            "day_of_week": "周二",
+            "major": "计算机科学与技术",
+            "grade": "2023",
+            "class_name": "计科2301班",
+        }
+        return {
+            "status": "success",
+            "filters": query_params,
+            "count": 2,
+            "courses": [{"course_id": "CS201"}, {"course_id": "GE101"}],
+            "message": "查询成功",
+        }
+
+    monkeypatch.setattr(schedule, "_fetch_course_schedule_from_api", fake_fetch)
+    result = await SkillRegistry.execute_tool(
+        "course-schedule",
+        {"day_of_week": "周二"},
+    )
+
+    assert result["status"] == "success"
+    assert result["count"] == 2
+
+
+def test_course_schedule_api_filters_by_profile_major_grade_and_class():
+    result = query_mock_course_schedule(
+        {
+            "major": "计算机科学与技术",
+            "grade": "2023级",
+            "class_name": "计科2301班",
+            "day_of_week": "周二",
+        }
+    )
+
+    assert result["status"] == "success"
+    assert result["filters"]["grade"] == 2023
+    assert [course["course_id"] for course in result["courses"]] == ["CS201", "GE101"]
+
+
+def test_course_schedule_api_contains_multiple_major_schedules():
+    computer = query_mock_course_schedule({"major": "计算机科学与技术", "grade": 2023})
+    forestry = query_mock_course_schedule({"major": "林学", "grade": 2023})
+
+    assert any(course["course_id"].startswith("CS") for course in computer["courses"])
+    assert any(course["course_id"].startswith("FR") for course in forestry["courses"])
+    assert all(course["major"] == "林学" for course in forestry["courses"])
 
 
 @pytest.mark.asyncio

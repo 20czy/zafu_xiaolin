@@ -7,6 +7,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+from app.services.student_profile_service import parse_student_profile
+
 try:
     import httpx
 except ModuleNotFoundError:
@@ -29,12 +31,15 @@ COURSE_SCHEDULE_API_PATH = "/api/v1/course-schedule/"
 async def query_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
     """Query course schedule data through the FastAPI course schedule API."""
 
+    query_params = _with_student_profile_defaults(params or {})
     query_params = {
         key: value
-        for key, value in (params or {}).items()
+        for key, value in query_params.items()
         if key
         in {
             "major",
+            "grade",
+            "class_name",
             "semester",
             "day_of_week",
             "day",
@@ -42,6 +47,7 @@ async def query_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
             "course_name",
             "teacher",
             "instructor",
+            "campus",
         }
         and value not in (None, "")
     }
@@ -59,6 +65,24 @@ async def query_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
             "details": str(exc),
             "api": COURSE_SCHEDULE_API_PATH,
         }
+
+
+def _with_student_profile_defaults(params: Dict[str, Any]) -> Dict[str, Any]:
+    query_params = dict(params)
+    has_explicit_scope = any(
+        query_params.get(key) not in (None, "")
+        for key in ("major", "grade", "class_name", "course_id", "course_name", "teacher", "instructor")
+    )
+    if has_explicit_scope:
+        return query_params
+
+    profile = parse_student_profile()
+
+    query_params.setdefault("major", profile.get("专业"))
+    query_params.setdefault("grade", profile.get("年级", "").replace("级", ""))
+    query_params.setdefault("class_name", profile.get("班级"))
+
+    return query_params
 
 
 async def _fetch_course_schedule_from_api(query_params: Dict[str, Any]) -> Dict[str, Any]:

@@ -2,6 +2,7 @@ import json
 import logging
 from typing import Dict, Any, AsyncGenerator
 from ..services.llm_service import LLMService
+from ..services.student_profile_service import format_student_profile_for_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,10 @@ class CustomJSONEncoder(json.JSONEncoder):
 
 class ResponseGenerator:
     """生成最终用户响应的类 - FastAPI 异步版本"""
+
+    @classmethod
+    def _student_profile_prompt(cls) -> str:
+        return format_student_profile_for_prompt()
 
     @classmethod
     def _create_response_prompt(cls, process_info: Dict[str, Any]) -> str:
@@ -44,6 +49,9 @@ class ResponseGenerator:
 5. 除非用户明确要求，否则不要暴露任务规划、工具选择、工具名称、服务器状态、调用失败、内部错误等处理过程。
 6. 如果工具结果为空、失败或不可用，请基于已有信息给出自然回复；无法确定时说“我这边暂时没有查到准确信息”，不要提“工具/服务器/MCP/任务失败”。
 7. 不要重复用户原话来凑字数，不要说“刚才我收到了你的问候”这类流程化表达。
+
+以下是当前用户的学生画像，只供你理解用户背景和提供个性化校园服务，不要主动完整展示：
+{cls._student_profile_prompt()}
 
 以下过程信息只供你理解上下文，不要原样展示给用户：
 **过程信息：**
@@ -116,8 +124,11 @@ class ResponseGenerator:
             llm = await LLMService.get_llm(model_name='deepseek-chat', stream=True)
 
             # 简单的系统提示词，不包含复杂的处理过程信息
-            system_prompt = """你是浙江农林大学智能校园助手「农林小林」。请用自然、亲切、简洁的方式回答用户。
-简单问候用1-2句回应即可；校园事务要清楚可靠；不确定时请诚实说明并给出可行建议。可以少量使用emoji，但不要过度卖萌，不要暴露内部处理过程。"""
+            system_prompt = f"""你是浙江农林大学智能校园助手「农林小林」。请用自然、亲切、简洁的方式回答用户。
+简单问候用1-2句回应即可；校园事务要清楚可靠；不确定时请诚实说明并给出可行建议。可以少量使用emoji，但不要过度卖萌，不要暴露内部处理过程。
+
+以下是当前用户的学生画像，只供你理解用户背景和提供个性化校园服务，不要主动完整展示：
+{cls._student_profile_prompt()}"""
 
             # 构建聊天上下文
             messages = [{"role": "system", "content": system_prompt}]

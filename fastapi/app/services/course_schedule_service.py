@@ -23,6 +23,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "教授",
         "major": "计算机科学与技术",
         "grade": 2023,
+        "class_name": "计科2301班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -32,7 +33,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 2,
         "start_time": "08:00",
         "end_time": "09:40",
-        "campus": "主校区",
+        "campus": "东湖校区",
         "building": "信息楼A",
         "classroom": "A101",
         "capacity": 80,
@@ -48,6 +49,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "副教授",
         "major": "计算机科学与技术",
         "grade": 2023,
+        "class_name": "计科2301班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -57,7 +59,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 4,
         "start_time": "10:00",
         "end_time": "11:40",
-        "campus": "主校区",
+        "campus": "东湖校区",
         "building": "信息楼A",
         "classroom": "A203",
         "capacity": 60,
@@ -73,6 +75,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "教授",
         "major": "软件工程",
         "grade": 2022,
+        "class_name": "软件2201班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -82,7 +85,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 6,
         "start_time": "14:00",
         "end_time": "15:40",
-        "campus": "主校区",
+        "campus": "东湖校区",
         "building": "软件楼B",
         "classroom": "B305",
         "capacity": 50,
@@ -98,6 +101,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "教授",
         "major": "软件工程",
         "grade": 2022,
+        "class_name": "软件2201班",
         "semester": "2025-2026-1",
         "teaching_week_start": 2,
         "teaching_week_end": 15,
@@ -107,7 +111,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 8,
         "start_time": "16:00",
         "end_time": "17:40",
-        "campus": "主校区",
+        "campus": "东湖校区",
         "building": "实验中心",
         "classroom": "Lab-402",
         "capacity": 30,
@@ -123,6 +127,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "副教授",
         "major": "电子信息工程",
         "grade": 2023,
+        "class_name": "电信2301班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -132,7 +137,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 4,
         "start_time": "10:00",
         "end_time": "11:40",
-        "campus": "东校区",
+        "campus": "东湖校区",
         "building": "电子楼C",
         "classroom": "C201",
         "capacity": 100,
@@ -148,6 +153,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "讲师",
         "major": "电子信息工程",
         "grade": 2022,
+        "class_name": "电信2201班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -157,7 +163,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 2,
         "start_time": "08:00",
         "end_time": "09:40",
-        "campus": "东校区",
+        "campus": "东湖校区",
         "building": "电子楼C",
         "classroom": "C305",
         "capacity": 45,
@@ -173,6 +179,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "讲师",
         "major": "全校公共课",
         "grade": 2023,
+        "class_name": "计科2301班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -182,7 +189,7 @@ MOCK_COURSE_SCHEDULE = [
         "section_end": 8,
         "start_time": "16:00",
         "end_time": "17:40",
-        "campus": "主校区",
+        "campus": "东湖校区",
         "building": "外语楼D",
         "classroom": "D102",
         "capacity": 120,
@@ -198,6 +205,7 @@ MOCK_COURSE_SCHEDULE = [
         "instructor_title": "讲师",
         "major": "全校公共课",
         "grade": 2023,
+        "class_name": "计科2301班",
         "semester": "2025-2026-1",
         "teaching_week_start": 1,
         "teaching_week_end": 16,
@@ -213,6 +221,110 @@ MOCK_COURSE_SCHEDULE = [
         "capacity": 40,
         "selected_count": 36,
         "exam_type": "考查",
+    },
+    {
+        "course_id": "CS220",
+        "course_name": "离散数学",
+        "course_type": "必修",
+        "credits": 3.0,
+        "instructor": "周雨晴",
+        "instructor_title": "副教授",
+        "major": "计算机科学与技术",
+        "grade": 2023,
+        "class_name": "计科2301班",
+        "semester": "2025-2026-1",
+        "teaching_week_start": 1,
+        "teaching_week_end": 16,
+        "week_type": "all",
+        "day_of_week": 5,
+        "section_start": 1,
+        "section_end": 2,
+        "start_time": "08:00",
+        "end_time": "09:40",
+        "campus": "东湖校区",
+        "building": "信息楼A",
+        "classroom": "A305",
+        "capacity": 70,
+        "selected_count": 64,
+        "exam_type": "考试",
+    },
+    {
+        "course_id": "DS101",
+        "course_name": "数据科学导论",
+        "course_type": "必修",
+        "credits": 3.0,
+        "instructor": "何一鸣",
+        "instructor_title": "教授",
+        "major": "数据科学与大数据技术",
+        "grade": 2023,
+        "class_name": "大数据2301班",
+        "semester": "2025-2026-1",
+        "teaching_week_start": 1,
+        "teaching_week_end": 16,
+        "week_type": "all",
+        "day_of_week": 2,
+        "section_start": 1,
+        "section_end": 2,
+        "start_time": "08:00",
+        "end_time": "09:40",
+        "campus": "东湖校区",
+        "building": "信息楼A",
+        "classroom": "A401",
+        "capacity": 65,
+        "selected_count": 61,
+        "exam_type": "考试",
+    },
+    {
+        "course_id": "FR101",
+        "course_name": "森林培育学",
+        "course_type": "必修",
+        "credits": 3.5,
+        "instructor": "吴森",
+        "instructor_title": "教授",
+        "major": "林学",
+        "grade": 2023,
+        "class_name": "林学2301班",
+        "semester": "2025-2026-1",
+        "teaching_week_start": 1,
+        "teaching_week_end": 16,
+        "week_type": "all",
+        "day_of_week": 3,
+        "section_start": 3,
+        "section_end": 4,
+        "start_time": "10:00",
+        "end_time": "11:40",
+        "campus": "东湖校区",
+        "building": "林学楼",
+        "classroom": "L201",
+        "capacity": 80,
+        "selected_count": 73,
+        "exam_type": "考试",
+    },
+    {
+        "course_id": "GE201",
+        "course_name": "大学英语III",
+        "course_type": "公共必修",
+        "credits": 2.0,
+        "instructor": "赵敏",
+        "instructor_title": "讲师",
+        "major": "全校公共课",
+        "grade": 2023,
+        "class_name": "电信2301班",
+        "semester": "2025-2026-1",
+        "teaching_week_start": 1,
+        "teaching_week_end": 16,
+        "week_type": "all",
+        "day_of_week": 3,
+        "section_start": 7,
+        "section_end": 8,
+        "start_time": "16:00",
+        "end_time": "17:40",
+        "campus": "东湖校区",
+        "building": "外语楼D",
+        "classroom": "D106",
+        "capacity": 120,
+        "selected_count": 108,
+        "exam_type": "考试",
     },
 ]
 
@@ -275,6 +387,18 @@ def _contains(value: Any, keyword: Any) -> bool:
     return str(keyword).strip().lower() in str(value).strip().lower()
 
 
+def _normalize_grade(grade_value: Any) -> Optional[int]:
+    if grade_value in (None, ""):
+        return None
+    digits = "".join(ch for ch in str(grade_value) if ch.isdigit())
+    if not digits:
+        return None
+    try:
+        return int(digits[:4])
+    except ValueError:
+        return None
+
+
 def _format_course(course: Dict[str, Any]) -> Dict[str, Any]:
     formatted = dict(course)
     formatted["day_label"] = DAY_LABELS.get(course["day_of_week"], str(course["day_of_week"]))
@@ -285,10 +409,22 @@ def _format_course(course: Dict[str, Any]) -> Dict[str, Any]:
 def query_mock_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
     day_of_week = normalize_day(params.get("day_of_week") or params.get("day"))
     teacher = params.get("teacher") or params.get("instructor")
+    grade = _normalize_grade(params.get("grade"))
 
     courses: List[Dict[str, Any]] = []
     for course in MOCK_COURSE_SCHEDULE:
-        if params.get("major") and not _contains(course["major"], params["major"]):
+        if params.get("major"):
+            is_major_course = _contains(course["major"], params["major"])
+            is_class_public_course = (
+                course["major"] == "全校公共课"
+                and params.get("class_name")
+                and _contains(course.get("class_name"), params["class_name"])
+            )
+            if not (is_major_course or is_class_public_course):
+                continue
+        if grade is not None and course["grade"] != grade:
+            continue
+        if params.get("class_name") and not _contains(course.get("class_name"), params["class_name"]):
             continue
         if params.get("semester") and course["semester"] != str(params["semester"]).strip():
             continue
@@ -298,6 +434,8 @@ def query_mock_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
             continue
         if teacher and not _contains(course["instructor"], teacher):
             continue
+        if params.get("campus") and not _contains(course["campus"], params["campus"]):
+            continue
         if day_of_week is not None and course["day_of_week"] != day_of_week:
             continue
         courses.append(_format_course(course))
@@ -306,11 +444,14 @@ def query_mock_course_schedule(params: Dict[str, Any]) -> Dict[str, Any]:
         "status": "success",
         "filters": {
             "major": params.get("major"),
+            "grade": grade,
+            "class_name": params.get("class_name"),
             "semester": params.get("semester"),
             "day_of_week": day_of_week,
             "course_id": params.get("course_id"),
             "course_name": params.get("course_name"),
             "teacher": teacher,
+            "campus": params.get("campus"),
         },
         "count": len(courses),
         "courses": courses,

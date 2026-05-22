@@ -7,6 +7,7 @@ from ..services.llm_service import LLMService
 from ..services.campus_tool_hub import CampusToolHub
 from ..services.mcp_server import Server, Tool, Configuration
 from ..services.server_manager import ServerManager
+from ..services.student_profile_service import format_student_profile_for_prompt
 from ..skills import SkillRegistry
 import os
 
@@ -38,6 +39,9 @@ class ToolSelector:
 
 任务计划：
 {task_plan}
+
+当前用户画像：
+{student_profile}
 
 请为每个任务选择最合适的工具，并以下格式返回工具选择方案：
 
@@ -114,7 +118,8 @@ class ToolSelector:
             logger.debug("生成工具选择提示词")
             prompt = cls.TOOL_SELECTION_PROMPT.format(
                 tool_capabilities=tools_description,
-                task_plan=json.dumps(task_plan, ensure_ascii=False, indent=2)
+                task_plan=json.dumps(task_plan, ensure_ascii=False, indent=2),
+                student_profile=format_student_profile_for_prompt(),
             )
             logger.debug(f"提示词长度: {len(prompt)} 字符")
             

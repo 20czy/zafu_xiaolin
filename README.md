@@ -1,8 +1,6 @@
 # 农林小林 (XiaoLin) - 校园大脑智能决策 Agent
 
-<p align="center">
-    <img alt="xiaolin" width="200" style="border-radius: 10px;" src="https://github.com/user-attachments/assets/2cb3cc13-fce5-4312-909c-fa93129685ca">
-</p>
+<img width="1536" height="1024" alt="27849" src="https://github.com/user-attachments/assets/75421b21-8234-4da5-b4da-a43e7fcafec0" />
 
 ## 📝 项目简介
 

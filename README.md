@@ -14,6 +14,10 @@
 
 [查看演示视频](https://github.com/user-attachments/assets/89f6fd26-3d2b-4d25-a6b3-afe34c89fa88)
 
+## 🤔 思考链路
+
+<img width="1672" height="941" alt="chain-thinking" src="https://github.com/user-attachments/assets/f358fef4-4f9a-462e-8b7c-9616a0bf6192" />
+
 ## 🎯 应用场景
 
 ### 学生服务

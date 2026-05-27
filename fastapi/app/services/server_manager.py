@@ -39,15 +39,19 @@ class ServerManager:
             for name, srv_config in servers_config["mcpServers"].items():
                 server = Server(name, srv_config)
                 try:
-                    await server.initialize()
+                    init_timeout = float(srv_config.get("init_timeout", 8))
+                    await asyncio.wait_for(server.initialize(), timeout=init_timeout)
                     self._servers[name] = server
                     logging.info(f"Server {name} initialized successfully")
+                except asyncio.TimeoutError:
+                    await server.cleanup()
+                    logging.error(f"Failed to initialize server {name}: timeout")
                 except Exception as e:
                     logging.error(f"Failed to initialize server {name}: {e}")
             
             # Cache all available tools at startup
-            self._cached_tools = await self.list_all_tools()
-            logging.info(f"Cached {len(self._cached_tools)} tools from all servers")
+            self.__class__._cached_tools = await self.list_all_tools()
+            logging.info(f"Cached {len(self.__class__._cached_tools)} tools from all servers")
             
             self.__class__._initialized = True
             logging.info("All servers initialized")
@@ -70,10 +74,12 @@ class ServerManager:
         all_tools = []
         for server in self._servers.values():
             try:
-                tools = await server.list_tools()
+                tools = await asyncio.wait_for(server.list_tools(), timeout=5)
                 for tool in tools:
                     setattr(tool, "server_name", server.name)
                 all_tools.extend(tools)
+            except asyncio.TimeoutError:
+                logging.error(f"Error listing tools from server {server.name}: timeout")
             except Exception as e:
                 logging.error(f"Error listing tools from server {server.name}: {e}")
         

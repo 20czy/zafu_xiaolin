@@ -186,12 +186,30 @@ def test_legacy_campus_notice_alias_works():
 
 
 @pytest.mark.asyncio
-async def test_capabilities_endpoint_returns_local_skills_without_mcp_initialization(monkeypatch):
+async def test_capabilities_endpoint_initializes_mcp_tools(monkeypatch):
+    class FakeTool:
+        name = "campus_weather"
+        description = "查询校园天气"
+        input_schema = {
+            "properties": {
+                "location": {"type": "string", "description": "地点"},
+            }
+        }
+        server_name = "weather"
+
+    async def fake_get_instance():
+        ServerManager._initialized = True
+        ServerManager._cached_tools = [FakeTool()]
+        return object()
+
     monkeypatch.setattr(ServerManager, "_initialized", False)
+    monkeypatch.setattr(ServerManager, "get_instance", fake_get_instance)
 
     result = await list_capabilities()
 
     assert result["summary"]["skill_count"] >= 2
-    assert result["summary"]["tool_count"] == 0
+    assert result["summary"]["tool_count"] == 1
+    assert result["tools"][0]["name"] == "campus_weather"
+    assert result["tools"][0]["server"] == "weather"
     assert any(skill["name"] == "course-schedule" for skill in result["skills"])
-    assert result["errors"]
+    assert result["errors"] == []

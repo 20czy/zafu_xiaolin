@@ -21,6 +21,15 @@
         "--local-timezone=America/New_York"
       ]
     },
+    "weather": {
+      "command": "python",
+      "cwd": "__fastapi_root__",
+      "init_timeout": 5,
+      "args": [
+        "-m",
+        "app.services.weather_mcp_server"
+      ]
+    },
     "zhipu-web-search-sse": {
       "url": "https://open.bigmodel.cn/api/mcp/web_search/sse",
       "headers": {

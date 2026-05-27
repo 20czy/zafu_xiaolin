@@ -47,6 +47,12 @@ async def list_capabilities() -> Dict[str, Any]:
     tool_items: List[Dict[str, Any]] = []
     errors: List[str] = []
 
+    try:
+        if not ServerManager._initialized:
+            await ServerManager.get_instance()
+    except Exception as exc:
+        errors.append(f"MCP 服务初始化失败：{exc}")
+
     if ServerManager._initialized:
         cached_tools = ServerManager.get_cached_tools()
         tool_items = [
@@ -54,7 +60,7 @@ async def list_capabilities() -> Dict[str, Any]:
             for tool in cached_tools
         ]
     else:
-        errors.append("MCP 服务尚未初始化；开始聊天或重启后端完成初始化后会显示已接入 Tool。")
+        errors.append("MCP 服务尚未初始化，暂时无法展示已接入 Tool。")
 
     return {
         "tools": tool_items,

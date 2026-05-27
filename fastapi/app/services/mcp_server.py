@@ -4,6 +4,8 @@ import json
 import asyncio
 import logging
 import shutil
+import sys
+from pathlib import Path
 from typing import Any
 from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
@@ -75,6 +77,12 @@ class Server:
         self._cleanup_lock: asyncio.Lock = asyncio.Lock()
         self.exit_stack: AsyncExitStack = AsyncExitStack()
 
+    def _resolve_cwd(self) -> Path | str | None:
+        cwd = self.config.get("cwd")
+        if cwd == "__fastapi_root__":
+            return Path(__file__).resolve().parents[2]
+        return cwd
+
     async def initialize(self) -> None:
         """Initialize the server connection."""
         try:
@@ -107,17 +115,20 @@ class Server:
                 if "command" not in self.config:
                     raise ValueError("Configuration must contain either 'url' or 'command' field")
                     
-                command = (
-                    shutil.which("npx")
-                    if self.config["command"] == "npx"
-                    else self.config["command"]
-                )
+                configured_command = self.config["command"]
+                if configured_command in {"python", "python3"}:
+                    command = sys.executable
+                elif configured_command == "npx":
+                    command = shutil.which("npx")
+                else:
+                    command = configured_command
                 if command is None:
                     raise ValueError("The command must be a valid string and cannot be None.")
 
                 server_params = StdioServerParameters(
                     command=command,
                     args=self.config["args"],
+                    cwd=self._resolve_cwd(),
                     env={**os.environ, **self.config["env"]}
                     if self.config.get("env")
                     else None,
@@ -388,5 +399,3 @@ class ChatSession:
 
         finally:
             await self.cleanup_servers()
-
-

@@ -112,7 +112,13 @@ class ToolSelector:
             all_tools = [*all_tools, *skill_tools]
             logger.debug(f"获取到 {len(all_tools)} 个工具，其中本地 skill {len(skill_tools)} 个")
             logger.debug("生成工具选择提示词")
-            tools_description = "\n".join([tool.format_for_llm() for tool in all_tools])
+            builtin_tools_description = await CampusToolHub.get_tool_info_for_planner()
+            discovered_tools_description = "\n".join([tool.format_for_llm() for tool in all_tools])
+            tools_description = "\n".join(
+                item
+                for item in [builtin_tools_description, discovered_tools_description]
+                if item
+            )
                 
             # Create selection prompt
             logger.debug("生成工具选择提示词")

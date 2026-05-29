@@ -2,6 +2,9 @@ import logging
 from typing import Dict, Any
 import json
 
+from app.services.llm_service import LLMService
+from app.services.student_profile_service import format_student_profile_for_prompt
+
 logger = logging.getLogger(__name__)
 
 class CampusToolHub:
@@ -36,10 +39,12 @@ class CampusToolHub:
         tools = [
             {
                 "name": "general_assistant",
-                "description": "通用助手，可以回答一般性问题",
+                "description": "通用大模型辅助工具。当任务没有专用 Skill 或 MCP Tool 可处理时，调用一次大模型，基于任务描述、用户输入、已有任务结果和学生画像生成辅助分析或回答。",
                 "parameters": [
-                    {"name": "query_type", "description": "查询类型，如'general'", "required": True},
-                    {"name": "keywords", "description": "关键词", "required": True}
+                    {"name": "query_type", "description": "查询类型，如 general、analysis、planning", "required": False},
+                    {"name": "keywords", "description": "用户问题、任务输入或需要分析的关键词", "required": True},
+                    {"name": "task", "description": "当前任务对象，包含任务描述、输入和依赖关系", "required": False},
+                    {"name": "task_results", "description": "前置任务执行结果，可用于汇总与推理", "required": False}
                 ]
             },
             {
@@ -102,15 +107,59 @@ class CampusToolHub:
     @classmethod
     async def _call_general_assistant(cls, params: Dict[str, Any]) -> Dict[str, Any]:
         """
-        调用通用助手API - 异步版本
+        调用一次大模型辅助完成没有专用工具覆盖的任务。
         """
         query_type = params.get("query_type", "general")
-        keywords = params.get("keywords", "")
-        
-        # 这里应该是实际的API调用，现在我们返回模拟数据
+        keywords = (
+            params.get("keywords")
+            or params.get("query")
+            or params.get("input")
+            or params.get("task_description")
+            or ""
+        )
+        task = params.get("task") or {}
+        task_results = params.get("task_results") or {}
+
+        system_prompt = f"""你是浙江农林大学校园大脑中的通用大模型辅助工具。
+你的职责是在没有专用 Tool / Skill 覆盖时，调用一次大模型辅助解决当前子任务。
+
+要求：
+1. 只回答当前子任务，不要编造工具没有返回的数据。
+2. 如果需要外部系统数据但当前没有提供，请说明缺口并给出下一步建议。
+3. 涉及校园事务时，优先结合学生画像和已有任务结果。
+4. 输出应清晰、可执行，适合作为后续最终回复的中间结果。
+
+当前用户画像：
+{format_student_profile_for_prompt()}
+"""
+
+        user_prompt = f"""查询类型：{query_type}
+
+当前任务：
+{json.dumps(task, ensure_ascii=False, indent=2)}
+
+用户输入 / 关键词：
+{keywords}
+
+已有任务结果：
+{json.dumps(task_results, ensure_ascii=False, indent=2)}
+
+请基于以上信息完成这一步任务。"""
+
+        llm = await LLMService.get_llm(model_name="deepseek-chat", temperature=0.2)
+        response = await llm.ainvoke(
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ]
+        )
+
         return {
-            "result": f"这是关于 '{keywords}' 的通用回答",
-            "query_type": query_type
+            "status": "success",
+            "tool": "general_assistant",
+            "query_type": query_type,
+            "keywords": keywords,
+            "result": response.content,
         }
     
     @classmethod

@@ -8,6 +8,7 @@ from ..agent.TaskPlanner import TaskPlanner
 from ..agent.ToolSelector import ToolSelector
 from ..services.server_manager import ServerManager
 from ..services.mcp_server import Server, Configuration
+from ..services.campus_tool_hub import CampusToolHub
 import os
 import pydantic
 
@@ -93,6 +94,74 @@ def ensure_server_manager_initialized():
     return _server_manager_init_task
 
 # 确保在导入模块时启动初始化
+
+
+@pytest.mark.asyncio
+async def test_task_executor_runs_general_assistant(monkeypatch):
+    captured = {}
+
+    async def fake_call_api(tool_name, params):
+        captured["tool_name"] = tool_name
+        captured["params"] = params
+        return {
+            "status": "success",
+            "tool": tool_name,
+            "result": "通用大模型辅助结果",
+        }
+
+    monkeypatch.setattr(CampusToolHub, "call_api", fake_call_api)
+
+    task = {"id": 1, "task": "分析活动方案", "input": "帮我规划一场讲座"}
+    tool_selection = {
+        "tool": "general_assistant",
+        "params": {"query_type": "planning"},
+    }
+
+    result = await TaskExecutor.execute_task(task, tool_selection, {})
+
+    assert result["status"] == "success"
+    assert result["result"] == "通用大模型辅助结果"
+    assert captured["tool_name"] == "general_assistant"
+    assert captured["params"]["keywords"] == "帮我规划一场讲座"
+    assert captured["params"]["task"] == task
+
+
+@pytest.mark.asyncio
+async def test_general_assistant_calls_llm_once(monkeypatch):
+    from ..services import campus_tool_hub
+
+    calls = []
+
+    class FakeResponse:
+        content = "这是 LLM 生成的辅助分析"
+
+    class FakeLLM:
+        async def ainvoke(self, messages):
+            calls.append(messages)
+            return FakeResponse()
+
+    async def fake_get_llm(*args, **kwargs):
+        return FakeLLM()
+
+    monkeypatch.setattr(campus_tool_hub.LLMService, "get_llm", fake_get_llm)
+    monkeypatch.setattr(campus_tool_hub, "format_student_profile_for_prompt", lambda: "姓名：张三")
+
+    result = await CampusToolHub.call_api(
+        "general_assistant",
+        {
+            "query_type": "analysis",
+            "keywords": "分析讲座安排",
+            "task": {"id": 1, "task": "分析讲座安排"},
+            "task_results": {},
+        },
+    )
+
+    assert result["status"] == "success"
+    assert result["tool"] == "general_assistant"
+    assert result["result"] == "这是 LLM 生成的辅助分析"
+    assert len(calls) == 1
+    assert calls[0][0]["role"] == "system"
+    assert calls[0][1]["role"] == "user"
 
 
 @pytest.mark.asyncio

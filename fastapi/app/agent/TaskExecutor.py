@@ -51,6 +51,13 @@ class TaskExecutor:
                 logger.info(f"使用本地 skill 执行工具: {tool_name}")
                 return await SkillRegistry.execute_tool(tool_name, params)
 
+            if tool_name == "general_assistant":
+                logger.info("使用通用大模型辅助工具执行任务")
+                params.setdefault("keywords", task.get("input") or task.get("task") or "")
+                params.setdefault("task", task)
+                params.setdefault("task_results", task_results)
+                return await CampusToolHub.call_api(tool_name, params)
+
             # Call the API
             for server_name, server in ServerManager._servers.items():
                 try:
@@ -70,8 +77,9 @@ class TaskExecutor:
                     logging.error(f"Error listing tools from server {server_name}: {str(e)}")
                     continue
            
-            # api_result = await CampusToolHub.call_api(tool_name, params)
-            # return api_result  # Always return raw API result
+            api_result = await CampusToolHub.call_api(tool_name, params)
+            if "error" not in api_result:
+                return api_result
             return f"No server found with tool: {tool_name}"
 
         except Exception as e:

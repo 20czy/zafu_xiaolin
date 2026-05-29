@@ -12,6 +12,7 @@ except ModuleNotFoundError:
 
 from .notice import query_campus_notice
 from .schedule import query_course_schedule
+from .venue import query_or_reserve_venue
 
 
 logger = logging.getLogger(__name__)
@@ -59,10 +60,16 @@ class SkillRegistry:
         "campus_notices": "campus-notice",
         "notice_query": "campus-notice",
         "校园通知": "campus-notice",
+        "venue_booking": "venue-booking",
+        "venue_query": "venue-booking",
+        "campus_venue": "venue-booking",
+        "场地查询": "venue-booking",
+        "场地预约": "venue-booking",
     }
     _handlers: Dict[str, SkillHandler] = {
         "course-schedule": query_course_schedule,
         "campus-notice": query_campus_notice,
+        "venue-booking": query_or_reserve_venue,
     }
     _initialized = False
 

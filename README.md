@@ -1,6 +1,4 @@
-<p align="center">
-    <img alt="农林小林 XiaoLin - Campus Brain Decision Agent" src="media/readme-hero.png">
-</p>
+<img width="1536" height="1024" alt="27849" src="https://github.com/user-attachments/assets/897b5eea-f58c-4236-8311-5344705d1ede" />
 
 # 农林小林 (XiaoLin) - 校园大脑智能决策 Agent
 

@@ -13,6 +13,12 @@
 > 下周三下午想办一场 200 人左右的学院讲座，主要面向 2023 级计科学生，地点尽量在东湖校区，帮我规划时间、场地、通知和后勤安排。
 
 理想中的校园大脑不只是给出泛泛建议，而是自动拆解任务，查询课程冲突、场地容量、校区位置、通知对象、后勤事项和审批风险，最终生成多个可比较的执行方案，减轻信息收集、方案对比和跨部门协调的负担。
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/db1ee88d-9775-46b1-9a3f-02af13a8b189" width="800">
+</p>
+<p align="center">
+  <img width="795" height="757" alt="截屏2026-05-30 15 01 58" src="https://github.com/user-attachments/assets/330e8f4d-8f18-4049-8036-6bd1ddc08f30" />
+</p>
 
 ### 🦾 项目演示
 

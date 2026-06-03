@@ -16,7 +16,10 @@ An ideal campus brain should not only provide generic suggestions. It should aut
 
 ### 🦾 Project Demo
 
-[Watch the demo video](https://github.com/user-attachments/assets/89f6fd26-3d2b-4d25-a6b3-afe34c89fa88)
+<img width="796" height="757" alt="截屏2026-06-03 16 33 14" src="https://github.com/user-attachments/assets/58307cc3-55c0-42e4-911d-f4a195ed25c8" />
+<img width="796" height="750" alt="截屏2026-06-03 16 34 16" src="https://github.com/user-attachments/assets/f9b91c42-61ba-45aa-b1d4-b367e66ed266" />
+<img width="797" height="753" alt="截屏2026-06-03 16 34 32" src="https://github.com/user-attachments/assets/a62f6203-54fd-48cb-90db-0f6caea7b9a4" />
+
 
 ### 🤔 Reasoning Flow
 

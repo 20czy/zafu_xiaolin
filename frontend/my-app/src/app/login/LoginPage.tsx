@@ -1,40 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '@/redux/features/authSlice';
-import { RootState } from "@/redux/store";
-import { apiUrl, fetchWithCSRF } from "@/app/components/util";
 
-// 定义表单验证架构
+import { apiUrl } from "@/app/components/util";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { login } from "@/redux/features/authSlice";
+import type { RootState } from "@/redux/store";
+
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "用户名至少需要2个字符",
-  }),
-  password: z.string().min(6, {
-    message: "密码至少需要6个字符",
-  }),
+  token: z.string().min(20, "请输入完整的试用访问码"),
 });
 
 export default function LoginPage() {
@@ -42,48 +24,31 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Redirect to chat if already logged in
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/chat");
-    }
-  }, [isLoggedIn, router]);
-
-  // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
+    defaultValues: { token: "" },
   });
 
-  // Handle form submission
+  useEffect(() => {
+    if (isLoggedIn) router.push("/chat");
+  }, [isLoggedIn, router]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const data = await fetchWithCSRF(apiUrl("/api/login/"), {
+      const response = await fetch(apiUrl("/api/v1/auth/login"), {
         method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
-      if (data.status === "success") {
-        dispatch(login({
-          username: data.data.username,
-          id: data.data.id
-        }));
-        // Redirect to chat page
-        router.push("/chat");
-      } else {
-        form.setError("root", {
-          message: "登录失败：" + data.message,
-        });
-      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || "访问码无效");
+      dispatch(login({ username: data.data.label }));
+      router.push("/chat");
     } catch (error) {
-      console.error(error);
       form.setError("root", {
-        message: "网络错误，请稍后重试",
+        message: error instanceof Error ? error.message : "验证失败，请稍后重试",
       });
     } finally {
       setIsLoading(false);
@@ -91,66 +56,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-50">
-      <Card className="w-[350px]">
+    <div className="flex h-screen items-center justify-center bg-gray-50 px-4">
+      <Card className="w-full max-w-[380px]">
         <CardHeader>
-            <div>
-              <CardTitle>登录</CardTitle>
-              <CardDescription>
-                请输入您的账号和密码进行登录
-              </CardDescription>
-            </div>
+          <CardTitle>内部试用</CardTitle>
+          <CardDescription>请输入管理员分享给你的限时访问码</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="username"
+                name="token"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>用户名</FormLabel>
+                    <FormLabel>试用访问码</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="请输入用户名" 
-                        {...field} 
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>密码</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="请输入密码" 
-                        {...field} 
-                        disabled={isLoading}
-                      />
+                      <Input type="password" placeholder="trial_..." {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               {form.formState.errors.root && (
-                <div className="text-sm text-red-500">
-                  {form.formState.errors.root.message}
-                </div>
+                <div className="text-sm text-red-500">{form.formState.errors.root.message}</div>
               )}
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? "登录中..." : "登录"}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "验证中..." : "进入应用"}
               </Button>
+              <p className="text-center text-sm text-muted-foreground">
+                获取访问码或遇到问题，请联系管理员：
+                <a
+                  className="ml-1 text-primary underline-offset-4 hover:underline"
+                  href="mailto:charn18658569539@gmail.com"
+                >
+                  charn18658569539@gmail.com
+                </a>
+              </p>
             </form>
           </Form>
         </CardContent>

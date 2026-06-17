@@ -231,7 +231,8 @@ Project root/
 │   │   └── services/ # Service layer
 │   └── app/main.py   # Application entry point
 ├── frontend/my-app/  # Next.js frontend
-└── backend/          # Historical Django implementation, not started by default in the demo
+├── docker-compose.yml
+└── docker-compose.prod.yml
 ```
 
 ### Demo Architecture
@@ -307,11 +308,11 @@ The demo has removed the login guard. After deployment, opening the app will tak
 
 ## 🔄 Demo Simplification Notes
 
-To reduce deployment cost, the demo removes runtime dependencies on Django, PostgreSQL, Redis, and Alembic migrations by default:
+To reduce deployment cost, the demo now keeps only the FastAPI backend, Next.js frontend, and local SQLite data:
 
 - FastAPI automatically creates SQLite tables on startup
 - All frontend requests go through `NEXT_PUBLIC_API_BASE_URL`, which defaults to `http://localhost:8001`
-- `backend/` is retained as the historical implementation; it can be connected back to an independent database and authentication system later for a production version
+- Production deployment can use `docker-compose.prod.yml` for persistent volumes and the gateway
 
 ## 💡 Future Roadmap
 

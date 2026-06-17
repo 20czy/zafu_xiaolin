@@ -19,9 +19,6 @@ def ensure_server_manager_initialized():
         _server_manager_init_task = loop.create_task(ServerManager.get_instance())
     return _server_manager_init_task
 
-# 确保在导入模块时启动初始化
-ensure_server_manager_initialized()
-
 # 加载 .env 文件中的环境变量
 load_dotenv()
 

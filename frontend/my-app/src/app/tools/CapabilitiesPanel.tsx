@@ -152,6 +152,7 @@ export default function CapabilitiesPanel({
       const response = await fetch(apiUrl("/api/v1/capabilities/"), {
         method: "GET",
         mode: "cors",
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(`请求失败，状态码：${response.status}`);

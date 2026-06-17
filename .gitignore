@@ -1,6 +1,7 @@
 **/vector_store/
 *.log
 *.env
+.env.production
 *.README.md
 node_modules
 .venv/

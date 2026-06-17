@@ -2,7 +2,7 @@ import logging
 from typing import Dict, Any
 import json
 
-from app.services.llm_service import LLMService
+from app.services.llm_service import LLMService, TOOL_LIBRARY_MODEL
 from app.services.student_profile_service import format_student_profile_for_prompt
 
 logger = logging.getLogger(__name__)
@@ -146,7 +146,7 @@ class CampusToolHub:
 
 请基于以上信息完成这一步任务。"""
 
-        llm = await LLMService.get_llm(model_name="deepseek-chat", temperature=0.2)
+        llm = await LLMService.get_llm(model_name=TOOL_LIBRARY_MODEL, temperature=0.2)
         response = await llm.ainvoke(
             [
                 {"role": "system", "content": system_prompt},

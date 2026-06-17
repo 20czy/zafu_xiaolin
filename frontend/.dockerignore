@@ -1,0 +1,4 @@
+my-app/.next/
+my-app/node_modules/
+my-app/.env*
+my-app/*.log

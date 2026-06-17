@@ -7,7 +7,7 @@
 
 使用方法:
 1. 确保servers_config.json中配置了zhipu-web-search-sse服务器
-2. 运行: /opt/anaconda3/envs/django/bin/python simple_search_test.py
+2. 运行: python simple_search_test.py
 """
 
 import os

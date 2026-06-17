@@ -6,6 +6,7 @@ import logging
 from ...db.session import get_db
 from ...schemas import agent_data as schemas
 from ...services.agent_data_service import AgentDataService
+from ...services.access_service import AccessPrincipal, current_access
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -14,11 +15,12 @@ logger = logging.getLogger(__name__)
 @router.post("/", response_model=schemas.AgentDataResponse)
 async def create_agent_data(
     agent_data: schemas.AgentDataCreate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """创建新的AgentData"""
     try:
-        db_agent_data = await AgentDataService.create_agent_data(db, agent_data)
+        db_agent_data = await AgentDataService.create_agent_data(db, agent_data, access.user_id)
         return schemas.AgentDataResponse(
             status="success",
             message="AgentData创建成功",
@@ -32,11 +34,12 @@ async def create_agent_data(
 @router.get("/{agent_data_id}", response_model=schemas.AgentDataResponse)
 async def get_agent_data(
     agent_data_id: str,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """根据ID获取AgentData"""
     try:
-        db_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id)
+        db_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id, access.user_id)
         if not db_agent_data:
             raise HTTPException(status_code=404, detail="AgentData不存在")
         
@@ -55,10 +58,10 @@ async def get_agent_data(
 async def get_agent_data_list(
     skip: int = Query(0, ge=0, description="跳过的记录数"),
     limit: int = Query(100, ge=1, le=1000, description="返回的记录数"),
-    user_id: Optional[int] = Query(None, description="用户ID过滤"),
     session_id: Optional[str] = Query(None, description="会话ID过滤"),
     data_type: Optional[str] = Query(None, description="数据类型过滤"),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """获取AgentData列表"""
     try:
@@ -67,7 +70,7 @@ async def get_agent_data_list(
             db=db,
             skip=skip,
             limit=limit,
-            user_id=user_id,
+            user_id=access.user_id,
             session_id=session_id,
             data_type=data_type
         )
@@ -75,7 +78,7 @@ async def get_agent_data_list(
         # 获取总数
         total = await AgentDataService.get_agent_data_count(
             db=db,
-            user_id=user_id,
+            user_id=access.user_id,
             session_id=session_id,
             data_type=data_type
         )
@@ -96,18 +99,19 @@ async def get_agent_data_list(
 async def update_agent_data(
     agent_data_id: str,
     agent_data_update: schemas.AgentDataUpdate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """更新AgentData"""
     try:
         # 检查AgentData是否存在
-        existing_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id)
+        existing_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id, access.user_id)
         if not existing_agent_data:
             raise HTTPException(status_code=404, detail="AgentData不存在")
         
         # 更新AgentData
         updated_agent_data = await AgentDataService.update_agent_data(
-            db, agent_data_id, agent_data_update
+            db, agent_data_id, agent_data_update, access.user_id
         )
         
         return schemas.AgentDataResponse(
@@ -125,17 +129,18 @@ async def update_agent_data(
 @router.delete("/{agent_data_id}", response_model=schemas.AgentDataResponse)
 async def delete_agent_data(
     agent_data_id: str,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """删除AgentData"""
     try:
         # 检查AgentData是否存在
-        existing_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id)
+        existing_agent_data = await AgentDataService.get_agent_data_by_id(db, agent_data_id, access.user_id)
         if not existing_agent_data:
             raise HTTPException(status_code=404, detail="AgentData不存在")
         
         # 删除AgentData
-        success = await AgentDataService.delete_agent_data(db, agent_data_id)
+        success = await AgentDataService.delete_agent_data(db, agent_data_id, access.user_id)
         if not success:
             raise HTTPException(status_code=500, detail="删除AgentData失败")
         
@@ -154,12 +159,13 @@ async def delete_agent_data(
 async def get_agent_data_by_session(
     session_id: str,
     data_type: Optional[str] = Query(None, description="数据类型过滤"),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """根据会话ID获取AgentData列表"""
     try:
         agent_data_list = await AgentDataService.get_agent_data_by_session(
-            db, session_id, data_type
+            db, session_id, data_type, access.user_id
         )
         
         return schemas.AgentDataListResponse(
@@ -175,11 +181,12 @@ async def get_agent_data_by_session(
 @router.get("/message/{message_id}", response_model=schemas.AgentDataListResponse)
 async def get_agent_data_by_message(
     message_id: int,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """根据消息ID获取AgentData列表"""
     try:
-        agent_data_list = await AgentDataService.get_agent_data_by_message(db, message_id)
+        agent_data_list = await AgentDataService.get_agent_data_by_message(db, message_id, access.user_id)
         
         return schemas.AgentDataListResponse(
             status="success",

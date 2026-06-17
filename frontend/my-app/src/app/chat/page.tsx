@@ -246,7 +246,7 @@ export default function ChatPage() {
 
 - Frontend: React, Next.js, TypeScript
 - UI: Tailwind CSS, shadcn/ui
-- Backend: Django/FastAPI
+- Backend: FastAPI
 
 ## 安装说明
 

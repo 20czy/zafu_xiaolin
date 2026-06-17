@@ -235,7 +235,8 @@ GET /api/v1/capabilities/
 │   │   └── services/ # 服务层
 │   └── app/main.py   # 应用入口
 ├── frontend/my-app/  # Next.js 前端
-└── backend/          # 历史 Django 实现，demo 默认不启动
+├── docker-compose.yml
+└── docker-compose.prod.yml
 ```
 
 ### Demo 架构
@@ -311,11 +312,11 @@ Demo 已移除登录拦截，部署完成后打开应用会直接进入聊天。
 
 ## 🔄 Demo 简化说明
 
-为了降低部署成本，demo 默认去掉了运行时对 Django、PostgreSQL、Redis 和 Alembic 迁移的依赖：
+为了降低部署成本，demo 当前只保留 FastAPI 后端、Next.js 前端和 SQLite 本地数据：
 
 - FastAPI 启动时自动创建 SQLite 表
 - 前端所有请求统一走 `NEXT_PUBLIC_API_BASE_URL`，默认 `http://localhost:8001`
-- `backend/` 保留为历史实现，后续如果要做生产版再接回独立数据库和鉴权
+- 生产部署可通过 `docker-compose.prod.yml` 接入持久化卷和网关
 
 ## 💡 未来规划 (RoadMap)
 

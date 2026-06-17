@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 
-from ..services.llm_service import LLMService
+from ..services.llm_service import LLMService, MAIN_AGENT_MODEL
 from ..services.campus_tool_hub import CampusToolHub
 from ..services.mcp_server import Server, Tool, Configuration
 from ..services.server_manager import ServerManager
@@ -131,7 +131,7 @@ class ToolSelector:
             
             # Use selection LLM to select tools
             logger.info("初始化工具选择 LLM 模型")
-            llm = await LLMService.get_llm(model_name='deepseek-chat', temperature=0.1)
+            llm = await LLMService.get_llm(model_name=MAIN_AGENT_MODEL, temperature=0.1)
             
             logger.info("向 LLM 发送工具选择请求")
             selection_response = await llm.ainvoke([

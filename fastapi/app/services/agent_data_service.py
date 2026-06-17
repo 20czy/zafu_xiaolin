@@ -12,17 +12,17 @@ class AgentDataService:
     """与AgentData相关的业务逻辑"""
 
     @staticmethod
-    async def create_agent_data(db: AsyncSession, agent_data: schemas.AgentDataCreate) -> models.AgentData:
+    async def create_agent_data(db: AsyncSession, agent_data: schemas.AgentDataCreate, user_id: int) -> models.AgentData:
         """创建新的AgentData"""
         db_agent_data = models.AgentData(
             id=agent_data.id or str(uuid.uuid4()),
             type=agent_data.type,
             title=agent_data.title,
             content=agent_data.content,
-            metadata=agent_data.metadata,
+            meta_data=agent_data.metadata,
             session_id=agent_data.session_id,
             message_id=agent_data.message_id,
-            user_id=agent_data.user_id
+            user_id=user_id
         )
         db.add(db_agent_data)
         await db.commit()
@@ -32,7 +32,8 @@ class AgentDataService:
     @staticmethod
     async def get_agent_data_by_id(
         db: AsyncSession,
-        agent_data_id: str
+        agent_data_id: str,
+        user_id: int,
     ) -> Optional[models.AgentData]:
         """根据ID获取AgentData"""
         result = await db.execute(
@@ -42,7 +43,10 @@ class AgentDataService:
                 selectinload(models.AgentData.session),
                 selectinload(models.AgentData.message)
             )
-            .where(models.AgentData.id == agent_data_id)
+            .where(
+                models.AgentData.id == agent_data_id,
+                models.AgentData.user_id == user_id,
+            )
         )
         return result.scalar_one_or_none()
 
@@ -63,8 +67,7 @@ class AgentDataService:
         )
         
         # 添加过滤条件
-        if user_id:
-            query = query.where(models.AgentData.user_id == user_id)
+        query = query.where(models.AgentData.user_id == user_id)
         if session_id:
             query = query.where(models.AgentData.session_id == session_id)
         if data_type:
@@ -88,8 +91,7 @@ class AgentDataService:
         query = select(models.AgentData.id)
         
         # 添加过滤条件
-        if user_id:
-            query = query.where(models.AgentData.user_id == user_id)
+        query = query.where(models.AgentData.user_id == user_id)
         if session_id:
             query = query.where(models.AgentData.session_id == session_id)
         if data_type:
@@ -102,7 +104,8 @@ class AgentDataService:
     async def update_agent_data(
         db: AsyncSession,
         agent_data_id: str,
-        agent_data_update: schemas.AgentDataUpdate
+        agent_data_update: schemas.AgentDataUpdate,
+        user_id: int,
     ) -> Optional[models.AgentData]:
         """更新AgentData"""
         # 构建更新数据字典
@@ -114,11 +117,11 @@ class AgentDataService:
         if agent_data_update.content is not None:
             update_data['content'] = agent_data_update.content
         if agent_data_update.metadata is not None:
-            update_data['metadata'] = agent_data_update.metadata
+            update_data['meta_data'] = agent_data_update.metadata
         
         if not update_data:
             # 如果没有要更新的数据，直接返回原数据
-            return await AgentDataService.get_agent_data_by_id(db, agent_data_id)
+            return await AgentDataService.get_agent_data_by_id(db, agent_data_id, user_id)
         
         # 添加更新时间
         update_data['updated_at'] = datetime.utcnow()
@@ -126,23 +129,30 @@ class AgentDataService:
         # 执行更新
         await db.execute(
             update(models.AgentData)
-            .where(models.AgentData.id == agent_data_id)
+            .where(
+                models.AgentData.id == agent_data_id,
+                models.AgentData.user_id == user_id,
+            )
             .values(**update_data)
         )
         await db.commit()
         
         # 返回更新后的数据
-        return await AgentDataService.get_agent_data_by_id(db, agent_data_id)
+        return await AgentDataService.get_agent_data_by_id(db, agent_data_id, user_id)
 
     @staticmethod
     async def delete_agent_data(
         db: AsyncSession,
-        agent_data_id: str
+        agent_data_id: str,
+        user_id: int,
     ) -> bool:
         """删除AgentData"""
         result = await db.execute(
             delete(models.AgentData)
-            .where(models.AgentData.id == agent_data_id)
+            .where(
+                models.AgentData.id == agent_data_id,
+                models.AgentData.user_id == user_id,
+            )
         )
         await db.commit()
         return result.rowcount > 0
@@ -151,11 +161,13 @@ class AgentDataService:
     async def get_agent_data_by_session(
         db: AsyncSession,
         session_id: str,
-        data_type: Optional[str] = None
+        data_type: Optional[str] = None,
+        user_id: int = 0,
     ) -> List[models.AgentData]:
         """根据会话ID获取AgentData列表"""
         query = select(models.AgentData).where(
-            models.AgentData.session_id == session_id
+            models.AgentData.session_id == session_id,
+            models.AgentData.user_id == user_id,
         )
         
         if data_type:
@@ -169,12 +181,16 @@ class AgentDataService:
     @staticmethod
     async def get_agent_data_by_message(
         db: AsyncSession,
-        message_id: int
+        message_id: int,
+        user_id: int,
     ) -> List[models.AgentData]:
         """根据消息ID获取AgentData列表"""
         result = await db.execute(
             select(models.AgentData)
-            .where(models.AgentData.message_id == message_id)
+            .where(
+                models.AgentData.message_id == message_id,
+                models.AgentData.user_id == user_id,
+            )
             .order_by(models.AgentData.created_at.desc())
         )
         return result.scalars().all()

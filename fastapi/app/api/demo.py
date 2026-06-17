@@ -1,9 +1,7 @@
-from datetime import datetime
 import os
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -12,14 +10,10 @@ from app.db import models
 from app.db.session import get_db
 from app.core.env import load_app_env
 from app.services.chat_history_manager import ChatHistoryManager
+from app.services.access_service import AccessPrincipal, current_access
 
 router = APIRouter()
 load_app_env()
-
-
-class LoginRequest(BaseModel):
-    username: str
-    password: str
 
 
 def ok(data: Any = None, **extra: Any) -> dict[str, Any]:
@@ -89,40 +83,25 @@ async def llm_config_status():
     )
 
 
-@router.post("/login/")
-async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(models.User).where(models.User.username == payload.username)
-    )
-    user = result.scalars().first()
-
-    if not user:
-        user = models.User(
-            username=payload.username,
-            email=f"{payload.username}@demo.local",
-            password=payload.password,
-            last_login=datetime.utcnow(),
-        )
-        db.add(user)
-    else:
-        user.last_login = datetime.utcnow()
-
-    await db.commit()
-    await db.refresh(user)
-    return ok({"id": user.id, "username": user.username})
-
-
 @router.get("/chat/sessions/")
-async def list_sessions(db: AsyncSession = Depends(get_db)):
+async def list_sessions(
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
     result = await db.execute(
-        select(models.ChatSession).order_by(models.ChatSession.updated_at.desc())
+        select(models.ChatSession)
+        .where(models.ChatSession.user_id == access.user_id)
+        .order_by(models.ChatSession.updated_at.desc())
     )
     return ok([serialize_session(session) for session in result.scalars().all()])
 
 
 @router.post("/chat/sessions/")
-async def create_session(db: AsyncSession = Depends(get_db)):
-    session = models.ChatSession(title="新的对话")
+async def create_session(
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
+    session = models.ChatSession(title="新的对话", user_id=access.user_id)
     db.add(session)
     await db.commit()
     await db.refresh(session)
@@ -130,38 +109,69 @@ async def create_session(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/chat/sessions/{session_id}/messages/")
-async def list_messages(session_id: str, db: AsyncSession = Depends(get_db)):
+async def list_messages(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
     result = await db.execute(
         select(models.ChatMessage)
+        .join(models.ChatSession)
         .options(selectinload(models.ChatMessage.process_infos))
-        .where(models.ChatMessage.session_id == session_id)
+        .where(
+            models.ChatMessage.session_id == session_id,
+            models.ChatSession.user_id == access.user_id,
+        )
         .order_by(models.ChatMessage.created_at)
     )
     return ok([serialize_message(message) for message in result.scalars().all()])
 
 
 @router.get("/chat/sessions/{session_id}/documents/")
-async def list_documents(session_id: str):
+async def list_documents(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
+    await require_owned_session(db, session_id, access.user_id)
     return ok([])
 
 
 @router.delete("/chat/sessions/{session_id}/messages/")
-async def delete_session(session_id: str, db: AsyncSession = Depends(get_db)):
-    await db.execute(delete(models.ChatSession).where(models.ChatSession.id == session_id))
+async def delete_session(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
+    await db.execute(
+        delete(models.ChatSession).where(
+            models.ChatSession.id == session_id,
+            models.ChatSession.user_id == access.user_id,
+        )
+    )
     await db.commit()
     return ok({"id": session_id})
 
 
 @router.get("/chat/sessions/{session_id}/history/")
-async def get_history(session_id: str, db: AsyncSession = Depends(get_db)):
+async def get_history(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
+    await require_owned_session(db, session_id, access.user_id)
     history = await ChatHistoryManager.get_chat_history(session_id, db)
     return ok({"history": history})
 
 
 @router.post("/chat/sessions/{session_id}/history/update/")
 async def update_history(
-    session_id: str, payload: dict[str, str], db: AsyncSession = Depends(get_db)
+    session_id: str,
+    payload: dict[str, str],
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
+    await require_owned_session(db, session_id, access.user_id)
     role = payload.get("role")
     content = (payload.get("content") or "").strip()
     if role not in {"user", "assistant"} or not content:
@@ -177,7 +187,12 @@ async def update_history(
 
 
 @router.post("/process_info/create/")
-async def create_process_info(payload: dict[str, Any], db: AsyncSession = Depends(get_db)):
+async def create_process_info(
+    payload: dict[str, Any],
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
+    await require_owned_session(db, payload["session_id"], access.user_id)
     info = await ChatHistoryManager.save_process_info(
         message_id=payload["message_id"],
         session_id=payload["session_id"],
@@ -185,3 +200,16 @@ async def create_process_info(payload: dict[str, Any], db: AsyncSession = Depend
         db=db,
     )
     return ok({"id": info.id if info else None})
+
+
+async def require_owned_session(db: AsyncSession, session_id: str, user_id: int):
+    result = await db.execute(
+        select(models.ChatSession).where(
+            models.ChatSession.id == session_id,
+            models.ChatSession.user_id == user_id,
+        )
+    )
+    session = result.scalars().first()
+    if not session:
+        raise HTTPException(status_code=404, detail="会话不存在")
+    return session

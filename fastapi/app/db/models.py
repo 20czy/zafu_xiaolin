@@ -19,7 +19,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_staff = Column(Boolean, default=False)
     is_superuser = Column(Boolean, default=False)
-    
+
     # 添加自定义字段
     phone = Column(String(15), nullable=True)
     avatar = Column(String, nullable=True)  # 存储头像路径
@@ -34,6 +34,23 @@ class User(Base):
     
     def __repr__(self):
         return f"User(id={self.id}, username={self.username}, {'(管理员)' if self.is_staff else ''})"
+
+
+class TrialAccess(Base):
+    __tablename__ = "trial_access"
+
+    id = Column(Integer, primary_key=True, index=True)
+    label = Column(String, nullable=False)
+    token_hash = Column(String(64), unique=True, nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users_user.id"), nullable=False, unique=True)
+    expires_at = Column(DateTime, nullable=False)
+    max_calls = Column(Integer, nullable=False, default=50)
+    calls_used = Column(Integer, nullable=False, default=0)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    last_used_at = Column(DateTime, nullable=True)
+
+    user = relationship("User")
 
 
 class ChatSession(Base):
@@ -110,5 +127,3 @@ class AgentData(Base):
     
     def __repr__(self):
         return f"AgentData(id={self.id}, type={self.type}, title={self.title})"
-
-    

@@ -1,0 +1,42 @@
+services:
+  api:
+    build:
+      context: ./fastapi
+    restart: unless-stopped
+    env_file:
+      - ./fastapi/.env
+      - ./.env.production
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:////data/xiaolin.db
+      API_BASE_URL: http://api:8001
+      COURSE_SCHEDULE_API_BASE_URL: http://api:8001
+      COOKIE_SECURE: "false"
+      ENABLE_API_DOCS: "false"
+    volumes:
+      - xiaolin_data:/data
+      - ./logs:/app/logs
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+
+  gateway:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - api
+
+volumes:
+  xiaolin_data:
+  caddy_data:
+  caddy_config:

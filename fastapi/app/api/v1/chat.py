@@ -12,6 +12,7 @@ from ...schemas import chat as schemas
 from ...agent.LLMController import get_process_info
 from ...agent.ResponseGenerator import ResponseGenerator
 from ...services.chat_history_manager import ChatHistoryManager
+from ...services.access_service import AccessPrincipal, consume_call, current_access
 import pydantic
 
 # Custom JSON encoder to handle CallToolResult and other non-serializable types
@@ -32,7 +33,8 @@ logger = logging.getLogger(__name__)
 @router.post("/", response_model=schemas.ChatResponse)
 async def chat(
     request: schemas.ChatRequest, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
 ):
     """
     处理用户的聊天请求，加工用户的信息，检索相关的文档，生成回复
@@ -50,6 +52,17 @@ async def chat(
                 message="消息内容和会话ID不能为空"
             )
         
+        session_result = await db.execute(
+            select(models.ChatSession).where(
+                models.ChatSession.id == session_id,
+                models.ChatSession.user_id == access.user_id,
+            )
+        )
+        if not session_result.scalars().first():
+            raise HTTPException(status_code=404, detail="会话不存在")
+
+        await consume_call(db, access)
+
         # 记录请求信息
         logger.info("="*50)
         logger.info("新的聊天请求")
@@ -79,6 +92,8 @@ async def chat(
             # 使用普通响应
             return await generate_standard_response(message, session_id, chat_history, db)
             
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"未预期的错误: {str(e)}", exc_info=True)
         return schemas.ChatResponse(
@@ -87,13 +102,18 @@ async def chat(
         )
 
 @router.get("/sessions", response_model=List[schemas.ChatSession])
-async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
+async def get_chat_sessions(
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
     """
     获取所有聊天会话
     """
     try:
         result = await db.execute(
-            select(models.ChatSession).order_by(
+            select(models.ChatSession).where(
+                models.ChatSession.user_id == access.user_id
+            ).order_by(
                 models.ChatSession.updated_at.desc()
             )
         )
@@ -105,14 +125,22 @@ async def get_chat_sessions(db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="获取聊天会话失败")
 
 @router.get("/sessions/{session_id}/messages", response_model=List[schemas.ChatMessage])
-async def get_session_messages(session_id: str, db: AsyncSession = Depends(get_db)):
+async def get_session_messages(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
     """
     获取指定会话的所有消息
     """
     try:
         result = await db.execute(
             select(models.ChatMessage)
-            .where(models.ChatMessage.session_id == session_id)
+            .join(models.ChatSession)
+            .where(
+                models.ChatMessage.session_id == session_id,
+                models.ChatSession.user_id == access.user_id,
+            )
             .order_by(models.ChatMessage.created_at)
         )
         messages = result.scalars().all()
@@ -128,14 +156,22 @@ async def get_session_messages(session_id: str, db: AsyncSession = Depends(get_d
         raise HTTPException(status_code=500, detail="获取会话消息失败")
 
 @router.get("/process-info/{session_id}", response_model=List[schemas.ProcessInfo])
-async def aget_process_info(session_id: str, db: AsyncSession = Depends(get_db)):
+async def aget_process_info(
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+    access: AccessPrincipal = Depends(current_access),
+):
     """
     获取指定会话的处理过程信息
     """
     try:
         result = await db.execute(
             select(models.ProcessInfo)
-            .where(models.ProcessInfo.session_id == session_id)
+            .join(models.ChatSession)
+            .where(
+                models.ProcessInfo.session_id == session_id,
+                models.ChatSession.user_id == access.user_id,
+            )
             .order_by(models.ProcessInfo.created_at.desc())
         )
         process_infos = result.scalars().all()

@@ -1,20 +1,23 @@
 {
   "mcpServers": {
     "puppeteer": {
+      "enabled": false,
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
     },
     "amap-maps": {
+            "enabled": "${ENABLE_AMAP_MCP}",
             "command": "npx",
             "args": [
                 "-y",
                 "@amap/amap-maps-mcp-server"
             ],
             "env": {
-                "AMAP_MAPS_API_KEY": "9a8df14d8aef9f3f8db7db6a161a39cb"
+                "AMAP_MAPS_API_KEY": "${AMAP_MAPS_API_KEY}"
             }
     },
     "time": {
+      "enabled": false,
       "command": "uvx",
       "args": [
         "mcp-server-time",
@@ -22,6 +25,7 @@
       ]
     },
     "weather": {
+      "enabled": true,
       "command": "python",
       "cwd": "__fastapi_root__",
       "init_timeout": 5,
@@ -31,9 +35,10 @@
       ]
     },
     "zhipu-web-search-sse": {
+      "enabled": "${ENABLE_ZHIPU_WEB_SEARCH_MCP}",
       "url": "https://open.bigmodel.cn/api/mcp/web_search/sse",
       "headers": {
-        "Authorization": "Bearer e8dc62a959064b1f8ad2223ab6f5f101.94J1FHIu9zlzwNnZ"
+        "Authorization": "Bearer ${ZHIPU_WEB_SEARCH_TOKEN}"
       }
     }
   }

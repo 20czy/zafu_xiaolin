@@ -9,7 +9,7 @@ def load_app_env() -> None:
     try:
         from dotenv import load_dotenv
 
-        load_dotenv(ENV_FILE, override=True)
+        load_dotenv(ENV_FILE, override=False)
         return
     except ModuleNotFoundError:
         pass

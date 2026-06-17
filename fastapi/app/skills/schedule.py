@@ -91,7 +91,11 @@ async def _fetch_course_schedule_from_api(query_params: Dict[str, Any]) -> Dict[
             base_url=COURSE_SCHEDULE_API_BASE_URL,
             timeout=5.0,
         ) as client:
-            response = await client.get(COURSE_SCHEDULE_API_PATH, params=query_params)
+            response = await client.get(
+                COURSE_SCHEDULE_API_PATH,
+                params=query_params,
+                headers={"X-Internal-Token": os.getenv("INTERNAL_API_TOKEN", "")},
+            )
             response.raise_for_status()
             return response.json()
 
@@ -104,5 +108,11 @@ def _fetch_course_schedule_with_stdlib(query_params: Dict[str, Any]) -> Dict[str
     if query_string:
         url = f"{url}?{query_string}"
 
-    with urlopen(url, timeout=5.0) as response:
+    from urllib.request import Request
+
+    request = Request(
+        url,
+        headers={"X-Internal-Token": os.getenv("INTERNAL_API_TOKEN", "")},
+    )
+    with urlopen(request, timeout=5.0) as response:
         return json.loads(response.read().decode("utf-8"))

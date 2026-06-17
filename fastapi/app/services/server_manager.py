@@ -35,8 +35,15 @@ class ServerManager:
             base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
             config_path = os.path.join(base_dir, 'services', 'servers_config.json')
             servers_config = config.load_config(config_path)
+            servers_config = self._expand_environment(servers_config)
             
             for name, srv_config in servers_config["mcpServers"].items():
+                enabled = srv_config.pop("enabled", True)
+                if isinstance(enabled, str):
+                    enabled = enabled.lower() in {"1", "true", "yes", "on"}
+                if not enabled:
+                    logging.info(f"Server {name} is disabled")
+                    continue
                 server = Server(name, srv_config)
                 try:
                     init_timeout = float(srv_config.get("init_timeout", 8))
@@ -58,6 +65,16 @@ class ServerManager:
         except Exception as e:
             logging.error(f"Error initializing servers: {e}")
             raise
+
+    @classmethod
+    def _expand_environment(cls, value):
+        if isinstance(value, dict):
+            return {key: cls._expand_environment(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [cls._expand_environment(item) for item in value]
+        if isinstance(value, str):
+            return os.path.expandvars(value)
+        return value
     
     def get_server(self, name: str) -> Server:
         """Get a server by name."""

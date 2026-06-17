@@ -17,7 +17,7 @@ class AgentDataCreate(AgentDataBase):
     id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), description="唯一标识符")
     session_id: Optional[str] = Field(None, description="关联的聊天会话ID")
     message_id: Optional[int] = Field(None, description="关联的消息ID")
-    user_id: int = Field(..., description="关联的用户ID")
+    user_id: Optional[int] = Field(None, description="由当前试用访问身份自动设置")
 
 
 class AgentDataUpdate(BaseModel):

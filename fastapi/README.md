@@ -28,7 +28,6 @@ fastapi/
 │   │   ├── chat_history_manager.py # 聊天历史管理
 │   │   └── llm_service.py     # LLM服务
 │   └── main.py            # 应用入口
-├── alembic/               # 数据库迁移
 ├── requirements.txt       # 依赖项
 └── README.md              # 项目说明
 ```
@@ -68,32 +67,26 @@ pip install -r requirements.txt
 
 ```
 DEEPSEEK_API_KEY=your_deepseek_api_key
-DATABASE_URL=sqlite:///./app.db
+DATABASE_URL=sqlite+aiosqlite:///./demo.db
 ```
 
 ## 数据库初始化
 
-使用 Alembic 初始化数据库：
-
-```bash
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
-```
+应用启动时会根据 SQLAlchemy 模型自动创建 SQLite 表。默认数据库为 `fastapi/demo.db`，也可以通过 `DATABASE_URL` 指定其他数据库。
 
 ## 运行应用
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
-服务将在 `http://localhost:8000` 上运行。
+服务将在 `http://localhost:8001` 上运行。
 
 ## API 文档
 
 FastAPI 自动生成的 API 文档可在以下地址访问：
 
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+- Swagger UI: `http://localhost:8001/docs`
 
 ## 主要 API 端点
 
@@ -104,9 +97,9 @@ FastAPI 自动生成的 API 文档可在以下地址访问：
 - `GET /api/v1/chat/sessions/{session_id}/messages`: 获取指定会话的所有消息
 - `GET /api/v1/chat/process-info/{session_id}`: 获取指定会话的处理过程信息
 
-## 从 Django 迁移到 FastAPI 的主要变化
+## 当前实现要点
 
-1. **异步支持**：FastAPI 原生支持异步编程，所有代理组件和服务都已改为异步方法。
+1. **异步支持**：FastAPI 原生支持异步编程，代理组件和服务使用异步方法。
 
 2. **依赖注入**：使用 FastAPI 的依赖注入系统来管理数据库会话和其他依赖项。
 
@@ -114,7 +107,7 @@ FastAPI 自动生成的 API 文档可在以下地址访问：
 
 4. **流式响应**：使用 FastAPI 的 StreamingResponse 来实现流式响应。
 
-5. **数据库模型**：保持与 Django 版本相似的数据库模型，但使用 SQLAlchemy ORM。
+5. **数据库模型**：使用 SQLAlchemy ORM 管理聊天、用户、场馆和 agent 数据。
 
 ## 注意事项
 

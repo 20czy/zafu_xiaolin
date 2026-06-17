@@ -2,7 +2,7 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
-from ..services.llm_service import LLMService
+from ..services.llm_service import LLMService, MAIN_AGENT_MODEL
 from ..services.student_profile_service import format_student_profile_for_prompt
 
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ class TaskPlanner:
 
             # Use planning LLM to generate task plan
             logger.info("初始化 LLM 模型")
-            llm = await LLMService.get_llm(model_name='deepseek-chat', temperature=0.2)
+            llm = await LLMService.get_llm(model_name=MAIN_AGENT_MODEL, temperature=0.2)
 
             logger.info("向 LLM 发送请求")
             planning_response = await llm.ainvoke([

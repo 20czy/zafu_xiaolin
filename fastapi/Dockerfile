@@ -3,18 +3,14 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# 安装系统依赖 (使用阿里云镜像)
-RUN echo "deb http://mirrors.aliyun.com/debian bookworm main" > /etc/apt/sources.list && \
-    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y gcc && \
-    rm -rf /var/lib/apt/lists/*
-
 # 复制requirements文件
 COPY requirements.txt .
 
 # 安装Python依赖
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir \
+    --index-url https://mirrors.cloud.tencent.com/pypi/simple \
+    --trusted-host mirrors.cloud.tencent.com \
+    -r requirements.txt
 
 # 复制源代码
 COPY . .

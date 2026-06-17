@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import Dict, Any, AsyncGenerator
-from ..services.llm_service import LLMService
+from ..services.llm_service import LLMService, MAIN_AGENT_MODEL
 from ..services.student_profile_service import format_student_profile_for_prompt
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ class ResponseGenerator:
         """
         try:
             # Create LLM with streaming enabled
-            llm = await LLMService.get_llm(model_name='deepseek-chat', stream=True)
+            llm = await LLMService.get_llm(model_name=MAIN_AGENT_MODEL, stream=True)
 
             prompt = cls._create_response_prompt(process_info)
 
@@ -121,7 +121,7 @@ class ResponseGenerator:
         """
         try:
             # Create LLM with streaming enabled
-            llm = await LLMService.get_llm(model_name='deepseek-chat', stream=True)
+            llm = await LLMService.get_llm(model_name=MAIN_AGENT_MODEL, stream=True)
 
             # 简单的系统提示词，不包含复杂的处理过程信息
             system_prompt = f"""你是浙江农林大学智能校园助手「农林小林」。请用自然、亲切、简洁的方式回答用户。
@@ -168,7 +168,7 @@ class ResponseGenerator:
             
             # 使用LLM生成最终响应
             logger.info("初始化响应生成 LLM 模型")
-            llm = await LLMService.get_llm(model_name='deepseek-chat', temperature=0.7)
+            llm = await LLMService.get_llm(model_name=MAIN_AGENT_MODEL, temperature=0.7)
             
             prompt = cls._create_response_prompt(process_info)
             

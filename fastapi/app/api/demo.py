@@ -11,6 +11,7 @@ from app.db.session import get_db
 from app.core.env import load_app_env
 from app.services.chat_history_manager import ChatHistoryManager
 from app.services.access_service import AccessPrincipal, current_access
+from app.services.llm_service import MAIN_AGENT_MODEL, TOOL_LIBRARY_MODEL
 
 router = APIRouter()
 load_app_env()
@@ -65,7 +66,7 @@ async def llm_config_status():
             "name": "DeepSeek",
             "env": "DEEPSEEK_API_KEY",
             "configured": bool(os.getenv("DEEPSEEK_API_KEY")),
-            "model": "deepseek-chat",
+            "model": f"{MAIN_AGENT_MODEL} / {TOOL_LIBRARY_MODEL}",
         },
         {
             "name": "智谱 GLM",

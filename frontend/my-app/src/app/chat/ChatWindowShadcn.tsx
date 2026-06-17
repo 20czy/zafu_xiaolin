@@ -332,6 +332,7 @@ export default function ChatWindowShadcn({
       ]);
 
       cleanupChatState();
+      fetchSessions();
     } catch (error) {
       handleChatError(error);
       cleanupChatState();

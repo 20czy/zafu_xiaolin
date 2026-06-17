@@ -10,6 +10,7 @@ services:
       DATABASE_URL: sqlite+aiosqlite:////data/xiaolin.db
       API_BASE_URL: http://api:8001
       COURSE_SCHEDULE_API_BASE_URL: http://api:8001
+      REQUIRE_TRIAL_ACCESS: "true"
       COOKIE_SECURE: "false"
       ENABLE_API_DOCS: "false"
     volumes:

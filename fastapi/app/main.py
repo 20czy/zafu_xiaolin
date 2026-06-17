@@ -7,7 +7,11 @@ from app.db.models import Base
 from app.db.session import engine
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.services.access_service import authenticate_request
+from app.services.access_service import (
+    authenticate_request,
+    ensure_local_dev_access,
+    trial_access_required,
+)
 from app.db.session import async_session
 import os
 import logging
@@ -69,8 +73,16 @@ app.add_middleware(
 
 @app.middleware("http")
 async def require_trial_access(request, call_next):
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
     public_paths = {"/api/v1/auth/login", "/api/v1/auth/logout", "/health"}
     if request.url.path.startswith("/api/") and request.url.path not in public_paths:
+        if not trial_access_required():
+            async with async_session() as db:
+                request.state.access = await ensure_local_dev_access(db)
+            return await call_next(request)
+
         internal_token = os.getenv("INTERNAL_API_TOKEN", "")
         if not internal_token or request.headers.get("X-Internal-Token") != internal_token:
             try:

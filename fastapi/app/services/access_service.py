@@ -15,6 +15,8 @@ from app.db import models
 
 
 COOKIE_NAME = "xiaolin_trial_session"
+LOCAL_DEV_USER_ID = 1
+LOCAL_DEV_LABEL = "local-dev"
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,36 @@ def hash_trial_token(token: str) -> str:
 
 def generate_trial_token() -> str:
     return f"trial_{secrets.token_urlsafe(32)}"
+
+
+def trial_access_required() -> bool:
+    return os.getenv("REQUIRE_TRIAL_ACCESS", "false").lower() in {"1", "true", "yes", "on"}
+
+
+async def ensure_local_dev_access(db: AsyncSession) -> AccessPrincipal:
+    result = await db.execute(
+        select(models.User).where(models.User.id == LOCAL_DEV_USER_ID)
+    )
+    user = result.scalars().first()
+    if not user:
+        user = models.User(
+            id=LOCAL_DEV_USER_ID,
+            username=LOCAL_DEV_LABEL,
+            email="local-dev@xiaolin.local",
+            password="!local-dev-only!",
+            is_active=True,
+        )
+        db.add(user)
+        await db.commit()
+
+    return AccessPrincipal(
+        access_id=0,
+        user_id=LOCAL_DEV_USER_ID,
+        label=LOCAL_DEV_LABEL,
+        expires_at=datetime.utcnow() + timedelta(days=3650),
+        max_calls=10**9,
+        calls_used=0,
+    )
 
 
 def create_session_cookie(access: models.TrialAccess) -> str:
@@ -128,6 +160,9 @@ def current_access(request: Request) -> AccessPrincipal:
 
 
 async def consume_call(db: AsyncSession, principal: AccessPrincipal) -> int:
+    if principal.access_id == 0:
+        return principal.calls_remaining
+
     result = await db.execute(
         select(models.TrialAccess).where(models.TrialAccess.id == principal.access_id)
     )

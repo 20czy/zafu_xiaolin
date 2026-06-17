@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..db.session import get_db
 from ..db import models
 from ..schemas import chat as schemas
+from .llm_service import LLMService, TOOL_LIBRARY_MODEL
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -27,6 +28,7 @@ class ChatHistoryManager:
     """
     
     MAX_HISTORY_LENGTH = 10  # 可根据需要调整
+    DEFAULT_TITLES = {"新的对话", "新对话", "", None}
     
     @classmethod
     async def get_chat_history(cls, session_id: str, db: AsyncSession) -> List[Dict[str, str]]:
@@ -113,19 +115,106 @@ class ChatHistoryManager:
             await db.commit()
             await db.refresh(message)
             
-            # 如果这是第一条消息，设置会话标题
+            # 第一条用户消息先保留默认标题，等待 AI 回复后再总结成缩略标题。
             if is_user and session.title is None:
-                title = content[:50] + ('...' if len(content) > 50 else '')
-                session.title = title
+                session.title = "新的对话"
                 await db.commit()
             
             logger.info(f"已保存{'用户' if is_user else 'AI'}消息到会话 {session_id}")
+            if not is_user:
+                await cls.update_session_title_if_needed(session_id, db)
             return message
             
         except Exception as e:
             await db.rollback()
             logger.error(f"保存消息出错: {str(e)}", exc_info=True)
             return None
+
+    @classmethod
+    async def update_session_title_if_needed(cls, session_id: str, db: AsyncSession) -> Optional[str]:
+        """
+        根据会话内容生成缩略标题。仅当标题为空或仍为默认标题时更新。
+        """
+        try:
+            result = await db.execute(
+                select(models.ChatSession).where(models.ChatSession.id == session_id)
+            )
+            session = result.scalars().first()
+            if not session or session.title not in cls.DEFAULT_TITLES:
+                return session.title if session else None
+
+            messages_result = await db.execute(
+                select(models.ChatMessage)
+                .where(models.ChatMessage.session_id == session_id)
+                .order_by(models.ChatMessage.created_at)
+                .limit(6)
+            )
+            messages = messages_result.scalars().all()
+            if not messages:
+                return session.title
+
+            title = await cls._generate_session_title(messages)
+            if not title:
+                first_user_message = next((msg.content for msg in messages if msg.is_user), "")
+                title = cls._normalize_title(first_user_message)
+
+            if title:
+                session.title = title
+                await db.commit()
+                await db.refresh(session)
+                logger.info(f"已更新会话 {session_id} 标题: {title}")
+                return title
+
+            return session.title
+        except Exception as e:
+            await db.rollback()
+            logger.warning(f"生成会话标题失败: {str(e)}", exc_info=True)
+            return None
+
+    @classmethod
+    async def _generate_session_title(cls, messages: List[models.ChatMessage]) -> str:
+        conversation = "\n".join(
+            f"{'用户' if msg.is_user else '助手'}: {cls._truncate_for_prompt(msg.content, 500)}"
+            for msg in messages
+            if msg.content
+        )
+        if not conversation:
+            return ""
+
+        prompt = f"""请根据下面这段聊天内容生成一个中文缩略标题。
+
+要求：
+1. 标题用于聊天历史列表，必须短小清楚。
+2. 优先使用 4 到 10 个中文字符，最多不超过 16 个中文字符。
+3. 不要使用引号、句号、冒号、前缀说明。
+4. 不要输出“新对话”“聊天记录”等泛泛标题。
+
+聊天内容：
+{conversation}
+
+只输出标题。"""
+
+        try:
+            llm = await LLMService.get_llm(model_name=TOOL_LIBRARY_MODEL, temperature=0.2)
+            response = await llm.ainvoke([{"role": "user", "content": prompt}])
+            return cls._normalize_title(response.content)
+        except Exception as e:
+            logger.warning(f"调用标题生成模型失败: {str(e)}", exc_info=True)
+            return ""
+
+    @staticmethod
+    def _truncate_for_prompt(text: str, max_length: int) -> str:
+        text = (text or "").strip()
+        return text if len(text) <= max_length else text[:max_length] + "..."
+
+    @staticmethod
+    def _normalize_title(title: str) -> str:
+        title = (title or "").strip()
+        title = title.strip("`\"'“”‘’《》<>（）()[]【】。、，,：:；;！!？? \n\t")
+        title = " ".join(title.split())
+        if not title:
+            return ""
+        return title[:16]
     
     @classmethod
     async def save_process_info(cls,

@@ -11,6 +11,7 @@ services:
       - ./logs:/app/logs
     environment:
       - DATABASE_URL=sqlite+aiosqlite:///./demo.db
+      - REQUIRE_TRIAL_ACCESS=false
 
   frontend:
     build:

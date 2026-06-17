@@ -2,8 +2,8 @@
   "private": true,
   "scripts": {
     "dev": "concurrently -k -n frontend,api \"npm:dev:frontend\" \"npm:dev:api\"",
-    "dev:frontend": "npm --prefix frontend/my-app run dev",
-    "dev:api": "python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001 --app-dir fastapi",
+    "dev:frontend": "NEXT_PUBLIC_API_BASE_URL=http://localhost:8001 npm --prefix frontend/my-app run dev",
+    "dev:api": "python -m uvicorn app.main:app --reload --reload-dir fastapi --host 0.0.0.0 --port 8001 --app-dir fastapi",
     "lint:frontend": "npm --prefix frontend/my-app run lint"
   },
   "dependencies": {

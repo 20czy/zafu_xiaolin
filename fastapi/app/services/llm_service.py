@@ -6,7 +6,7 @@ from ..core.env import load_app_env
 load_app_env()
 
 DEEPSEEK_API_BASE = os.getenv("DEEPSEEK_API_BASE", "https://api.deepseek.com/v1")
-MAIN_AGENT_MODEL = os.getenv("AGENT_MAIN_MODEL", "deepseek-v4-pro")
+MAIN_AGENT_MODEL = os.getenv("AGENT_MAIN_MODEL", "deepseek-v4-flash")
 TOOL_LIBRARY_MODEL = os.getenv("TOOL_LIBRARY_MODEL", "deepseek-v4-flash")
 
 

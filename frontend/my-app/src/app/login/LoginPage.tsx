@@ -42,6 +42,10 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
+      const contentType = response.headers.get("Content-Type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("登录接口未返回 JSON，请检查 NEXT_PUBLIC_API_BASE_URL 是否指向 FastAPI 服务");
+      }
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "访问码无效");
       dispatch(login({ username: data.data.label }));
